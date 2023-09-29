@@ -1,0 +1,26 @@
+//  Author: Corey Ferguson
+//  Date:   September 22, 2023
+//  File:   sender.txt
+//
+
+func main
+    a = server(8080, 1024)
+
+    echo "Server listening on port 8080...\n"
+
+    array b = null
+
+    while 1
+        if !(b = accept(a))
+            continue
+        end if
+        
+        for c in b
+            send(c, gmt())
+        end for
+        
+        sleep 1000
+    end while
+end func
+
+main()

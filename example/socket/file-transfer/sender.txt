@@ -1,0 +1,19 @@
+//  Author: Corey Ferguson
+//  Date:   September 22, 2023
+//  File:   sender.txt
+//
+
+func main
+    a = server(8080, 1)
+
+    array b = null
+    while !(b = accept(a))
+        continue
+    end while
+
+    val = read("/Users/<user>/SimpleScript/example/data/unit_3_test_data.csv")
+
+    echo "Send {}\n" format (send(first b, val) <= 0 ? "fail", "success")
+end func
+
+main()

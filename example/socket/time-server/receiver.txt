@@ -1,0 +1,27 @@
+//  Author: Corey Ferguson
+//  Date:   September 22, 2023
+//  File:   receiver.txt
+//
+
+include "@/datetime/parseTime"
+include "@/datetime/isoString"
+
+func main
+    a = client("127.0.0.1", 8080)
+
+    echo "Connected...\n"
+
+    val = null
+
+    while 1
+        if !(val = recv(a))
+            break
+        end if
+        
+        echo "{}\n" format isoString(parseTime(val))
+    end while
+
+    echo "Disconnected.\n"
+end func
+
+main()

@@ -1,0 +1,24 @@
+//  Author: Corey Ferguson
+//  Date:   September 22, 2023
+//  File:   receiver.txt
+//
+
+func main
+    a = client("127.0.0.1", 8082)
+
+    echo "Connected...\n"
+
+    while 1
+        val = null
+        
+        if !(val = recv(a))
+            break
+        end if
+        
+        echo val
+    end while
+
+    echo "Disconnected.\n"
+end func
+
+main()

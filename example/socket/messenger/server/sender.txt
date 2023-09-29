@@ -1,0 +1,39 @@
+//  Author: Corey Ferguson
+//  Date:   September 21, 2023
+//  File:   sender.txt
+//
+
+func main
+    a = server(8080, 3)
+
+    echo "Server listening on port 8080...\n"
+
+    array b = null
+
+    while 1
+        while !(b = accept(a))
+            continue
+        end while
+        
+        echo "Connected...\n"
+        
+        listen(first b, 8081)
+        
+        while 1
+            val = null
+            while !(val = (input() ?? ""))
+                continue
+            end while
+        
+            if send(first b, val) <= 0
+                break
+            end if
+        end while
+
+        close(first b)
+        
+        echo "Disconnected.\n"
+    end while
+end func
+
+main()

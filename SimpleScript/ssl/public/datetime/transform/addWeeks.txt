@@ -1,0 +1,31 @@
+//  Author: Corey Ferguson
+//  Date:   August 24, 2023
+//  File:   addWeeks.txt
+//
+
+include "@/string/string"
+
+func main
+    if nrows(argv) !== 3
+        expectError("2 argument(s), got {}" format (nrows(argv)))
+    end if
+
+    timestamp = ((argv row 1) slice 1, argv cell 1, 0)
+
+    if subtypeOf timestamp !== "int"
+        typeError(subtypeOf timestamp, "int")
+    end if
+
+    weeks = ((argv row 2) slice 1, argv cell 2, 0)
+
+    if subtypeOf weeks !== "int"
+        typeError(subtypeOf weeks, "int")
+    end if
+
+    timestamp += weeks * 604800
+
+    return timestamp
+end func
+
+return main()
+

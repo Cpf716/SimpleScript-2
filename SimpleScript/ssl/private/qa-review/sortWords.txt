@@ -1,0 +1,12 @@
+//  problem:    inefficiency
+
+include "@/search/string/words"
+include "@/table/sort/sortRows"
+
+arr = words("/Users/<user>/Documents/words.txt")
+
+arr insert 0, 2
+
+arr = sortRows(arr, 1)
+
+echo "The most common word '{}' is used {} times.\n" format array(arr.(count arr - 2), arr.(count arr - 1))

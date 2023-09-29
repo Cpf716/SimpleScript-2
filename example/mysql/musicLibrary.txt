@@ -1,0 +1,88 @@
+//  Author: Corey Ferguson
+//  Date:   September 2, 2023
+//  File:   example_1.txt
+//
+
+func encode => res
+    res = inverse res
+
+    res insert 1, (array(first res) fill (count res - 1) / first res)
+
+    return inverse res
+end func
+
+consume encode
+
+func main
+    conn = -1
+
+    try
+        conn = connect("tcp://localhost:3306", "root", "root")
+    catch err
+        echo "SQL: {}\n" format err
+
+        return
+    end try
+
+    /*
+    try
+        update(conn, "insert into music_library.albums(artist_id, album_year, album_name) values ((select artist_id from music_library.artists), 2016, 'Starboy - Single')")
+    catch err
+        echo "SQL: {}\n" format err
+    end try
+
+    try
+        update(conn, "insert into music_library.songs(artist_id, album_id, song_title) values ((select artist_id from music_library.artists), (select album_id from music_library.albums order by album_id desc limit 1), 'Starboy')")
+    catch err
+        echo "SQL: {}\n" format err
+    end try
+    */
+
+    array res = null
+
+    try
+        res = query(conn, "select * from music_library.artists")
+    catch err
+        echo "SQL: {}\n" format err
+    end try
+
+    //  write("/tmp/artists.csv", encode(res), "csv")
+
+    try
+        res = query(conn, "select * from music_library.albums")
+    catch err
+        echo "SQL: {}\n" format err
+    end try
+
+    //  write("/tmp/albums.csv", encode(res), "csv")
+
+    try
+        res = query(conn, "select * from music_library.songs")
+    catch err
+        echo "SQL: {}\n" format err
+    end try
+
+    //  write("/tmp/songs.csv", encode(res), "csv")
+
+    try
+        res = query(conn, "select artist_name, album_year, album_name, song_title from music_library.songs songs join music_library.albums albums on songs.album_id = albums.album_id join music_library.artists artists on albums.artist_id = artists.artist_id")
+    catch err
+        echo "SQL: {}\n" format err
+    end try
+
+    for i = 0, i < (count res - 1) / first res, i += 1
+        for j = 0, j < first res, j += 1
+            echo "{}\t\t" format (res cell i, j)
+        end for
+        
+        echo "\n"
+    end for
+
+    try
+        close(conn)
+    catch err
+        echo "SQL: {}\n" format err
+    end try
+end func
+
+main()
