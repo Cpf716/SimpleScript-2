@@ -62,15 +62,12 @@ int main(int argc, char* argv[]) {
     
     try {
         statement(os.str()).execute(&ss);
-    //  /*
+        
     } catch (simple::error e) {
         cout << e.what() << endl;
         
         ss.print_stack_trace();
     }
-     // */
-    
-    file -> close();
     
     if (STOPWATCH) {
         end = steady_clock::now();

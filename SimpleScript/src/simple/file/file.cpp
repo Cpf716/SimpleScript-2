@@ -421,6 +421,7 @@ namespace simple {
         
         for (size_t i = 0; i < argc; ++i) {
             size_t k = stoi(data[i * (j + 1)]);
+            
             for (size_t l = 0; l < j - k; ++l)
                 data.insert(i * (j + 1) + k + l + 1, EMPTY);
         }

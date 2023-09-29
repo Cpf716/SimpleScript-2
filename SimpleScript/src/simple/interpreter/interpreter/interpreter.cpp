@@ -49,15 +49,12 @@ namespace simple {
             delete arrayv[i];
         
         delete[] arrayv;
-         
         
         if (function_bst != NULL)
             function_bst -> close();
         
-        /*
         for (size_t i = 0; i < functionc; ++i)
             functionv[i] -> close();
-         // */
         
         delete[] functionv;
         
