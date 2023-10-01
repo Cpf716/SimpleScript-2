@@ -63,6 +63,7 @@ namespace simple {
             
         } catch (exception& e) {
             size_t i = statementc - 1;
+            
             if (statementv[i] -> compare("finally"))
                 --i;
             

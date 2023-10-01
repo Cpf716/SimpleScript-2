@@ -7,13 +7,13 @@ include "@/string/search/words"
 
 func main
     if nrows(argv) !== 2
-        expectError("1 argument(s), got {}" format (nrows(argv) - 1))
+        expectExcept("1 argument(s), got {}" format (nrows(argv) - 1))
     end if
 
     filename = (argv row 1) slice 1
 
     if typeOf filename !== "string"
-        typeError(typeOf filename, "string")
+        typeExcept(typeOf filename, "string")
     end if
 
     if filename === null

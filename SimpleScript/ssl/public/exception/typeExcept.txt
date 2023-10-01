@@ -1,6 +1,6 @@
 //  Author: Corey Ferguson
 //  Date:   August 3, 2023
-//  File:   typeError.txt
+//  File:   typeExcept.txt
 //
 
 include "@/table/nrows"
@@ -12,13 +12,13 @@ end if
 firstType = ((argv row 1) slice 1, argv cell 1, 0)
 
 if typeOf firstType !== "string"
-    typeError(typeOf firstType, "string")
+    typeExcept(typeOf firstType, "string")
 end if
 
 secondType = ((argv row 2) slice 1, argv cell 2, 0)
 
 if typeOf secondType !== "string"
-    typeError(typeOf secondType, "string")
+    typeExcept(typeOf secondType, "string")
 end if
 
 throw "Cannot convert from {} to {}" format array(firstType, secondType)

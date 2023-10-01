@@ -16,7 +16,7 @@
 #include "echo_statement.h"
 #include "else_statement.h"
 #include "else_if_statement.h"
-#include "error_statement.h"
+#include "exception_statement.h"
 #include "finally_statement.h"
 #include "for_statement.h"
 #include "function_statement.h"

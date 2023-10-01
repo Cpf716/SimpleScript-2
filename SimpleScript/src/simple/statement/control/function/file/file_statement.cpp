@@ -462,7 +462,7 @@ namespace simple {
                     dst[s] = new sleep_statement(ltrim(src[i].substr(5)));
                 } else if (tokenv[0] == "throw") {
                     //  delete[] tokenv;
-                    dst[s] = new error_statement(ltrim(src[i].substr(5)));
+                    dst[s] = new exception_statement(ltrim(src[i].substr(5)));
                 } else {
                     //  delete[] tokenv;
                     dst[s] = new statement(src[i]);

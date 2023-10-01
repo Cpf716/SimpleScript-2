@@ -3,23 +3,23 @@
 //  File:   gcd.txt
 //
 
-include "@/error/expectError"
+include "@/exception/expectExcept"
 
 func main
     if nrows(argv) !== 3
-        expectError("2 argument(s), got {}" format (nrows(argv) - 1))
+        expectExcept("2 argument(s), got {}" format (nrows(argv) - 1))
     end if
 
     a = ((argv row 1) slice 1, argv cell 0, 0)
 
     if subtypeOf a !== "int"
-        typeError(subtypeOf a, "int")
+        typeExcept(subtypeOf a, "int")
     end if
 
     b = ((argv row 2) slice 1, argv cell 1, 0)
 
     if subtypeOf b !== "int"
-        typeError(subtypeOf b, "int")
+        typeExcept(subtypeOf b, "int")
     end if
 
     if a < b

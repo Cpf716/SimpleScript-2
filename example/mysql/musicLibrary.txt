@@ -14,10 +14,12 @@ end func
 consume encode
 
 func main
-    conn = -1
+    con = -1
 
     try
-        conn = connect("tcp://localhost:3306", "root", "root")
+        con = connect("tcp://localhost:3306", "root", "root")
+        
+        setSchema(con, "music_library")
     catch err
         echo "SQL: {}\n" format err
 
@@ -26,13 +28,13 @@ func main
 
     /*
     try
-        update(conn, "insert into music_library.albums(artist_id, album_year, album_name) values ((select artist_id from music_library.artists), 2016, 'Starboy - Single')")
+        update(con, "insert into albums(artist_id, album_year, album_name) values ((select artist_id from artists), 2016, 'Starboy - Single')")
     catch err
         echo "SQL: {}\n" format err
     end try
 
     try
-        update(conn, "insert into music_library.songs(artist_id, album_id, song_title) values ((select artist_id from music_library.artists), (select album_id from music_library.albums order by album_id desc limit 1), 'Starboy')")
+        update(con, "insert into songs(artist_id, album_id, song_title) values ((select artist_id from artists), (select album_id from albums order by album_id desc limit 1), 'Starboy')")
     catch err
         echo "SQL: {}\n" format err
     end try
@@ -41,7 +43,7 @@ func main
     array res = null
 
     try
-        res = query(conn, "select * from music_library.artists")
+        res = query(con, "select * from artists")
     catch err
         echo "SQL: {}\n" format err
     end try
@@ -49,7 +51,7 @@ func main
     //  write("/tmp/artists.csv", encode(res), "csv")
 
     try
-        res = query(conn, "select * from music_library.albums")
+        res = query(con, "select * from albums")
     catch err
         echo "SQL: {}\n" format err
     end try
@@ -57,7 +59,7 @@ func main
     //  write("/tmp/albums.csv", encode(res), "csv")
 
     try
-        res = query(conn, "select * from music_library.songs")
+        res = query(con, "select * from songs")
     catch err
         echo "SQL: {}\n" format err
     end try
@@ -65,7 +67,7 @@ func main
     //  write("/tmp/songs.csv", encode(res), "csv")
 
     try
-        res = query(conn, "select artist_name, album_year, album_name, song_title from music_library.songs songs join music_library.albums albums on songs.album_id = albums.album_id join music_library.artists artists on albums.artist_id = artists.artist_id")
+        res = query(con, "select artist_name, album_year, album_name, song_title from songs songs join albums albums on songs.album_id = albums.album_id join artists artists on albums.artist_id = artists.artist_id")
     catch err
         echo "SQL: {}\n" format err
     end try
@@ -79,7 +81,7 @@ func main
     end for
 
     try
-        close(conn)
+        close(con)
     catch err
         echo "SQL: {}\n" format err
     end try

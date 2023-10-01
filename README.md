@@ -2,7 +2,7 @@
 
 SimpleScript is an interpreted, procedural programming language.
 
-It features three base types (number, string, and array) and seven subtypes (double, int, string, char, array, dictionary, and table) as well as 88 operators and 21 installed functions.
+It features three base types (number, string, and array) and seven subtypes (double, int, string, char, array, dictionary, and table) as well as 88 operators and 22 built-in functions.
 
 Additionally, SimpleScript supports MySQL DBMS and TCP socket programming.
 

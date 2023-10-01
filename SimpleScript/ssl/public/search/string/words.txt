@@ -13,7 +13,7 @@ func main
     filename = (argv row 1) slice 1
 
     if typeOf filename !== "string"
-        typeError(typeOf filename, "string")
+        typeExcept(typeOf filename, "string")
     end if
 
     if filename === null

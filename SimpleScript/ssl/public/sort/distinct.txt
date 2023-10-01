@@ -3,11 +3,11 @@
 //  File:   distinct.txt
 //
 
-include "@/error/expectError"
+include "@/exception/expectExcept"
 
 func main
     if (count argv - 1) / first argv !== 2
-        expectError("1 argument(s), got {}" format ((count argv - 1) / first argv - 1))
+        expectExcept("1 argument(s), got {}" format ((count argv - 1) / first argv - 1))
     end if
 
     array arr = (argv row 1) slice 1

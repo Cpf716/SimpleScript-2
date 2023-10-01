@@ -9,6 +9,7 @@
 #define try_statement_h
 
 #include "control_statement.h"
+#include "exception.h"
 
 namespace simple {
     class try_statement: public control_statement {

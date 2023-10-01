@@ -64,9 +64,9 @@ int main(int argc, char* argv[]) {
         statement(os.str()).execute(&ss);
         
     } catch (simple::error e) {
-        cout << e.what() << endl;
-        
         ss.print_stack_trace();
+        
+        throw e;
     }
     
     if (STOPWATCH) {

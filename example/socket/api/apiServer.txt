@@ -6,10 +6,12 @@
 include "@/datetime/parseTime"
 
 func mysql => sql
-    conn = -1
+    con = -1
 
     try
-        conn = connect("tcp://localhost:3306", "root", "root")
+        con = connect("tcp://localhost:3306", "root", "root")
+        
+        setSchema(con, "music_library")
     catch err
         echo "SQL: {}\n" format err
 
@@ -21,13 +23,13 @@ func mysql => sql
     array res = null
 
     try
-        res = query(conn, sql)
+        res = query(con, sql)
     catch err
         echo "SQL: {}\n" format err
     end try
     
     try
-        close(conn)
+        close(con)
     catch err
         echo "SQL: {}\n" format err
     end try
@@ -67,13 +69,13 @@ func main
         val = recv(c)
         
         if val === "api/artists"
-            send(c, mysql("select * from music_library.artists"))
+            send(c, mysql("select * from artists"))
         else if val === "api/albums"
-            send(c, mysql("select * from music_library.albums"))
+            send(c, mysql("select * from albums"))
         else if val === "api/songs"
-            send(c, mysql("select * from music_library.songs"))
+            send(c, mysql("select * from songs"))
         else if val === "api/join"
-            send(c, mysql("select artist_name, album_year, album_name, song_title from music_library.songs songs join music_library.albums albums on songs.album_id = albums.album_id join music_library.artists artists on albums.artist_id = artists.artist_id"))
+            send(c, mysql("select artist_name, album_year, album_name, song_title from songs join albums on songs.album_id = albums.album_id join artists on albums.artist_id = artists.artist_id"))
         else if count val !== 0
             send(c, "404")
         end if

@@ -11,6 +11,7 @@
 #include "buo.h"
 #include <cstdio>   //  remove
 #include <ctime>
+#include "exception.h"
 #include "function.h"
 #include "function_t.h"
 #include "logic.h"

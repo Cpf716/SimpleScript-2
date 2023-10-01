@@ -18,6 +18,7 @@
 		9C163A892A3E35C4006CAABD /* finally_statement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C163A882A3E35C4006CAABD /* finally_statement.cpp */; };
 		9C1BB8C12A36BD15006E4360 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1BB8C02A36BD15006E4360 /* file.cpp */; };
 		9C1BB8C42A36BEA1006E4360 /* file_statement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1BB8C32A36BEA1006E4360 /* file_statement.cpp */; };
+		9C3DC9F12AC898290014F28A /* exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C3DC9F02AC898290014F28A /* exception.cpp */; };
 		9C63BEFD29F1DDDE008C46ED /* logic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1CFB3C2915ED8500584726 /* logic.cpp */; };
 		9C63BEFE29F1DDE0008C46ED /* arithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6F3C3A290CA179004559AB /* arithmetic.cpp */; };
 		9C63BF0229F1DE4D008C46ED /* interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CF86541291AF97E00CFCF26 /* interpreter.cpp */; };
@@ -108,14 +109,16 @@
 		9C1F8A892A7C9AD400A8CD92 /* timezones.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = timezones.txt; sourceTree = "<group>"; };
 		9C380BD52A2828E60065EAE9 /* padStart.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = padStart.txt; sourceTree = "<group>"; };
 		9C380BD62A2829BD0065EAE9 /* padEnd.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = padEnd.txt; sourceTree = "<group>"; };
+		9C3DC9EF2AC8981E0014F28A /* exception.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = exception.h; sourceTree = "<group>"; };
+		9C3DC9F02AC898290014F28A /* exception.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = exception.cpp; sourceTree = "<group>"; };
 		9C46099B2AC4908A0091AECC /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		9C4609A02AC4B97F0091AECC /* Operators.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Operators.md; sourceTree = "<group>"; };
 		9C4609A22AC4BB110091AECC /* Functions.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Functions.md; sourceTree = "<group>"; };
 		9C4609A32AC4C20C0091AECC /* matMult.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = matMult.txt; sourceTree = "<group>"; };
 		9C4E27872A6105E10047781B /* months.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = months.txt; sourceTree = "<group>"; };
 		9C4E27912A610D120047781B /* weekdays.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = weekdays.txt; sourceTree = "<group>"; };
-		9C4E27962A6237290047781B /* expectError.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = expectError.txt; sourceTree = "<group>"; };
-		9C4E27972A6237B70047781B /* typeError.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = typeError.txt; sourceTree = "<group>"; };
+		9C4E27962A6237290047781B /* expectExcept.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = expectExcept.txt; sourceTree = "<group>"; };
+		9C4E27972A6237B70047781B /* typeExcept.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = typeExcept.txt; sourceTree = "<group>"; };
 		9C4E9ED829EEDDC70048F743 /* statement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = statement.h; sourceTree = "<group>"; };
 		9C4E9EDC29EEE0B70048F743 /* sort.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = sort.txt; sourceTree = "<group>"; };
 		9C4E9EDD29EEE0FB0048F743 /* echo_statement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = echo_statement.h; sourceTree = "<group>"; };
@@ -137,7 +140,7 @@
 		9C7C9E7129F8E19800053DA2 /* variance.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = variance.txt; sourceTree = "<group>"; };
 		9C7C9E7229F8E1A300053DA2 /* deviation.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = deviation.txt; sourceTree = "<group>"; };
 		9C7C9E7429F8E1D700053DA2 /* indexOf.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = indexOf.txt; sourceTree = "<group>"; };
-		9C7C9E7629F8E23700053DA2 /* error_statement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = error_statement.h; sourceTree = "<group>"; };
+		9C7C9E7629F8E23700053DA2 /* exception_statement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = exception_statement.h; sourceTree = "<group>"; };
 		9C7C9E7729F8E3FC00053DA2 /* startsWith.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = startsWith.txt; sourceTree = "<group>"; };
 		9C7C9E7829F994F600053DA2 /* endsWith.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = endsWith.txt; sourceTree = "<group>"; };
 		9C7C9E7929F9DD1800053DA2 /* try_statement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = try_statement.h; sourceTree = "<group>"; };
@@ -155,7 +158,7 @@
 		9C9E11D72A67051400308BB3 /* padNumber.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = padNumber.txt; sourceTree = "<group>"; };
 		9C9E11DC2A67968600308BB3 /* mode.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = mode.txt; sourceTree = "<group>"; };
 		9C9E11DD2A679A9A00308BB3 /* sortWords.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = sortWords.txt; sourceTree = "<group>"; };
-		9C9E11DE2A684BAC00308BB3 /* rangeError.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = rangeError.txt; sourceTree = "<group>"; };
+		9C9E11DE2A684BAC00308BB3 /* rangeExcept.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = rangeExcept.txt; sourceTree = "<group>"; };
 		9C9E11E02A684D8C00308BB3 /* isLeapYear.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = isLeapYear.txt; sourceTree = "<group>"; };
 		9C9E11E12A68553D00308BB3 /* reverseRows.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = reverseRows.txt; sourceTree = "<group>"; };
 		9C9E11E52A6870D500308BB3 /* isDaylightSavings.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = isDaylightSavings.txt; sourceTree = "<group>"; };
@@ -525,6 +528,15 @@
 			path = statement;
 			sourceTree = "<group>";
 		};
+		9C3DC9EE2AC898110014F28A /* exception */ = {
+			isa = PBXGroup;
+			children = (
+				9C3DC9EF2AC8981E0014F28A /* exception.h */,
+				9C3DC9F02AC898290014F28A /* exception.cpp */,
+			);
+			path = exception;
+			sourceTree = "<group>";
+		};
 		9C4609992AC3696F0091AECC /* qa-failed */ = {
 			isa = PBXGroup;
 			children = (
@@ -599,8 +611,8 @@
 		9C63BED729F0F221008C46ED /* SimpleScript */ = {
 			isa = PBXGroup;
 			children = (
-				9C4E9EDB29EEE0940048F743 /* ssl */,
 				9CC49D8D2A296AAF00ABB949 /* src */,
+				9C4E9EDB29EEE0940048F743 /* ssl */,
 			);
 			path = SimpleScript;
 			sourceTree = "<group>";
@@ -705,14 +717,14 @@
 			path = table;
 			sourceTree = "<group>";
 		};
-		9C9E11D92A67117700308BB3 /* error */ = {
+		9C9E11D92A67117700308BB3 /* exception */ = {
 			isa = PBXGroup;
 			children = (
-				9C4E27962A6237290047781B /* expectError.txt */,
-				9C9E11DE2A684BAC00308BB3 /* rangeError.txt */,
-				9C4E27972A6237B70047781B /* typeError.txt */,
+				9C4E27962A6237290047781B /* expectExcept.txt */,
+				9C9E11DE2A684BAC00308BB3 /* rangeExcept.txt */,
+				9C4E27972A6237B70047781B /* typeExcept.txt */,
 			);
-			path = error;
+			path = exception;
 			sourceTree = "<group>";
 		};
 		9C9E11DB2A67790100308BB3 /* data */ = {
@@ -874,11 +886,11 @@
 			isa = PBXGroup;
 			children = (
 				9CB565DE29F394A60095216F /* data */,
-				9CB2B0522A80AB5000F0B735 /* FleetAreaName.txt */,
-				9C1246962ABE360C00692A3B /* socket */,
-				9C0B9F1E2AA30A1B0082568B /* mysql */,
-				9C693F8D2AB506D500C044C6 /* math */,
 				9C0B9F0F2A9C48040082568B /* datetime */,
+				9C693F8D2AB506D500C044C6 /* math */,
+				9C0B9F1E2AA30A1B0082568B /* mysql */,
+				9C1246962ABE360C00692A3B /* socket */,
+				9CB2B0522A80AB5000F0B735 /* FleetAreaName.txt */,
 			);
 			path = example;
 			sourceTree = "<group>";
@@ -913,7 +925,6 @@
 		9CC49D8D2A296AAF00ABB949 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				9C1246AD2ABE3A5600692A3B /* api */,
 				9CCADCB72A2CFA8C00F0189C /* simple */,
 				9CB2B0532A80B24E00F0B735 /* bst.h */,
 				9C63BF0029F1DE3A008C46ED /* main.cpp */,
@@ -924,12 +935,12 @@
 		9CC64C48290C93E1000D3C48 = {
 			isa = PBXGroup;
 			children = (
-				9CEB6DF32AC64A8800FD386C /* LICENSE.txt */,
-				9C4609A22AC4BB110091AECC /* Functions.md */,
-				9C4609A02AC4B97F0091AECC /* Operators.md */,
-				9C46099B2AC4908A0091AECC /* README.md */,
 				9CC45BF82A47EA1500A6D1C6 /* example */,
 				9C63BED729F0F221008C46ED /* SimpleScript */,
+				9C4609A22AC4BB110091AECC /* Functions.md */,
+				9CEB6DF32AC64A8800FD386C /* LICENSE.txt */,
+				9C4609A02AC4B97F0091AECC /* Operators.md */,
+				9C46099B2AC4908A0091AECC /* README.md */,
 				9CC64C52290C93E1000D3C48 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -963,15 +974,17 @@
 		9CCADCB72A2CFA8C00F0189C /* simple */ = {
 			isa = PBXGroup;
 			children = (
-				9CD57B8E2989EC3200EBB6E7 /* array.h */,
-				9C9E11F62A70A8F400308BB3 /* node.h */,
-				9CCADCC82A31362200F0189C /* stack.h */,
+				9C1246AD2ABE3A5600692A3B /* api */,
 				9CCADCB32A2C0A0B00F0189C /* error */,
+				9C3DC9EE2AC898110014F28A /* exception */,
 				9C1BB8BF2A36BCEE006E4360 /* file */,
 				9CA5D77F2A10316A001C560E /* interface */,
 				9C163A742A3E2F95006CAABD /* interpreter */,
 				9C63BED629F0F1BF008C46ED /* statement */,
 				9CCADCB22A2C0A0700F0189C /* utility */,
+				9CD57B8E2989EC3200EBB6E7 /* array.h */,
+				9C9E11F62A70A8F400308BB3 /* node.h */,
+				9CCADCC82A31362200F0189C /* stack.h */,
 			);
 			path = simple;
 			sourceTree = "<group>";
@@ -981,7 +994,7 @@
 			children = (
 				9C9E12032A783E3700308BB3 /* algorithm */,
 				9C4E27832A6104080047781B /* datetime */,
-				9C9E11D92A67117700308BB3 /* error */,
+				9C9E11D92A67117700308BB3 /* exception */,
 				9C7C9E7029F8E0FA00053DA2 /* math */,
 				9CB2B04F2A806AB500F0B735 /* metric */,
 				9C9E12012A7576B500308BB3 /* number */,
@@ -1038,7 +1051,7 @@
 				9CCADCB02A2BCA1100F0189C /* assert_statement.h */,
 				9CAA09A129EF76320086A4BE /* break_statement.h */,
 				9C63BED529F0F071008C46ED /* continue_statement.h */,
-				9C7C9E7629F8E23700053DA2 /* error_statement.h */,
+				9C7C9E7629F8E23700053DA2 /* exception_statement.h */,
 				9C63BEDB29F0F7A9008C46ED /* return_statement.h */,
 			);
 			path = jump;
@@ -1150,6 +1163,7 @@
 				9C63BEFD29F1DDDE008C46ED /* logic.cpp in Sources */,
 				9C163A722A3E0C4D006CAABD /* function_statement.cpp in Sources */,
 				9C163A802A3E3324006CAABD /* else_statement.cpp in Sources */,
+				9C3DC9F12AC898290014F28A /* exception.cpp in Sources */,
 				9CCBFC672A37DA2C00AB115B /* do_while_statement.cpp in Sources */,
 				9CCBFC612A37D7BB00AB115B /* while_statement.cpp in Sources */,
 				9CA5D77D2A0F7CEF001C560E /* error.cpp in Sources */,

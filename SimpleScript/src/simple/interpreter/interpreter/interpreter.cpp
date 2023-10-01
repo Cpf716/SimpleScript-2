@@ -12354,9 +12354,15 @@ namespace simple {
             if (num < 0)
                 range_error(rtrim(num));
             
-            if (num >= 10000)
-                api::mysql_close((int)num);
-            else
+            if (num >= 10000) {
+                try {
+                    api::mysql_close((int)num);
+                    
+                } catch (sql::SQLException& e) {
+                    throw exception(e.what());
+                }
+                
+            } else
                 api::socket_close((int)num);
             
             return encode(types[5]);
@@ -12541,7 +12547,14 @@ namespace simple {
                 }
             }
             
-            sql::ResultSet *res = api::mysql_prepare_query((size_t)num, str, argc, argv);
+            sql::ResultSet* res = NULL;
+            
+            try {
+                res = api::mysql_prepare_query((size_t)num, str, argc, argv);
+                
+            } catch (sql::SQLException& e) {
+                throw exception(e.what());
+            }
             
             if (res == NULL)
                 return encode(types[5]);
@@ -12624,7 +12637,14 @@ namespace simple {
                 }
             }
             
-            int res = api::mysql_prepare_update((size_t)num, str, argc, argv);
+            int res;
+            
+            try {
+                res = api::mysql_prepare_update((size_t)num, str, argc, argv);
+                
+            } catch (sql::SQLException& e) {
+                throw exception(e.what());
+            }
             
             return to_string(res);
         }));
@@ -12663,7 +12683,14 @@ namespace simple {
             
             string str = decode(argv[1]);
             
-            sql::ResultSet *res = api::mysql_query((size_t)num, str);
+            sql::ResultSet *res = NULL;
+            
+            try {
+                res = api::mysql_query((size_t)num, str);
+                
+            } catch (sql::SQLException& e) {
+                throw exception(e.what());
+            }
             
             if (res == NULL)
                 return encode(types[5]);
@@ -12883,6 +12910,42 @@ namespace simple {
             return to_string(fildes);
         }));
         
+        set_function(new simple::function("setSchema", [this](const size_t argc, string* argv) {
+            if (argc != 2)
+                expect("2 argument(s), got " + to_string(argc));
+            
+            double num = stod(argv[0]);
+            
+            if (!is_int(num))
+                type_error(2, 3);
+                //  double => int
+            
+            if (num < 0)
+                range_error(rtrim(num));
+            
+            if (simple::is_array(argv[1]))
+                type_error(0, 4);
+                //  array => string
+            
+            if (argv[1].empty())
+                null_error();
+            
+            if (!is_string(argv[1]))
+                type_error(2, 4);
+                //  double => string
+            
+            string str = decode(argv[1]);
+            
+            try {
+                api::mysql_set_schema((size_t)num, str);
+                
+            } catch (sql::SQLException& e) {
+                throw exception(e.what());
+            }
+            
+            return encode(types[5]);
+        }));
+        
         set_function(new simple::function("update", [this](const size_t argc, string* argv) {
             if (argc != 2)
                 expect("2 argument(s), got " + to_string(argc));
@@ -12917,7 +12980,14 @@ namespace simple {
             
             string str = decode(argv[1]);
             
-            int res = api::mysql_update((size_t)num, str);
+            int res;
+            
+            try {
+                res = api::mysql_update((size_t)num, str);
+                
+            } catch (sql::SQLException& e) {
+                throw exception(e.what());
+            }
             
             return to_string(res);
         }));
@@ -13844,15 +13914,17 @@ namespace simple {
     }
 
     void interpreter::print_stack_trace() {
-        write();
+        logger << endl;
         
         string padding = "";
         
         while (!stack_trace.empty()) {
-            cout << padding + stack_trace.pop() + "()\n";
+            logger << padding + stack_trace.pop() + "()\n";
             
             padding += "  ";
         }
+        
+        write();
     }
 
     void interpreter::reload() {

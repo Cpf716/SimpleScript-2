@@ -1,28 +1,29 @@
 //
-//  error_statement.h
+//  exception_statement.h
 //  SimpleScript
 //
 //  Created by Corey Ferguson on 4/26/23.
 //
 
-#ifndef error_statement_h
-#define error_statement_h
+#ifndef exception_statement_h
+#define exception_statement_h
 
+#include "exception.h"
 #include "statement_t.h"
 
 namespace simple {
-    class error_statement: public statement_t {
+    class exception_statement: public statement_t {
         //  MEMBER FIELDS
         
         string message;
     public:
         //  CONSTRUCTORS
         
-        error_statement(const string message) {
+        exception_statement(const string message) {
             if (message.empty())
                 expect("expression");
             
-            this -> message = message;
+            this->message = message;
         }
         
         void close() { delete this; }
@@ -33,11 +34,12 @@ namespace simple {
         
         string evaluate(interpreter* ss) {
             unsupported_error("evaluate()");
+            
             return EMPTY;
         }
         
         string execute(interpreter* ss) {
-            throw error(decode(ss -> evaluate(message)));
+            throw exception(decode(ss -> evaluate(message)));
             
             return EMPTY;
         }
@@ -54,4 +56,4 @@ namespace simple {
     };
 }
 
-#endif /* error_statement_h */
+#endif /* exception_statement_h */

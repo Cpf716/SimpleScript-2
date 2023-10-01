@@ -11,7 +11,7 @@ namespace simple {
     //  CONSTRUCTORS
 
     error::error(const std::string message) {
-        this -> message = message;
+        this->message = message;
     }
 
     //  MEMBER FUNCTIONS

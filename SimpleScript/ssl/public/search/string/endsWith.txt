@@ -3,23 +3,23 @@
 //  File:   endsWith.txt
 //
 
-include "@/error/expectError"
+include "@/exception/expectExcept"
 
 func main
     if nrows(argv) !== 3
-        expectError("2 argument(s), got {}" format (nrows(argv) - 1))
+        expectExcept("2 argument(s), got {}" format (nrows(argv) - 1))
     end if
 
     text = ((argv row 1) slice 1, argv cell 1, 0)
 
     if typeOf text !== "string"
-        typeError(typeOf text, "string")
+        typeExcept(typeOf text, "string")
     end if
 
     pattern = ((argv row 2) slice 1, argv cell 2, 0)
 
     if typeOf pattern !== "string"
-        typeError(typeOf pattern, "string")
+        typeExcept(typeOf pattern, "string")
     end if
 
     if pattern === null
