@@ -7,7 +7,7 @@
 
 #include "for_statement.h"
 
-namespace simple {
+namespace ss {
     //  CONSTRUCTORS
 
     for_statement::for_statement(const string specificer, const size_t statementc, statement_t** statementv) {
@@ -47,7 +47,7 @@ namespace simple {
             tokenc = tokens(tokenv, tokenv[0]);
             
             if (tokenc < 3 || !is_symbol(tokenv[0]) || tolower(tokenv[1]) != "in")
-                expect("',' in 'for' statement specifier");
+                expect_error("',' in 'for' statement specifier");
             
             expressionv = new string[expressionc = 2];
             
@@ -72,10 +72,10 @@ namespace simple {
                 tokenv[tokenc++] = EMPTY;
             
             if (tokenc < 5)
-                expect("',' in 'for' statement specifier");
+                expect_error("',' in 'for' statement specifier");
             
             if (tokenc > 5)
-                expect("';' after expression");
+                expect_error("';' after expression");
             
             expressionv = new string[expressionc = 3];
             
@@ -84,17 +84,17 @@ namespace simple {
         }
         
         if (statementc && is_clause(statementv[statementc - 1]))
-            expect("expression");
+            expect_error("expression");
         
-        this -> statementc = statementc;
-        this -> statementv = statementv;
+        this->statementc = statementc;
+        this->statementv = statementv;
     }
 
     void for_statement::close() {
         delete[] expressionv;
         
         for (size_t i = 0; i < statementc; ++i)
-            statementv[i] -> close();
+            statementv[i]->close();
         
         delete[] statementv;
         
@@ -106,25 +106,47 @@ namespace simple {
 
     //  MEMBER FUNCTIONS
 
+    bool for_statement::analyze(interpreter* ssu) const {
+        if (!statementc) {
+            cout << "'for' statement has empty body\n";
+            
+            return false;
+        }
+        
+        size_t i = 0;
+        while (i < statementc - 1 && !statementv[i]->analyze(ssu))
+            ++i;
+        
+        if (i != statementc - 1)
+            cout << "Unreachable code\n";
+                
+        if (statementv[i]->analyze(ssu) &&
+            (statementv[i]->compare("break") ||
+             statementv[i]->compare("return")))
+            cout << "'for' statement will execute at most once\n";
+        
+        return false;
+    }
+
     bool for_statement::compare(const string val) const { return false; }
 
-    string for_statement::evaluate(interpreter* ss) {
+    string for_statement::evaluate(interpreter* ssu) {
         unsupported_error("evaluate()");
         
         return EMPTY;
     }
 
-    string for_statement::execute(interpreter* ss) {
+    string for_statement::execute(interpreter* ssu) {
         should_break = false;
         
-        string buid = ss -> backup();
+        string buid = ssu->backup();
         size_t valuec = 0;
         
         if (expressionc == 2) {
-            if (ss -> is_defined(expressionv[0]))
-                ss -> drop(expressionv[0]);
+            if (ssu->is_defined(expressionv[0]))
+                ssu->drop(expressionv[0]);
             
-            string result = ss -> evaluate(expressionv[1]);
+            string result = ssu->evaluate(expressionv[1]);
             
             valuev = new string[result.length() + 1];
             valuec = parse(valuev, result);
@@ -142,38 +164,38 @@ namespace simple {
             if (i < tokenc && tolower(tokenv[i]) == "array")
                 ++i;
             
-            if (i < tokenc - 1 && is_symbol(tokenv[i]) && tokenv[i + 1] == "=" && ss -> is_defined(tokenv[i])) {
+            if (i < tokenc - 1 && is_symbol(tokenv[i]) && tokenv[i + 1] == "=" && ssu->is_defined(tokenv[i])) {
                 valuev = new string[valuec = 1];
                 valuev[0] = tokenv[i];
                 
-                ss -> drop(valuev[0]);
+                ssu->drop(valuev[0]);
             }
             
             //  available to every iteration
-            ss -> evaluate(expressionv[0]);
+            ssu->evaluate(expressionv[0]);
         }
         
         size_t index = 0;
         while (1) {
-            string _buid = ss -> backup();
+            string _buid = ssu->backup();
             
             if (expressionc == 2) {
                 if (index == valuec) {
-                    ss -> restore(_buid, true, 1, expressionv);
+                    ssu->restore(_buid, true, 1, expressionv);
                     
                     break;
                 }
                 
                 if (valuev[index].empty() || is_string(valuev[index]))
-                    ss -> set_string(expressionv[0], valuev[index]);
+                    ssu->set_string(expressionv[0], valuev[index]);
                 else
-                    ss -> set_number(expressionv[0], stod(valuev[index]));
+                    ssu->set_number(expressionv[0], stod(valuev[index]));
                 
                 ++index;
                 
-            } else if (!expressionv[1].empty() && !simple::evaluate(ss -> evaluate(expressionv[1]))) {
+            } else if (!expressionv[1].empty() && !ss::evaluate(ssu->evaluate(expressionv[1]))) {
                 //  available for one iteration
-                ss -> restore(_buid);
+                ssu->restore(_buid);
                 
                 break;
             }
@@ -181,7 +203,7 @@ namespace simple {
             should_continue = false;
             
             for (size_t j = 0; j < statementc; ++j) {
-                statementv[j] -> execute(ss);
+                statementv[j]->execute(ssu);
                 
                 if (should_break || should_continue)
                     break;
@@ -189,26 +211,26 @@ namespace simple {
             
             if (should_break) {
                 if (expressionc == 2)
-                    ss -> restore(_buid, true, 1, expressionv);
+                    ssu->restore(_buid, true, 1, expressionv);
                 else
-                    ss -> restore(_buid);
+                    ssu->restore(_buid);
                 
                 break;
             }
             
             if (expressionc == 2)
-                ss -> restore(_buid, true, 1, expressionv);
+                ssu->restore(_buid, true, 1, expressionv);
             else {
                 //  available once
-                ss -> evaluate(expressionv[2]);
-                ss -> restore(_buid);
+                ssu->evaluate(expressionv[2]);
+                ssu->restore(_buid);
             }
         }
         
         if (expressionc == 2 || !valuec)
-            ss -> restore(buid);
+            ssu->restore(buid);
         else
-            ss -> restore(buid, true, 1, valuev);
+            ssu->restore(buid, true, 1, valuev);
         
         if (valuev != NULL) {
             delete[] valuev;
@@ -225,28 +247,6 @@ namespace simple {
 
     void for_statement::set_return(const string result) {
         should_break = true;
-        parent -> set_return(result);
-    }
-
-    bool for_statement::validate(interpreter* ss) const {
-        if (!statementc) {
-            cout << "'for' statement has empty body\n";
-            
-            return false;
-        }
-        
-        size_t i = 0;
-        while (i < statementc - 1 && !statementv[i] -> validate(ss))
-            ++i;
-        
-        if (i != statementc - 1)
-            cout << "Unreachable code\n";
-                
-        if (statementv[i] -> validate(ss) &&
-            (statementv[i] -> compare("break") ||
-             statementv[i] -> compare("return")))
-            cout << "'for' statement will execute at most once\n";
-        
-        return false;
+        parent->set_return(result);
     }
 }

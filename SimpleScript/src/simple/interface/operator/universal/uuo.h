@@ -12,7 +12,7 @@
 
 using namespace std;
 
-namespace simple {
+namespace ss {
     class uuo: public operator_t {
         //  MEMBER FIELDS
         
@@ -22,7 +22,7 @@ namespace simple {
         
         uuo(const string opcode, const std::function<string(const string)> operation) {
             set_opcode(opcode);
-            this -> operation = operation;
+            this->operation = operation;
         }
         
         void close() { delete this; }

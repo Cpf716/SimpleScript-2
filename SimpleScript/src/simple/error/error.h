@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-namespace simple {
+namespace ss {
     class error: public std::exception {
         //  MEMBER FIELDS
         
@@ -29,7 +29,7 @@ namespace simple {
 
     void defined_error(const std::string symbol);
 
-    void expect(const std::string subject);
+    void expect_error(const std::string subject);
 
     void null_error();
 

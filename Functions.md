@@ -17,15 +17,15 @@ Postcondition:  returns an array of null values with count `num`
 Precondition:   `count hostName > 0 && port >= 0`<br>
 Postcondition:  returns a file descriptor identifying the server at `hostName` and `port`, otherwise returns -1 if an error occurs (blocking)
 
-### close(con | fildes: int): int
+### close(fildes: int): int
 
-Precondition:   `con >= 0 || fildes >= 0`<br>
-Postcondition:  returns 0 upon successful closure of the MySQL connection `con` or the socket `fildes`, otherwise returns -1 if an error occurs 
+Precondition:   `fildes >= 0`<br>
+Postcondition:  returns 0 upon successful closure of the MySQL connection or the socket `fildes`, otherwise returns -1 or throws an exception if an error occurs
 
 ### connect(hostName: string, userName: string, password: string): int
 
 Precondition:   `count hostName > 0 && count userName > 0 && count password > 0`<br>
-Postcondition:  returns an integer identifying the MySQL connection to `hostName` given `userName` and `password`, otherwise returns -1 if an error occurs
+Postcondition:  returns the MySQL connection to `hostName` given `userName` and `password`, otherwise throws an exception if an error occurs
 
 ### exists(path: string): int
 
@@ -55,17 +55,17 @@ Postcondition:  returns the current local time string
 ### prepareQuery(con: int, sql: string, args...): table
 
 Precondition:   `con >= 0 && count sql > 0`<br>
-Postcondition:  returns the result set of a prepared statement query
+Postcondition:  returns the result set of a prepared statement query, otherwise returns `undefined` if no such connection exists or throws an exception if an error occurs
 
 ### prepareUpdate(con: int, sql: string, args...): int
 
 Precondition:   `con >= 0 && count sql > 0`<br>
-Postcondition:  returns the number of rows updated by a prepared statement update
+Postcondition:  returns the number of rows updated by a prepared statement update, otherwise returns -1 if no such connection exists or throws an exception if an error occurs
 
 ### query(con: int, sql: string): table
 
 Precondition:   `con >= 0 && count sql > 0`<br>
-Postcondition:  returns the result set of `sql` query
+Postcondition:  returns the result set of `sql` query, otherwise returns `undefined` if no such connection exists or throws an exception if an error occurs
 
 ### rand(): int
 
@@ -101,12 +101,12 @@ Postcondition:  starts a server at `port` with the capacity of `backlog`; return
 ### setSchema(con: int, schema: string)
 
 Precondition:   `con >= 0 && count schema > 0`<br>
-Postcondition:  sets the schema for connection `con`; returns `undefined`
+Postcondition:  sets the schema for connection `con`; returns 1 on success, otherwise returns 0 if no such connection exists or throws an exception if an error occurs
 
 ### update(con: int, sql: string)
 
 Precondition:   `con >= 0 && count sql > 0`<br>
-Postcondition:  returns the number of rows updated by `sql` query
+Postcondition:  returns the number of rows updated by `sql` query, otherwise returns -1 if no such connection exists or throws an exception if an error occurs
 
 ### write(path: string, data: any): string
 ### write(path: string, data: any, type: string): string

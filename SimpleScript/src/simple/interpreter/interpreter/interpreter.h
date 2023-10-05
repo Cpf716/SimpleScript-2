@@ -24,7 +24,7 @@
 
 using namespace std::chrono;
 
-namespace simple {
+namespace ss {
     class interpreter: public logic {
         //  MEMBER FIELDS
         
@@ -66,7 +66,7 @@ namespace simple {
         size_t unary_count;
         
         size_t arrayc = 0;
-        tuple<string, simple::array<string>, pair<bool, bool>>** arrayv = NULL;
+        tuple<string, ss::array<string>, pair<bool, bool>>** arrayv = NULL;
         
         size_t functionc = 0;
         function_t** functionv = NULL;
@@ -75,7 +75,7 @@ namespace simple {
         tuple<string, string, pair<bool, bool>>** stringv = NULL;
         
         size_t backupc = 0;
-        pair<size_t, tuple<string, simple::array<string>*, pair<bool, bool>>**>** bu_arrayv = NULL;
+        pair<size_t, tuple<string, ss::array<string>*, pair<bool, bool>>**>** bu_arrayv = NULL;
         pair<size_t, function_t**>** bu_functionv = NULL;
         pair<string, string>** bu_numberv = NULL;
         pair<size_t, tuple<string, string, pair<bool, bool>>**>** bu_stringv = NULL;
@@ -88,11 +88,13 @@ namespace simple {
         
         string buid = EMPTY;
         
-        simple::stack<string> stack_trace = simple::stack<string>();
+        ss::stack<string> stack_trace = ss::stack<string>();
         
         string types[8] { "array", "char", "double", "int", "string", "undefined", "dictionary", "table" };
 
         //  MEMBER FUNCTIONS
+        
+        string element(string val);
         
         void initialize();
         
@@ -102,19 +104,17 @@ namespace simple {
         
         int io_array(const string symbol) const;
         
-        string element(string val);
-        
         size_t merge(int n, string* data) const;
         
         size_t prefix(string* dst, const string src) const;
         
         void save();
         
-        void write();
-        
         size_t split(string* dst, string src) const;
         
         void type_error(const size_t lhs, const size_t rhs);
+        
+        void write();
     public:
         
         //  CONSTRUCTORS
@@ -131,7 +131,7 @@ namespace simple {
         
         string evaluate(const string expression);
         
-        simple::array<string> get_array(const string symbol);
+        ss::array<string> get_array(const string symbol);
         
         string get_string(const string symbol);
         

@@ -10,7 +10,7 @@
 
 #include "statement_t.h"
 
-namespace simple {
+namespace ss {
     class return_statement: public statement_t {
         //  MEMBER FIELDS
         
@@ -27,15 +27,17 @@ namespace simple {
         
         //  MEMBER FUNCTIONS
         
+        bool analyze(interpreter* ssu) const { return true; }
+        
         bool compare(const string val) const { return val == "return"; }
         
-        string evaluate(interpreter* ss) {
+        string evaluate(interpreter* ssu) {
             unsupported_error("evaluate()");
             return EMPTY;
         }
         
-        string execute(interpreter* ss) {
-            set_return(expression.empty() ? EMPTY : ss -> evaluate(expression));
+        string execute(interpreter* ssu) {
+            set_return(expression.empty() ? EMPTY : ssu->evaluate(expression));
             return EMPTY;
         }
         
@@ -43,11 +45,9 @@ namespace simple {
         
         void set_continue() { unsupported_error("set_continue()"); }
         
-        void set_parent(statement_t* parent) { this -> parent = parent; }
+        void set_parent(statement_t* parent) { this->parent = parent; }
         
-        void set_return(const string result) { parent -> set_return(result); }
-        
-        bool validate(interpreter* ss) const { return true; }
+        void set_return(const string result) { parent->set_return(result); }
     };
 }
 

@@ -7,34 +7,49 @@
 
 #include "file_statement.h"
 
-namespace simple {
+namespace ss {
     //  CONSTRUCTORS
 
     file_statement::file_statement(const size_t n, string* src, const size_t functionc, function_t** functionv) {
-        this -> functionc = functionc;
-        this -> functionv = functionv;
+        this->functionc = functionc;
+        this->functionv = functionv;
         
         statementv = new statement_t*[n];
         statementc = build(statementv, src, 0, n);
         
         if (statementc && is_clause(statementv[statementc - 1]))
-            expect("expression");
+            expect_error("expression");
         
         for (size_t i = 0; i < statementc; ++i)
-            statementv[i] -> set_parent(this);
+            statementv[i]->set_parent(this);
     }
 
     void file_statement::close() {
         delete[] functionv;
         
         for (size_t i = 0; i < statementc; ++i)
-            statementv[i] -> close();
+            statementv[i]->close();
         
         delete[] statementv;
         delete this;
     }
 
     //  MEMBER FUNCTIONS
+
+    bool file_statement::analyze(interpreter* ssu) const {
+        if (!statementc) return false;
+        
+        size_t i = 0;
+        while (i < statementc - 1 && !statementv[i]->analyze(ssu))
+            ++i;
+        
+        if (i != statementc - 1)
+            cout << "Unreachable code\n";
+        
+        statementv[statementc - 1]->analyze(ssu);
+        
+        return false;
+    }
 
     size_t file_statement::build(statement_t** dst, string* src, size_t si, size_t ei) {
         size_t i = si, s = 0;
@@ -46,14 +61,14 @@ namespace simple {
             
             if (tokenv[0] == "include") {
                 delete[] tokenv;
-                expect("expression");
+                expect_error("expression");
             }
             
             if (tokenv[0] == "catch") {
                 delete[] tokenv;
                 
                 if (tokenc > 2)
-                    expect("';' after expression");
+                    expect_error("';' after expression");
                 
                 size_t k;   int p = 1;
                 for (k = i + 1; k < ei; ++k) {
@@ -74,7 +89,7 @@ namespace simple {
                         } else if (p == 1) {
                             if (tokenv[0] == "catch") {
                                 delete[] tokenv;
-                                expect("'end try'");
+                                expect_error("'end try'");
                             }
                             
                             if (tokenv[0] == "finally") {
@@ -125,7 +140,7 @@ namespace simple {
                                 delete[] tokenv;
                                 
                                 if (tokenc > 2)
-                                    expect("';' after expression");
+                                    expect_error("';' after expression");
                                 
                                 --p;
                                 
@@ -137,7 +152,7 @@ namespace simple {
                     }
                 }
                 
-                if (k == ei) expect("'end while'");
+                if (k == ei) expect_error("'end while'");
                 
                 statement_t** _dst = new statement_t*[k - i - 1];
                 size_t _s = build(_dst, src, i + 1, k);
@@ -196,7 +211,7 @@ namespace simple {
                 delete[] tokenv;
                 
                 if (tokenc > 1)
-                    expect("';' after expression");
+                    expect_error("';' after expression");
                 
                 size_t k;   int p = 1;
                 for (k = i + 1; k < ei; ++k) {
@@ -217,7 +232,7 @@ namespace simple {
                         } else if (p == 1) {
                             if (tokenv[0] == "else") {
                                 delete[] tokenv;
-                                expect("'end if'");
+                                expect_error("'end if'");
                             }
                             
                             delete[] tokenv;
@@ -236,7 +251,7 @@ namespace simple {
                 delete[] tokenv;
                 
                 if (tokenc > 1)
-                    expect("';' after expression");
+                    expect_error("';' after expression");
                 
                 size_t k;   int p = 1;
                 for (k = i + 1; k < ei; ++k) {
@@ -256,7 +271,7 @@ namespace simple {
                         } else if (p == 1) {
                             if (tokenv[0] == "catch" || tokenv[0] == "finally") {
                                 delete[] tokenv;
-                                expect("'end try'");
+                                expect_error("'end try'");
                             }
                             
                             delete[] tokenv;
@@ -285,7 +300,7 @@ namespace simple {
                         delete[] tokenv;
                         
                         if (tokenc > 2)
-                            expect("';' after expression");
+                            expect_error("';' after expression");
                         
                         --p;
                         
@@ -294,7 +309,7 @@ namespace simple {
                         delete[] tokenv;
                 }
                 
-                if (k == ei) expect("'end for'");
+                if (k == ei) expect_error("'end for'");
                 
                 statement_t** _dst = new statement_t*[k - i - 1];
                 size_t _s = build(_dst, src, i + 1, k);
@@ -316,7 +331,7 @@ namespace simple {
                     } else if (tokenc > 1 && tokenv[0] == "end" && tokenv[1] == "func") {
                         delete[] tokenv;
                         if (tokenc > 2)
-                            expect("';' after expression");
+                            expect_error("';' after expression");
                         
                         --p;
                         
@@ -326,7 +341,7 @@ namespace simple {
                         delete[] tokenv;
                 }
                 
-                if (k == ei) expect("'end func'");
+                if (k == ei) expect_error("'end func'");
                 
                 statement_t** _dst = new statement_t*[k - i - 1];
                 size_t _s = build(_dst, src, i + 1, k);
@@ -347,7 +362,7 @@ namespace simple {
                         delete[] tokenv;
                         
                         if (tokenc > 2)
-                            expect("';' after expression");
+                            expect_error("';' after expression");
                         
                         --p;
                         
@@ -356,7 +371,7 @@ namespace simple {
                         delete[] tokenv;
                 }
                 
-                if (k == ei) expect("'end if'");
+                if (k == ei) expect_error("'end if'");
                 
                 statement_t** _dst = new statement_t*[k - i - 1];
                 size_t _s = build(_dst, src, i + 1, k);
@@ -368,7 +383,7 @@ namespace simple {
                 delete[] tokenv;
                 
                 if (tokenc > 1)
-                    expect("';' after expression");
+                    expect_error("';' after expression");
                 
                 size_t k;   int p = 1;
                 for (k = i + 1; k < ei; ++k) {
@@ -382,7 +397,7 @@ namespace simple {
                         delete[] tokenv;
                         
                         if (tokenc > 2)
-                            expect("';' after expression");
+                            expect_error("';' after expression");
                         
                         --p;
                         
@@ -392,7 +407,7 @@ namespace simple {
                         delete[] tokenv;
                 }
                 
-                if (k == ei) expect("'end try'");
+                if (k == ei) expect_error("'end try'");
                 
                 statement_t** _dst = new statement_t*[k - i - 1];
                 size_t _s = build(_dst, src, i + 1, k);
@@ -419,7 +434,7 @@ namespace simple {
                                 delete[] tokenv;
                                 
                                 if (tokenc > 2)
-                                    expect("';' after expression");
+                                    expect_error("';' after expression");
                                 
                                 --p;
                                 
@@ -431,7 +446,7 @@ namespace simple {
                     }
                 }
                 
-                if (k == ei) expect("'end while'");
+                if (k == ei) expect_error("'end while'");
                 
                 statement_t** _dst = new statement_t*[k - i - 1];
                 size_t _s = build(_dst, src, i + 1, k);
@@ -483,18 +498,18 @@ namespace simple {
         return false;
     }
 
-    string file_statement::evaluate(interpreter* ss) {
+    string file_statement::evaluate(interpreter* ssu) {
         unsupported_error("evaluate()");
         return EMPTY;
     }
 
-    string file_statement::execute(interpreter* ss) {
-        validate(ss);
+    string file_statement::execute(interpreter* ssu) {
+        analyze(ssu);
         
         should_return = false;
         
         for (size_t i = 0; i < statementc; ++i) {
-            statementv[i] -> execute(ss);
+            statementv[i]->execute(ssu);
             
             if (should_return)
                 break;
@@ -510,22 +525,7 @@ namespace simple {
     void file_statement::set_parent(statement_t* parent) { unsupported_error("set_parent()"); }
 
     void file_statement::set_return(const string result) {
-        this -> result = result;
-        this -> should_return = true;
-    }
-
-    bool file_statement::validate(interpreter* ss) const {
-        if (!statementc) return false;
-        
-        size_t i = 0;
-        while (i < statementc - 1 && !statementv[i] -> validate(ss))
-            ++i;
-        
-        if (i != statementc - 1)
-            cout << "Unreachable code\n";
-        
-        statementv[statementc - 1] -> validate(ss);
-        
-        return false;
+        this->result = result;
+        this->should_return = true;
     }
 }

@@ -10,7 +10,7 @@
 
 #include "control_statement.h"
 
-namespace simple {
+namespace ss {
     class while_statement: public control_statement {
         //  MEMBER FIELDS
         
@@ -23,13 +23,15 @@ namespace simple {
         
         while_statement(const string expression, const size_t statementc, statement_t** statementv);
         
-        //  MEMBER FUNCTIONS
-        
         void close();
         
-        string evaluate(interpreter* ss);
+        //  MEMBER FUNCTIONS
         
-        string execute(interpreter* ss);
+        bool analyze(interpreter* ssu) const;
+        
+        string evaluate(interpreter* ssu);
+        
+        string execute(interpreter* ssu);
         
         bool compare(const string val) const;
         
@@ -38,8 +40,6 @@ namespace simple {
         void set_continue();
         
         void set_return(const string result);
-        
-        bool validate(interpreter* ss) const;
     };
 }
 

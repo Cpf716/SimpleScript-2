@@ -10,7 +10,7 @@
 
 #include "statement_t.h"
 
-namespace simple {
+namespace ss {
     class statement: public statement_t {
         //  MEMBER FIELDS
         
@@ -20,24 +20,31 @@ namespace simple {
         
         statement(const string expression) {
             if (expression.empty())
-                expect("expression");
+                expect_error("expression");
             
-            this -> expression = expression;
+            this->expression = expression;
         }
         
         void close() { delete this; }
         
         //  MEMBER FUNCTIONS
         
+        bool analyze(interpreter* ssu) const {
+            if (!ssu->is_mutating(expression))
+                cout << "Expression result unused: (" << expression << ")\n";
+            
+            return false;
+        }
+        
         bool compare(const string val) const { return false; }
         
-        string evaluate(interpreter* ss) {
+        string evaluate(interpreter* ssu) {
             unsupported_error("evaluate()");
             return EMPTY;
         }
         
-        string execute(interpreter* ss) {
-            ss -> evaluate(expression);
+        string execute(interpreter* ssu) {
+            ssu-> evaluate(expression);
              
             return EMPTY;
         }
@@ -49,13 +56,6 @@ namespace simple {
         void set_parent(statement_t* parent) { }
         
         void set_return(const string result) { unsupported_error("set_return()"); }
-        
-        bool validate(interpreter* ss) const {
-            if (!ss -> is_mutating(expression))
-                cout << "Expression result unused: (" << expression << ")\n";
-            
-            return false;
-        }
     };
 }
 

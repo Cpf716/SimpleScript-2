@@ -10,7 +10,7 @@
 
 #include "operator_t.h"
 
-namespace simple {
+namespace ss {
     class blo : public operator_t {
         //  MEMBER FIELDS
         
@@ -21,7 +21,7 @@ namespace simple {
         blo(const string opcode, const std::function<double(const string, const string)> operation) {
             set_opcode(opcode);
             
-            this -> operation = operation;
+            this->operation = operation;
         }
         
         void close() { delete this; }

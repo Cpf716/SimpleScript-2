@@ -7,18 +7,18 @@
 
 #include "file.h"
 
-namespace simple {
+namespace ss {
     //  CONSTRUCTORS
 
-    file::file(const string filepath, interpreter* ss, node<string>* parent) {
+    file::file(const string filepath, interpreter* ssu, node<string>* parent) {
         ifstream file;
         file.open(filepath);
         
         if (!file.is_open())
             throw error("No such file: " + filepath);
         
-        this -> filepath = filepath;
-        this -> rename(::filename(filepath));
+        this->filepath = filepath;
+        this->rename(::filename(filepath));
         
         string* src = new string[1];
         size_t n = 0;
@@ -153,7 +153,7 @@ namespace simple {
                     ++j;
                 
                 if (j == n)
-                    expect("'*/'");
+                    expect_error("'*/'");
                 
                 for (size_t k = i; k <= j; ++k) {
                     for (size_t l = i; l < n - 1; ++l)
@@ -170,7 +170,7 @@ namespace simple {
             ++i;
         
         if (i != n)
-            expect("expression");
+            expect_error("expression");
         
         //  semicolons are fourth
         i = 0;
@@ -215,11 +215,11 @@ namespace simple {
         
         ::node<string>* node = new ::node<string>(filepath, parent);
         
-        simple::array<string> arr;
+        ss::array<string> arr;
         
-        string buid = ss -> backup();
+        string buid = ssu->backup();
         
-        ss -> reload();
+        ssu->reload();
         
         for (i = 0; i < n; ++i) {
             string tokenv[src[i].length() + 1];
@@ -227,17 +227,17 @@ namespace simple {
             
             if (tokenv[0] == "include") {
                 if (tokenc == 1)
-                    expect("expression");
+                    expect_error("expression");
                 
                 src[i] = ltrim(src[i].substr(7));
                 
-                string result = ss -> evaluate(src[i]);
+                string result = ssu->evaluate(src[i]);
                 
                 string valuev[result.length() + 2];
                 size_t valuec = parse(valuev, result);
                 
                 if (valuec > 2)
-                    expect("1 argument(s), got " + to_string(valuec));
+                    expect_error("1 argument(s), got " + to_string(valuec));
                 
                 for (size_t j = 0; j < valuec; ++j) {
                     if (valuev[j].empty())
@@ -256,7 +256,7 @@ namespace simple {
                     undefined_error("\"" + valuev[1] + "\"");
                 
                 size_t j = 0;
-                while (j < filec && filev[j] -> first -> name() != valuev[1])
+                while (j < filec && filev[j]->first->name() != valuev[1])
                     ++j;
                 
                 if (j != filec) {
@@ -273,10 +273,10 @@ namespace simple {
                 ::node<string>* _parent = parent;
                 
                 while (_parent != NULL) {
-                    if (_parent -> data() == node -> data())
-                        throw error(_parent -> data());
+                    if (_parent->data() == node->data())
+                        throw error(_parent->data());
                     
-                    _parent = _parent -> parent();
+                    _parent = _parent->parent();
                 }
                     
                 if (is_pow(filec, 2)) {
@@ -291,19 +291,19 @@ namespace simple {
                 if (valuev[0].length() > 1 && valuev[0][0] == '@' && valuev[0][1] == '/')
                     valuev[0] = BASE_DIR + valuev[0].substr(2) + ".txt";
                 
-                string _buid = ss -> backup();
+                string _buid = ssu->backup();
                 
-                ss -> reload();
+                ssu->reload();
                 
-                filev[filec] = new pair<::file*, bool>(new ::file(valuev[0], ss, node), true);
-                filev[filec] -> first -> rename(valuev[1]);
+                filev[filec] = new pair<::file*, bool>(new ::file(valuev[0], ssu, node), true);
+                filev[filec]->first->rename(valuev[1]);
                 
-                ss -> restore(_buid);
+                ssu->restore(_buid);
                 
                 size_t _filec = filec++;
-                for (j = 0; j < filev[_filec] -> first -> filec; ++j) {
+                for (j = 0; j < filev[_filec]->first->filec; ++j) {
                     size_t k = 0;
-                    while (k < filec && filev[_filec] -> first -> filev[j] -> first -> name() != filev[k] -> first -> name())
+                    while (k < filec && filev[_filec]->first->filev[j]->first->name() != filev[k]->first->name())
                         ++k;
                     
                     if (k == filec) {
@@ -316,13 +316,13 @@ namespace simple {
                             filev = tmp;
                         }
                         
-                        filev[filec] = new pair<::file*, bool>(filev[_filec] -> first -> filev[j] -> first, false);
-                        filev[filec] -> first -> consume();
+                        filev[filec] = new pair<::file*, bool>(filev[_filec]->first->filev[j]->first, false);
+                        filev[filec]->first->consume();
                         
                         ++filec;
                     } else
-                        //  different instance than filev[k] -> first
-                        filev[_filec] -> first -> filev[j] -> first -> consume();
+                        //  different instance than filev[k]->first
+                        filev[_filec]->first->filev[j]->first->consume();
                 }
                 
                 continue;
@@ -331,7 +331,7 @@ namespace simple {
             break;
         }
         
-        ss -> restore(buid);
+        ssu->restore(buid);
         
         for (; i > 0; --i) {
             for (size_t j = i - 1; j < n - 1; ++j)
@@ -352,58 +352,58 @@ namespace simple {
         function_t** _filev = new function_t*[filec];
         
         for (i = 0; i < filec; ++i)
-            _filev[i] = filev[i] -> first;
+            _filev[i] = filev[i]->first;
         
-        this -> main = new file_statement(n, src, filec, _filev);
-        this -> ss = ss;
+        this->target = new file_statement(n, src, filec, _filev);
+        this->ssu = ssu;
     }
 
     //  MEMBER FUNCTIONS
 
     string file::call(const size_t argc, string* argv) {        
-        string buid = ss -> backup();
+        string buid = ssu->backup();
         
-        ss -> reload();
+        ssu->reload();
         
-        string _buid = ss -> backup();
+        string _buid = ssu->backup();
         
-        ss -> set_function(this);
+        ssu->set_function(this);
         
         for (size_t i = 0; i < filec; ++i)
-            ss -> set_function(filev[i] -> first);
+            ssu->set_function(filev[i]->first);
         
-        simple::array<string> arr = marshall(argc, argv);
+        ss::array<string> arr = marshall(argc, argv);
         
         for (size_t  i = 0; i < arr.size(); ++i)
-            ss -> set_array("argv", i, arr[i]);
+            ssu->set_array("argv", i, arr[i]);
         
-        ss -> consume("argv");
-        ss -> evaluate("shrink argv");
+        ssu->consume("argv");
+        ssu->evaluate("shrink argv");
         
-        string result = main -> execute(ss);
+        string result = target->execute(ssu);
         
         consume();
         
-        ss -> restore(_buid);
-        ss -> restore(buid);
+        ssu->restore(_buid);
+        ssu->restore(buid);
         
         return result;
     }
 
     void file::close() {
         for (size_t i = 0; i < filec; ++i)
-            if (filev[i] -> second)
-                filev[i] -> first -> close();
+            if (filev[i]->second)
+                filev[i]->first->close();
         
         delete[] filev;
         
-        main -> close();
+        target->close();
         
         delete this;
     }
 
-    simple::array<string> file::marshall(const size_t argc, string* argv) const {
-        simple::array<string> data = simple::array<string>(argc * 2 + 1);
+    ss::array<string> file::marshall(const size_t argc, string* argv) const {
+        ss::array<string> data = ss::array<string>(argc * 2 + 1);
         
         size_t j = 1;
         for (size_t i = 0; i < argc; ++i) {

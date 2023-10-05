@@ -10,7 +10,7 @@
 
 #include "operator_t.h"
 
-namespace simple {
+namespace ss {
     class uao : public operator_t {
         //  MEMBER FIELDS
         
@@ -21,7 +21,7 @@ namespace simple {
         uao(const string opcode, const std::function<double(const double)> operation) {
             set_opcode(opcode);
             
-            this -> operation = operation;
+            this->operation = operation;
         }
         
         void close() { delete this; }

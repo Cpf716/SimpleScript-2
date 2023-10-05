@@ -10,7 +10,7 @@
 
 #include "bao_t.h"
 
-namespace simple {
+namespace ss {
     class bao : public bao_t {
         //  MEMBER FIELDS
         std::function<double(const double, const double)> operation;
@@ -20,7 +20,7 @@ namespace simple {
         
         bao(const string opcode, const std::function<double(const double, const double)> operation) {
             set_opcode(opcode);
-            this -> operation = operation;
+            this->operation = operation;
         }
         
         void close() { delete this; }

@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-namespace simple {
+namespace ss {
     class exception: public std::exception {
         std::string message;
     public:

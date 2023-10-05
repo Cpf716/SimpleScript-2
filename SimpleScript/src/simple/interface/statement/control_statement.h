@@ -10,15 +10,15 @@
 
 #include "statement_t.h"
 
-namespace simple {
+namespace ss {
     struct control_statement: public statement_t {
         //  MEMBER FUNCTIONS
         
         void set_parent(statement_t* parent) {
-            this -> parent = parent;
+            this->parent = parent;
             
             for (size_t i = 0; i < statementc; ++i)
-                statementv[i] -> set_parent(this);
+                statementv[i]->set_parent(this);
         }
     protected:
         //  MEMBER FIELDS

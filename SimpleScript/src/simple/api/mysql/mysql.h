@@ -19,7 +19,7 @@
 
 using namespace std;
 
-namespace simple {
+namespace ss {
     namespace api {
         size_t mysql_connect(const string host_name, const string user_name, const string password);
 
@@ -27,7 +27,7 @@ namespace simple {
 
         int mysql_close(const size_t connection);
 
-        void mysql_set_schema(const size_t connection, const std::string schema);
+        bool mysql_set_schema(const size_t connection, const std::string schema);
 
         sql::ResultSet* mysql_prepare_query(const size_t connection, const string sql, const size_t argc, string* argv);
 

@@ -7,7 +7,7 @@
 
 #include "interpreter.h"
 
-namespace simple {
+namespace ss {
     //  CONSTRUCTORS
 
     interpreter::interpreter() {
@@ -35,7 +35,7 @@ namespace simple {
         write();
         
         while (backupc)
-            restore(bu_numberv[backupc - 1] -> first, false);
+            restore(bu_numberv[backupc - 1]->first, false);
         
         delete[] bu_arrayv;
         delete[] bu_functionv;
@@ -43,7 +43,7 @@ namespace simple {
         delete[] bu_stringv;
         
         if (array_bst != NULL)
-            array_bst -> close();
+            array_bst->close();
         
         for (size_t i = 0; i < arrayc; ++i)
             delete arrayv[i];
@@ -51,15 +51,15 @@ namespace simple {
         delete[] arrayv;
         
         if (function_bst != NULL)
-            function_bst -> close();
+            function_bst->close();
         
         for (size_t i = 0; i < functionc; ++i)
-            functionv[i] -> close();
+            functionv[i]->close();
         
         delete[] functionv;
         
         if (string_bst != NULL)
-            string_bst -> close();
+            string_bst->close();
         
         for (size_t i = 0; i < stringc; ++i)
             delete stringv[i];
@@ -67,7 +67,7 @@ namespace simple {
         delete[] stringv;
         
         for (size_t i = 0; i < uoc; ++i)
-            uov[i] -> close();
+            uov[i]->close();
         
         delete[] uov;
                 
@@ -97,7 +97,7 @@ namespace simple {
             delete[] bu_functionv;
             bu_functionv = _bu_functionv;
             
-            pair<size_t, tuple<string, simple::array<string>*, pair<bool, bool>>**>** _bu_arrayv = new pair<size_t, tuple<string, simple::array<string>*, pair<bool, bool>>**>*[backupc * 2];
+            pair<size_t, tuple<string, ss::array<string>*, pair<bool, bool>>**>** _bu_arrayv = new pair<size_t, tuple<string, ss::array<string>*, pair<bool, bool>>**>*[backupc * 2];
             
             for (size_t i = 0; i < backupc; ++i)
                 _bu_arrayv[i] = bu_arrayv[i];
@@ -123,20 +123,20 @@ namespace simple {
         
         bu_functionv[backupc] = new pair<size_t, function_t**>(functionc, _functionv);
         
-        tuple<string, simple::array<string>*, pair<bool, bool>>** _arrayv = new tuple<string, simple::array<string>*, pair<bool, bool>>*[pow2(arrayc)];
+        tuple<string, ss::array<string>*, pair<bool, bool>>** _arrayv = new tuple<string, ss::array<string>*, pair<bool, bool>>*[pow2(arrayc)];
         
         for (size_t i = 0; i < arrayc; ++i) {
             string first = std::get<0>(* arrayv[i]);
             
             //  requires pointer since array contains internal pointer
-            simple::array<string>* second = new simple::array<string>(std::get<1>(* arrayv[i]));
+            ss::array<string>* second = new ss::array<string>(std::get<1>(* arrayv[i]));
             
             pair<bool, bool> third = std::get<2>(* arrayv[i]);
             
-            _arrayv[i] = new tuple<string, simple::array<string>*, pair<bool, bool>>(first, second, third);
+            _arrayv[i] = new tuple<string, ss::array<string>*, pair<bool, bool>>(first, second, third);
         }
         
-        bu_arrayv[backupc] = new pair<size_t, tuple<string, simple::array<string>*, pair<bool, bool>    >**>(arrayc, _arrayv);
+        bu_arrayv[backupc] = new pair<size_t, tuple<string, ss::array<string>*, pair<bool, bool>    >**>(arrayc, _arrayv);
         
         tuple<string, string, pair<bool, bool>>** _stringv = new tuple<string, string, pair<bool, bool>>*[pow2(stringc)];
         
@@ -184,7 +184,7 @@ namespace simple {
                 
                 arithmetic::drop(symbol);
                 
-                string_bst -> close();
+                string_bst->close();
                 
                 string symbolv[stringc];
                 
@@ -203,7 +203,7 @@ namespace simple {
             
             arithmetic::drop(symbol);
             
-            array_bst -> close();
+            array_bst->close();
             
             string symbolv[arrayc];
             
@@ -219,18 +219,18 @@ namespace simple {
         --functionc;
         
         if (function_bst != NULL)
-            function_bst -> close();
+            function_bst->close();
         
         string symbolv[functionc];
         
         for (size_t j = 0; j < functionc; ++j)
-            symbolv[j] = functionv[j] -> name();
+            symbolv[j] = functionv[j]->name();
         
         function_bst = functionc ? build(symbolv, 0, (int)functionc) : NULL;
     }
 
     string interpreter::element(const string val) {
-        if (simple::is_array(val))
+        if (ss::is_array(val))
             type_error(0, 4);
             //  array => string
         
@@ -275,16 +275,16 @@ namespace simple {
         cout << endl;
         //  */
         
-        simple::stack<string> operands = simple::stack<string>();
+        ss::stack<string> operands = ss::stack<string>();
         
         for (int i = n - 1; i >= 0; --i) {
-            if (data[i] == "(" || data[i] == ")" || tolower(data[i]) == uov[const_oi] -> opcode())
+            if (data[i] == "(" || data[i] == ")" || tolower(data[i]) == uov[const_oi]->opcode())
                 continue;
             
             string term = tolower(data[i]);
             
             size_t j = 0;
-            while (j < uoc && term != uov[j] -> opcode())
+            while (j < uoc && term != uov[j]->opcode())
                 ++j;
                     
             if (j == uoc) {
@@ -292,13 +292,13 @@ namespace simple {
                     if (j == 10 || (j >= 16 && j < 22))
                         continue;
                     
-                    if (term == tolower(aov[j] -> opcode()))
+                    if (term == tolower(aov[j]->opcode()))
                         break;
                 }
                 
                 if (j == aoc - 2) {
                     j = 0;
-                    while (j < loc - 1 && data[i] != lov[j] -> opcode())
+                    while (j < loc - 1 && data[i] != lov[j]->opcode())
                         ++j;
                     
                     if (j == loc - 1) {
@@ -313,10 +313,10 @@ namespace simple {
                             while (k > 0 && data[k - 1] == "(")
                                 --k;
                             
-                            if (k > 0 && data[k - 1] == uov[const_oi] -> opcode())
+                            if (k > 0 && data[k - 1] == uov[const_oi]->opcode())
                                 --k;
                             
-                            if (k > 0 && data[k - 1] == uov[assignment_oi + 1] -> opcode())
+                            if (k > 0 && data[k - 1] == uov[assignment_oi + 1]->opcode())
                                 continue;
                             
                             size_t argc = 0;   int p = 0;   bool flag = false;
@@ -328,7 +328,7 @@ namespace simple {
                                         break;
                                     
                                     --p;
-                                } else if (p == 1 && data[k] == uov[unary_count] -> opcode())
+                                } else if (p == 1 && data[k] == uov[unary_count]->opcode())
                                     ++argc;
                                 else {
                                     size_t j = 0;
@@ -358,10 +358,10 @@ namespace simple {
                                 argv[k] = evaluate(argv[k]);
                             }
                             
-                            stack_trace.push(functionv[j] -> name());
+                            stack_trace.push(functionv[j]->name());
                             
                             //  call function and push its result
-                            operands.push(functionv[j] -> call(argc, argv));
+                            operands.push(functionv[j]->call(argc, argv));
                             
                             stack_trace.pop();
                         }
@@ -371,7 +371,7 @@ namespace simple {
                         if (j == 0) {
                             string rhs = operands.top();
                             
-                            if (simple::is_array(rhs))
+                            if (ss::is_array(rhs))
                                 d = 1;
                             else {
                                 if (rhs.empty())
@@ -418,7 +418,7 @@ namespace simple {
                                     d = stod(rhs);
                             }
                             
-                            d = ((ulo *)lov[j]) -> apply(to_string(d));
+                            d = ((ulo *)lov[j])->apply(to_string(d));
                         } else {
                             string  lhs = operands.pop();
                             
@@ -430,7 +430,7 @@ namespace simple {
                                     
                                     rhs = evaluate(rhs);
                                     
-                                    if (simple::is_array(rhs))
+                                    if (ss::is_array(rhs))
                                         d = 1;
                                     else {
                                         if (rhs.empty())
@@ -454,7 +454,7 @@ namespace simple {
                                         
                                         rhs = evaluate(rhs);
                                         
-                                        if (simple::is_array(rhs))
+                                        if (ss::is_array(rhs))
                                             d = 1;
                                         else {
                                             if (rhs.empty())
@@ -468,7 +468,7 @@ namespace simple {
                                         }
                                     }
                                 } else {
-                                    if (!simple::is_array(lhs)) {
+                                    if (!ss::is_array(lhs)) {
                                         if (is_string(lhs)) {
                                             //  d = 1
                                             
@@ -481,7 +481,7 @@ namespace simple {
                                                 
                                                 rhs = evaluate(rhs);
                                                 
-                                                if (simple::is_array(rhs))
+                                                if (ss::is_array(rhs))
                                                     d = 1;
                                                 else {
                                                     if (rhs.empty())
@@ -501,7 +501,7 @@ namespace simple {
                                                     
                                                     rhs = evaluate(rhs);
                                                     
-                                                    if (simple::is_array(rhs))
+                                                    if (ss::is_array(rhs))
                                                         d = 1;
                                                     else {
                                                         if (rhs.empty())
@@ -523,7 +523,7 @@ namespace simple {
                                                     
                                                     rhs = evaluate(rhs);
                                                     
-                                                    if (simple::is_array(rhs))
+                                                    if (ss::is_array(rhs))
                                                         d = 1;
                                                     else {
                                                         if (rhs.empty())
@@ -546,7 +546,7 @@ namespace simple {
                                             
                                             rhs = evaluate(rhs);
                                             
-                                            if (simple::is_array(rhs))
+                                            if (ss::is_array(rhs))
                                                 d = 1;
                                             else {
                                                 if (rhs.empty())
@@ -599,7 +599,7 @@ namespace simple {
                                 while (l < n && data[l] == "(")
                                     ++l;
                                 
-                                if (data[l] == uov[indexer_oi] -> opcode())
+                                if (data[l] == uov[indexer_oi]->opcode())
                                     operation_error();
                                 
                                 rhs = operands.top();
@@ -636,7 +636,7 @@ namespace simple {
                                 
                                 double a = get_number(lhs);
                                 
-                                a = ((bao *)aov[j]) -> apply(a, b);
+                                a = ((bao *)aov[j])->apply(a, b);
                                 
                                 set_number(lhs, a);
                                 
@@ -646,7 +646,7 @@ namespace simple {
                                 while (l < n && data[l] == "(")
                                     ++l;
                                 
-                                if (data[l] != uov[indexer_oi] -> opcode())
+                                if (data[l] != uov[indexer_oi]->opcode())
                                     operation_error();
                                 
                                 rhs =   operands.top();
@@ -725,7 +725,7 @@ namespace simple {
                                     
                                     double a = stod(std::get<1>(* arrayv[k])[l * 2 + 1]);
                                     
-                                    a = ((bao *)aov[j]) -> apply(a, b);
+                                    a = ((bao *)aov[j])->apply(a, b);
                                     
                                     rhs = rtrim(a);
                                     
@@ -785,7 +785,7 @@ namespace simple {
                                         
                                         double a = stod(std::get<1>(* arrayv[k])[(size_t)idx]);
                                         
-                                        a = ((bao *)aov[j]) -> apply(a, b);
+                                        a = ((bao *)aov[j])->apply(a, b);
                                         
                                         rhs = rtrim(a);
                                         
@@ -848,7 +848,7 @@ namespace simple {
                                         
                                         double a = stod(std::get<1>(* arrayv[k])[m * 2 + 1]);
                                         
-                                        b = ((bao *)aov[j]) -> apply(a, b);
+                                        b = ((bao *)aov[j])->apply(a, b);
                                         
                                         rhs = rtrim(a);
                                         
@@ -902,7 +902,7 @@ namespace simple {
                                     
                                     double a = stod(std::get<1>(* arrayv[k])[(size_t)idx]);
                                     
-                                    a = ((bao *)aov[j]) -> apply(a, b);
+                                    a = ((bao *)aov[j])->apply(a, b);
                                     
                                     rhs = rtrim(a);
                                     
@@ -914,7 +914,7 @@ namespace simple {
                             while (k < n && data[k] == "(")
                                 ++k;
                             
-                            if (data[k] != uov[indexer_oi] -> opcode()) {
+                            if (data[k] != uov[indexer_oi]->opcode()) {
                                 delete[] dst;
                                 operation_error();
                             }
@@ -1004,7 +1004,7 @@ namespace simple {
                                 
                                 double a = stod(dst[k * 2 + 1]);
                                     
-                                a = ((bao *)aov[j]) -> apply(a, b);
+                                a = ((bao *)aov[j])->apply(a, b);
                                 
                                 dst[k * 2 + 1] = rtrim(a);
                                 
@@ -1062,7 +1062,7 @@ namespace simple {
                                     
                                     double a = stod(dst[(size_t)idx]);
                                         
-                                    a = ((bao *)aov[j]) -> apply(a, b);
+                                    a = ((bao *)aov[j])->apply(a, b);
                                     
                                     dst[(size_t)idx] = rtrim(a);
                                     
@@ -1134,7 +1134,7 @@ namespace simple {
                                     
                                     double a = stod(dst[l * 2 + 1]);
                                         
-                                    a = ((bao *)aov[j]) -> apply(a, b);
+                                    a = ((bao *)aov[j])->apply(a, b);
                                     
                                     dst[l * 2 + 1] = rtrim(a);
                                     
@@ -1186,7 +1186,7 @@ namespace simple {
                                 
                                 double a = stod(dst[(size_t)idx]);
                                     
-                                a = ((bao *)aov[j]) -> apply(a, b);
+                                a = ((bao *)aov[j])->apply(a, b);
                                 
                                 dst[(size_t)idx] = rtrim(a);
                                 
@@ -1227,7 +1227,7 @@ namespace simple {
                             a = stod(rhs);
                         
                         if (j < arithmetic::unary_count)
-                            a = ((uao *)aov[j]) -> apply(a);
+                            a = ((uao *)aov[j])->apply(a);
                         else {
                             rhs =   operands.pop();
                             
@@ -1257,7 +1257,7 @@ namespace simple {
                             } else
                                 b = stod(rhs);
                             
-                            a = ((bao_t *)aov[j]) -> apply(a, b);
+                            a = ((bao_t *)aov[j])->apply(a, b);
                         }
                         
                         rhs = rtrim(a);
@@ -1271,7 +1271,7 @@ namespace simple {
                 if (j < unary_count) {
                     rhs =   operands.pop();
                     
-                    rhs = ((uuo *)uov[j]) -> apply(rhs);
+                    rhs = ((uuo *)uov[j])->apply(rhs);
                     
                     operands.push(rhs);
                 } else if (j > unary_count) {
@@ -1288,12 +1288,11 @@ namespace simple {
                                 --k;
                             if (data[k] == "(")
                                 flag = false;
-                            else if (data[k] == uov[assignment_oi] -> opcode()
-                                || data[k] == uov[assignment_oi + 1] -> opcode())
+                            else if (data[k] == uov[assignment_oi]->opcode() || data[k] == uov[assignment_oi + 1]->opcode())
                                 flag = true;
                             else {
                                 size_t l = 25;
-                                while (l < aoc - 2 && data[k] != aov[l] -> opcode())
+                                while (l < aoc - 2 && data[k] != aov[l]->opcode())
                                     ++l;
                                 
                                 flag = l != aoc - 2;
@@ -1312,7 +1311,7 @@ namespace simple {
                         string ctr = operands.pop();
                         
                         rhs = operands.pop();
-                        rhs = ((tuo *)uov[j]) -> apply(lhs, ctr, rhs);
+                        rhs = ((tuo *)uov[j])->apply(lhs, ctr, rhs);
                     } else if (j == cell_oi ||
                                j == insert_oi) {
                         string ctr = operands.pop();
@@ -1320,7 +1319,7 @@ namespace simple {
                         ctr = evaluate(ctr);
                         rhs = operands.pop();
                         rhs = evaluate(rhs);
-                        rhs = ((tuo *)uov[j]) -> apply(lhs, ctr, rhs);
+                        rhs = ((tuo *)uov[j])->apply(lhs, ctr, rhs);
                     } else if (j == splice_oi) {
                         string* valuev = new string[lhs.length() + 1];
                         size_t valuec = parse(valuev, lhs);
@@ -1354,7 +1353,7 @@ namespace simple {
                             
                             k = io_array(lhs);
                             
-                            if (simple::is_array(rhs))
+                            if (ss::is_array(rhs))
                                 type_error(0, 3);
                                 //  array => int
                             
@@ -1378,7 +1377,7 @@ namespace simple {
                                         break;
                                 } while (l < n);
                                 
-                                if (data[l] == uov[unary_count] -> opcode())
+                                if (data[l] == uov[unary_count]->opcode())
                                     operation_error();
                                 
                                 if (!is_dictionary(std::get<1>(* arrayv[k])))
@@ -1437,11 +1436,11 @@ namespace simple {
                                         break;
                                 } while (l < n);
                                 
-                                if (data[l] == uov[unary_count] -> opcode()) {
+                                if (data[l] == uov[unary_count]->opcode()) {
                                     rhs = operands.pop();
                                     rhs = evaluate(rhs);
                                     
-                                    if (simple::is_array(rhs))
+                                    if (ss::is_array(rhs))
                                         type_error(0, 3);
                                         //  array => int
                                     
@@ -1481,7 +1480,7 @@ namespace simple {
                             rhs = operands.pop();
                             rhs = evaluate(rhs);
                             
-                            if (simple::is_array(rhs)) {
+                            if (ss::is_array(rhs)) {
                                 delete[] valuev;
                                 
                                 type_error(0, 3);
@@ -1517,7 +1516,7 @@ namespace simple {
                                         break;
                                 } while (k < n);
                                 
-                                if (data[k] == uov[unary_count] -> opcode()) {
+                                if (data[k] == uov[unary_count]->opcode()) {
                                     delete[] valuev;
                                     
                                     operation_error();
@@ -1575,11 +1574,11 @@ namespace simple {
                                         break;
                                 } while (k < n);
                                 
-                                if (data[k] == uov[unary_count] -> opcode()) {
+                                if (data[k] == uov[unary_count]->opcode()) {
                                     rhs = operands.top();
                                     rhs = evaluate(rhs);
                                     
-                                    if (simple::is_array(rhs)) {
+                                    if (ss::is_array(rhs)) {
                                         delete[] valuev;
                                         
                                         type_error(0, 3);
@@ -1639,7 +1638,7 @@ namespace simple {
                                 rhs = operands.pop();
                                 rhs = evaluate(rhs);
                                 
-                                if (simple::is_array(rhs))
+                                if (ss::is_array(rhs))
                                     type_error(0, 3);
                                     //  array => int
                                 
@@ -1669,11 +1668,11 @@ namespace simple {
                                         break;
                                 } while (k < n);
                                 
-                                if (data[k] == uov[unary_count] -> opcode()) {
+                                if (data[k] == uov[unary_count]->opcode()) {
                                     rhs = operands.pop();
                                     rhs = evaluate(rhs);
                                     
-                                    if (simple::is_array(rhs))
+                                    if (ss::is_array(rhs))
                                         type_error(0, 3);
                                         //  array => int
                                     
@@ -1721,7 +1720,7 @@ namespace simple {
                                     rhs = operands.pop();
                                     rhs = evaluate(rhs);
                                     
-                                    if (simple::is_array(rhs))
+                                    if (ss::is_array(rhs))
                                         type_error(0, 3);
                                         //  array => int
                                     
@@ -1749,11 +1748,11 @@ namespace simple {
                                             break;
                                     } while (l < n);
                                     
-                                    if (data[l] == uov[unary_count] -> opcode()) {
+                                    if (data[l] == uov[unary_count]->opcode()) {
                                         rhs = operands.pop();
                                         rhs = evaluate(rhs);
                                         
-                                        if (simple::is_array(rhs))
+                                        if (ss::is_array(rhs))
                                             type_error(0, 3);
                                             //  array => int
                                         
@@ -1783,7 +1782,7 @@ namespace simple {
                                     rhs = operands.pop();
                                     rhs = evaluate(rhs);
                                     
-                                    if (simple::is_array(rhs))
+                                    if (ss::is_array(rhs))
                                         type_error(0, 3);
                                         //  array => int
                                     
@@ -1811,11 +1810,11 @@ namespace simple {
                                             break;
                                     } while (l < n);
                                     
-                                    if (data[l] == uov[unary_count] -> opcode()) {
+                                    if (data[l] == uov[unary_count]->opcode()) {
                                         rhs = operands.pop();
                                         rhs = evaluate(rhs);
                                         
-                                        if (simple::is_array(rhs))
+                                        if (ss::is_array(rhs))
                                             type_error(0, 3);
                                             //  array => int
                                         
@@ -1843,7 +1842,7 @@ namespace simple {
                             rhs = operands.pop();
                             rhs = evaluate(rhs);
                             
-                            if (simple::is_array(rhs))
+                            if (ss::is_array(rhs))
                                 type_error(0, 3);
                                 //  array => int
                             
@@ -1872,11 +1871,11 @@ namespace simple {
                                     break;
                             } while (k < n);
 
-                            if (data[k] == uov[unary_count] -> opcode()) {
+                            if (data[k] == uov[unary_count]->opcode()) {
                                 rhs = operands.pop();
                                 rhs = evaluate(rhs);
                                 
-                                if (simple::is_array(rhs))
+                                if (ss::is_array(rhs))
                                     type_error(0, 3);
                                     //  array => int
                                 
@@ -1909,7 +1908,7 @@ namespace simple {
                             }
                         }
                     } else if (j == substr_oi) {
-                        if (simple::is_array(lhs))
+                        if (ss::is_array(lhs))
                             type_error(0, 4);
                             //  array => string
                         
@@ -1947,7 +1946,7 @@ namespace simple {
                         rhs = operands.pop();
                         rhs = evaluate(rhs);
                         
-                        if (simple::is_array(rhs))
+                        if (ss::is_array(rhs))
                             type_error(0, 3);
                             //  array => int
                         
@@ -1976,11 +1975,11 @@ namespace simple {
                                 break;
                         } while (k < n);
                         
-                        if (data[k] == uov[unary_count] -> opcode()) {
+                        if (data[k] == uov[unary_count]->opcode()) {
                             rhs = operands.pop();
                             rhs = evaluate(rhs);
                             
-                            if (simple::is_array(rhs))
+                            if (ss::is_array(rhs))
                                 type_error(0, 3);
                                 //  array => int
                             
@@ -2024,7 +2023,7 @@ namespace simple {
                             rhs = operands.pop();
                             rhs = evaluate(rhs);
                             
-                            if (simple::is_array(rhs))
+                            if (ss::is_array(rhs))
                                 type_error(0, 3);
                                 //  array => int
                             
@@ -2057,11 +2056,11 @@ namespace simple {
                                 
                             } while (k < n);
                             
-                            if (data[l] == uov[unary_count] -> opcode()) {
+                            if (data[l] == uov[unary_count]->opcode()) {
                                 rhs = operands.pop();
                                 rhs = evaluate(rhs);
                                 
-                                if (simple::is_array(rhs))
+                                if (ss::is_array(rhs))
                                     type_error(0, 3);
                                     //  array => int
                                 
@@ -2106,7 +2105,7 @@ namespace simple {
                             rhs = operands.pop();
                             rhs = evaluate(rhs);
                             
-                            if (simple::is_array(rhs))
+                            if (ss::is_array(rhs))
                                 type_error(0, 3);
                                 //  array => int
                             
@@ -2137,11 +2136,11 @@ namespace simple {
                                 
                             } while (k < n);
                             
-                            if (data[k] == uov[unary_count] -> opcode()) {
+                            if (data[k] == uov[unary_count]->opcode()) {
                                 rhs = operands.pop();
                                 rhs = evaluate(rhs);
                                 
-                                if (simple::is_array(rhs))
+                                if (ss::is_array(rhs))
                                     type_error(0, 3);
                                     //  array => int
                                 
@@ -2201,7 +2200,7 @@ namespace simple {
                                     while (l < n && data[l] == "(")
                                         ++l;
                                     
-                                    if (data[l] == uov[indexer_oi] -> opcode())
+                                    if (data[l] == uov[indexer_oi]->opcode())
                                         operation_error();
                                     
                                     if (rhs.empty())
@@ -2241,7 +2240,7 @@ namespace simple {
                                     while (l < n && data[l] == "(")
                                         ++l;
                                     
-                                    if (data[l] == uov[indexer_oi] -> opcode())
+                                    if (data[l] == uov[indexer_oi]->opcode())
                                         operation_error();
                                     
                                     string tmp = rhs;
@@ -2301,7 +2300,7 @@ namespace simple {
                                 while (l < n && data[l] == "(")
                                     ++l;
                                 
-                                if (data[l] == uov[indexer_oi] -> opcode()) {
+                                if (data[l] == uov[indexer_oi]->opcode()) {
                                     if (rhs.empty()) {
                                         if (is_dictionary(std::get<1>(* arrayv[k])))
                                             null_error();
@@ -3079,7 +3078,7 @@ namespace simple {
                         while (k < n && data[k] == "(")
                             ++k;
                         
-                        if (data[k] == uov[indexer_oi] -> opcode()) {
+                        if (data[k] == uov[indexer_oi]->opcode()) {
                             ++k;
                             while (k < n && data[k] == "(")
                                 ++k;
@@ -3481,7 +3480,7 @@ namespace simple {
                             }
                             
                             //  const
-                            if (data[k] == uov[const_oi] -> opcode())
+                            if (data[k] == uov[const_oi]->opcode())
                                 ++k;
                             
                             if (data[k] == "array") {
@@ -3545,7 +3544,7 @@ namespace simple {
                                     delete[] v;
                                 }
                                 
-                                if (data[i + 1] == uov[const_oi] -> opcode())
+                                if (data[i + 1] == uov[const_oi]->opcode())
                                     std::get<2>(* arrayv[io_array(lhs)]).first = true;
                             } else {
                                 int k = io_array(lhs);
@@ -3553,10 +3552,10 @@ namespace simple {
                                     k = io_string(lhs);
                                     if (k == -1) {
                                         if (is_defined(lhs)) {
-                                            if (data[i + 1] == uov[const_oi] -> opcode())
+                                            if (data[i + 1] == uov[const_oi]->opcode())
                                                 defined_error(lhs);
                                             
-                                            if (simple::is_array(rhs))
+                                            if (ss::is_array(rhs))
                                                 type_error(0, 2);
                                                 //  array => double
                                             
@@ -3586,7 +3585,7 @@ namespace simple {
                                             if (rhs.empty()) {
                                                 set_string(lhs, rhs);
                                                 
-                                                if (data[i + 1] == uov[const_oi] -> opcode())
+                                                if (data[i + 1] == uov[const_oi]->opcode())
                                                     std::get<2>(* arrayv[io_array(lhs)]).first = true;
                                             } else {
                                                 v = new string[rhs.length() + 1];
@@ -3600,7 +3599,7 @@ namespace simple {
                                                         
                                                         set_string(lhs, rhs);
                                                         
-                                                        if (data[i + 1] == uov[const_oi] -> opcode())
+                                                        if (data[i + 1] == uov[const_oi]->opcode())
                                                             std::get<2>(* stringv[io_string(lhs)]).first = true;
                                                         
                                                     } else if (is_symbol(rhs))  {
@@ -3612,7 +3611,7 @@ namespace simple {
                                                                 
                                                                 set_number(lhs, d);
                                                                 
-                                                                if (data[i + 1] == uov[const_oi] -> opcode())
+                                                                if (data[i + 1] == uov[const_oi]->opcode())
                                                                     disable_write(lhs);
                                                                 
                                                                 rhs = rtrim(d);
@@ -3622,7 +3621,7 @@ namespace simple {
                                                                 
                                                                 set_string(lhs, rhs);
                                                                 
-                                                                if (data[i + 1] == uov[const_oi] -> opcode())
+                                                                if (data[i + 1] == uov[const_oi]->opcode())
                                                                     std::get<2>(* stringv[io_string(lhs)]).first = true;
                                                             }
                                                         } else {
@@ -3632,7 +3631,7 @@ namespace simple {
                                                             for (size_t l = 1; l < std::get<1>(* arrayv[k]).size(); ++l)
                                                                 set_array(lhs, l, std::get<1>(* arrayv[k])[l]);
                                                             
-                                                            if (data[i + 1] == uov[const_oi] -> opcode()) {
+                                                            if (data[i + 1] == uov[const_oi]->opcode()) {
                                                                 k = io_array(lhs);
                                                                 std::get<1>(* arrayv[k]).shrink_to_fit();
                                                                 std::get<2>(* arrayv[k]).first = true;
@@ -3644,7 +3643,7 @@ namespace simple {
                                                         
                                                         set_number(lhs, d);
                                                         
-                                                        if (data[i + 1] == uov[const_oi] -> opcode())
+                                                        if (data[i + 1] == uov[const_oi]->opcode())
                                                             disable_write(lhs);
                                                         
                                                         rhs = rtrim(d);
@@ -3655,7 +3654,7 @@ namespace simple {
                                                     
                                                     delete[] v;
                                                 
-                                                    if (data[i + 1] == uov[const_oi] -> opcode()) {
+                                                    if (data[i + 1] == uov[const_oi]->opcode()) {
                                                         int k = io_array(lhs);
                                                         std::get<1>(* arrayv[k]).shrink_to_fit();
                                                         std::get<2>(* arrayv[k]).first = true;
@@ -3664,10 +3663,10 @@ namespace simple {
                                             }
                                         }
                                     } else {
-                                        if (data[i + 1] == uov[const_oi] -> opcode())
+                                        if (data[i + 1] == uov[const_oi]->opcode())
                                             defined_error(lhs);
                                         
-                                        if (simple::is_array(rhs))
+                                        if (ss::is_array(rhs))
                                             type_error(0, 4);
                                             //  array => string
                                         
@@ -3697,7 +3696,7 @@ namespace simple {
                                         set_string(lhs, rhs);
                                     }
                                 } else {
-                                    if (data[i + 1] == uov[const_oi] -> opcode())
+                                    if (data[i + 1] == uov[const_oi]->opcode())
                                         defined_error(lhs);
                                     
                                     if (std::get<2>(* arrayv[k]).first)
@@ -3817,7 +3816,7 @@ namespace simple {
                     } else {
                         rhs =   operands.top();
                                 operands.pop();
-                        rhs =   ((buo *)uov[j]) -> apply(lhs, rhs);
+                        rhs =   ((buo *)uov[j])->apply(lhs, rhs);
                     }
                     
                     operands.push(rhs);
@@ -3832,7 +3831,7 @@ namespace simple {
         
         while (operands.size() > 1) {
             if (operands.top().empty() ||
-                simple::is_array(operands.top()) ||
+                ss::is_array(operands.top()) ||
                 is_string(operands.top())) {
                 operands.pop();
                 continue;
@@ -3859,7 +3858,7 @@ namespace simple {
         
         //  cout << operands.top() << endl;
             
-        if (operands.top().empty() || simple::is_array(operands.top()))
+        if (operands.top().empty() || ss::is_array(operands.top()))
             return operands.pop();
         
         if (is_string(operands.top())) {
@@ -3896,7 +3895,7 @@ namespace simple {
         return result;
     }
 
-    simple::array<string> interpreter::get_array(const string symbol) {
+    ss::array<string> interpreter::get_array(const string symbol) {
         int i = io_array(symbol);
         
         if (i == -1)
@@ -4820,7 +4819,7 @@ namespace simple {
         //  16
         
         uov[uoc++] = new uuo("typeof", [this](const string rhs) {
-            if (simple::is_array(rhs))
+            if (ss::is_array(rhs))
                 return encode(types[0]);
             
             if (rhs.empty() || is_string(rhs))
@@ -4901,7 +4900,7 @@ namespace simple {
             if (rhs.empty())
                 null_error();
             
-            if (simple::is_array(rhs))
+            if (ss::is_array(rhs))
                 type_error(0, 4);
                 //  array => string
             
@@ -5361,7 +5360,7 @@ namespace simple {
                     
                     string result = evaluate(rhs);
                     
-                    if (simple::is_array(result))
+                    if (ss::is_array(result))
                         type_error(0, 4);
                         //  array => string
                     
@@ -5397,7 +5396,7 @@ namespace simple {
                 
                 string result = evaluate(rhs);
                 
-                if (simple::is_array(result))
+                if (ss::is_array(result))
                     type_error(0, 4);
                     //  array => string
                 
@@ -5435,7 +5434,7 @@ namespace simple {
                     type_error(0, 7);
                     //  array => table
                 
-                if (simple::is_array(ctr))
+                if (ss::is_array(ctr))
                     type_error(0, 3);
                     //  array => int
                 
@@ -5454,7 +5453,7 @@ namespace simple {
                 if (y < 0 || y >= (std::get<1>(* arrayv[i]).size() - 1) / c)
                     range_error("index " + rtrim(y) + ", rows " + to_string((std::get<1>(* arrayv[i]).size() - 1) / c));
                 
-                if (simple::is_array(rhs))
+                if (ss::is_array(rhs))
                     type_error(0, 3);
                     //  array => int
                 
@@ -5482,7 +5481,7 @@ namespace simple {
                 //  array => table
             }
             
-            if (simple::is_array(ctr))
+            if (ss::is_array(ctr))
                 type_error(0, 3);
                 //  array => int
             
@@ -5501,7 +5500,7 @@ namespace simple {
             if (y < 0 || y >= (valuec - 1) / c)
                 range_error("index " + rtrim(y) + ", rows " + to_string((valuec - 1) / c));
             
-            if (simple::is_array(rhs))
+            if (ss::is_array(rhs))
                 type_error(0, 3);
                 //  array => int
             
@@ -5814,7 +5813,7 @@ namespace simple {
                 if (is_string(lhs)) {
                     string text = decode(lhs);
                     
-                    if (simple::is_array(rhs))
+                    if (ss::is_array(rhs))
                         type_error(0, 4);
                         //  array => string
                     
@@ -5895,7 +5894,7 @@ namespace simple {
                         
                         text = decode(text);
                         
-                        if (simple::is_array(rhs))
+                        if (ss::is_array(rhs))
                             type_error(0, 4);
                             //  array => string
                         
@@ -6095,7 +6094,7 @@ namespace simple {
                     
                     string result = evaluate(rhs);
                     
-                    if (simple::is_array(result))
+                    if (ss::is_array(result))
                         type_error(0, 2);
                         //  array => double
                     
@@ -6142,7 +6141,7 @@ namespace simple {
                 
                 string result = evaluate(rhs);
                 
-                if (simple::is_array(result))
+                if (ss::is_array(result))
                     type_error(0, 2);
                     //  array => double
                 
@@ -6219,7 +6218,7 @@ namespace simple {
                     
                     drop(ctr);
                     
-                    if (simple::is_array(result))
+                    if (ss::is_array(result))
                         type_error(0, 2);
                         //  array => double
                     
@@ -6272,7 +6271,7 @@ namespace simple {
                 
                 drop(ctr);
                 
-                if (simple::is_array(result))
+                if (ss::is_array(result))
                     type_error(0, 2);
                     //  array => double
                 
@@ -6293,7 +6292,7 @@ namespace simple {
         });
         
         uov[format_oi = uoc++] = new buo("format", [this](const string lhs, const string rhs) {
-            if (simple::is_array(lhs))
+            if (ss::is_array(lhs))
                 type_error(0, 4);
                 //  array => string
             
@@ -6952,7 +6951,7 @@ namespace simple {
                 if (is_string(lhs)) {
                     string text = decode(lhs);
                     
-                    if (simple::is_array(rhs))
+                    if (ss::is_array(rhs))
                         type_error(0, 4);
                         //  array => string
                     
@@ -7033,7 +7032,7 @@ namespace simple {
                         
                         text = decode(text);
                         
-                        if (simple::is_array(rhs))
+                        if (ss::is_array(rhs))
                             type_error(0, 4);
                             //  array => string
                         
@@ -7135,7 +7134,7 @@ namespace simple {
                     type_error(4, 3);
                     //  string => int
                 
-                if (simple::is_array(ctr))
+                if (ss::is_array(ctr))
                     type_error(0, 3);
                     //  array => int
                 
@@ -7166,7 +7165,7 @@ namespace simple {
                 return rhs;
             }
             
-            if (simple::is_array(ctr))
+            if (ss::is_array(ctr))
                 type_error(0, 3);
                 //  array => int
             
@@ -7237,7 +7236,7 @@ namespace simple {
                     operation_error();
                 }
                 
-                if (simple::is_array(rhs))
+                if (ss::is_array(rhs))
                     type_error(0, 4);
                     //  array => string
                 
@@ -7288,7 +7287,7 @@ namespace simple {
                 return encode(ss.str());
             }
             
-            if (simple::is_array(rhs))
+            if (ss::is_array(rhs))
                 type_error(0, 4);
                 //  array => string
             
@@ -7347,7 +7346,7 @@ namespace simple {
                     null_error();
                 
                 if (is_string(lhs)) {
-                    if (simple::is_array(rhs))
+                    if (ss::is_array(rhs))
                         type_error(0, 1);
                         //  array => char
                     
@@ -7430,7 +7429,7 @@ namespace simple {
                         
                         text = decode(text);
                         
-                        if (simple::is_array(rhs))
+                        if (ss::is_array(rhs))
                             type_error(0, 1);
                             //  array => char
                         
@@ -7554,7 +7553,7 @@ namespace simple {
                     
                     string result = evaluate(rhs);
                     
-                    if (simple::is_array(result))
+                    if (ss::is_array(result))
                         type_error(0, 4);
                         //  array => string
                     
@@ -7588,7 +7587,7 @@ namespace simple {
                 string result = evaluate(rhs);
                 
                 if (!result.empty()) {
-                    if (simple::is_array(result)) {
+                    if (ss::is_array(result)) {
                         delete[] valuev;
                         type_error(0, 4);
                         //  array => string
@@ -8332,7 +8331,7 @@ namespace simple {
         //  22
         
         uov[optional_oi = uoc++]= new buo("??", [this] (string lhs, string rhs) {
-            if (simple::is_array(lhs))
+            if (ss::is_array(lhs))
                 return lhs;
                 
             if (lhs.empty()) {
@@ -8374,7 +8373,7 @@ namespace simple {
                     if (rhs.empty())
                         return EMPTY;
                     
-                    if (simple::is_array(rhs))
+                    if (ss::is_array(rhs))
                         return rhs;
                     
                     if (is_string(rhs)) {
@@ -8575,7 +8574,7 @@ namespace simple {
                 delete[] valuev;
                 
                 if (is_string(lhs)) {
-                    if (simple::is_array(rhs))
+                    if (ss::is_array(rhs))
                         return to_string(1);
                     
                     if (is_string(rhs)) {
@@ -8632,7 +8631,7 @@ namespace simple {
                     if (i == -1) {
                         i = io_string(lhs);
                         if (i == -1) {
-                            if (simple::is_array(rhs))
+                            if (ss::is_array(rhs))
                                 return to_string(1);
                             
                             if (is_string(rhs)) {
@@ -8703,7 +8702,7 @@ namespace simple {
                         
                         std::get<2>(* stringv[i]).second = true;
                         
-                        if (simple::is_array(rhs))
+                        if (ss::is_array(rhs))
                             return to_string(1);
                         
                         if (is_string(rhs)) {
@@ -8944,7 +8943,7 @@ namespace simple {
                     return to_string(1);
                 }
                 
-                if (simple::is_array(rhs))
+                if (ss::is_array(rhs))
                     return to_string(1);
                 
                 if (is_string(rhs)) {
@@ -9083,7 +9082,7 @@ namespace simple {
                 delete[] valuev;
                 
                 if (is_string(lhs)) {
-                    if (simple::is_array(rhs))
+                    if (ss::is_array(rhs))
                         return to_string(0);
                     
                     if (is_string(rhs)) {
@@ -9140,7 +9139,7 @@ namespace simple {
                     if (i == -1) {
                         i = io_string(lhs);
                         if (i == -1) {
-                            if (simple::is_array(rhs))
+                            if (ss::is_array(rhs))
                                 return to_string(0);
                             
                             if (is_string(rhs)) {
@@ -9211,7 +9210,7 @@ namespace simple {
                         
                         std::get<2>(* stringv[i]).second = true;
                         
-                        if (simple::is_array(rhs))
+                        if (ss::is_array(rhs))
                             return to_string(0);
                         
                         if (is_string(rhs)) {
@@ -9452,7 +9451,7 @@ namespace simple {
                     return to_string(1);
                 }
                 
-                if (simple::is_array(rhs))
+                if (ss::is_array(rhs))
                     return to_string(0);
                 
                 if (is_string(rhs)) {
@@ -9591,7 +9590,7 @@ namespace simple {
                 delete[] valuev;
                 
                 if (is_string(lhs)) {
-                    if (simple::is_array(rhs))
+                    if (ss::is_array(rhs))
                         return to_string(1);
                     
                     if (is_string(rhs)) {
@@ -9648,7 +9647,7 @@ namespace simple {
                     if (i == -1) {
                         i = io_string(lhs);
                         if (i == -1) {
-                            if (simple::is_array(rhs))
+                            if (ss::is_array(rhs))
                                 return to_string(1);
                             
                             if (is_string(rhs)) {
@@ -9719,7 +9718,7 @@ namespace simple {
                         
                         std::get<2>(* stringv[i]).second = true;
                         
-                        if (simple::is_array(rhs))
+                        if (ss::is_array(rhs))
                             return to_string(1);
                         
                         if (is_string(rhs)) {
@@ -9960,7 +9959,7 @@ namespace simple {
                     return to_string(0);
                 }
                 
-                if (simple::is_array(rhs))
+                if (ss::is_array(rhs))
                     return to_string(1);
                 
                 if (is_string(rhs)) {
@@ -10098,7 +10097,7 @@ namespace simple {
                 delete[] valuev;
                 
                 if (is_string(lhs)) {
-                    if (simple::is_array(rhs))
+                    if (ss::is_array(rhs))
                         return to_string(0);
                     
                     if (is_string(rhs)) {
@@ -10155,7 +10154,7 @@ namespace simple {
                     if (i == -1) {
                         i = io_string(lhs);
                         if (i == -1) {
-                            if (simple::is_array(rhs))
+                            if (ss::is_array(rhs))
                                 return to_string(0);
                             
                             if (is_string(rhs)) {
@@ -10226,7 +10225,7 @@ namespace simple {
                         
                         std::get<2>(* stringv[i]).second = true;
                         
-                        if (simple::is_array(rhs))
+                        if (ss::is_array(rhs))
                             return to_string(0);
                         
                         if (is_string(rhs)) {
@@ -10467,7 +10466,7 @@ namespace simple {
                     return to_string(0);
                 }
                 
-                if (simple::is_array(rhs))
+                if (ss::is_array(rhs))
                     return to_string(0);
                 
                 if (is_string(rhs)) {
@@ -12218,21 +12217,21 @@ namespace simple {
         buov[5][2] = (buo *)uov[assignment_oi + 1];     //  =
         //  assignment
         
-        arrayv = new tuple<string, simple::array<string>, pair<bool, bool>>*[1];
+        arrayv = new tuple<string, ss::array<string>, pair<bool, bool>>*[1];
         functionv = new function_t*[1];
         stringv = new tuple<string, string, pair<bool, bool>>*[1];
         
-        bu_arrayv = new pair<size_t, tuple<string, simple::array<string>*,  pair<bool, bool>>**>*[1];
+        bu_arrayv = new pair<size_t, tuple<string, ss::array<string>*,  pair<bool, bool>>**>*[1];
         bu_functionv = new pair<size_t, function_t**>*[1];
         bu_numberv = new pair<string, string>*[1];
         bu_stringv = new pair<size_t, tuple<string, string, pair<bool, bool>>**>*[1];
         
-        set_function(new simple::function("array", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("array", [this](const size_t argc, string* argv) {
             if (!argc)
-                expect("1 argument(s), got " + to_string(argc));
+                expect_error("1 argument(s), got " + to_string(argc));
             
             if (argc == 1) {
-                if (simple::is_array(argv[0]))
+                if (ss::is_array(argv[0]))
                     type_error(0, 3);
                     //  array => int
                 
@@ -12253,17 +12252,17 @@ namespace simple {
             }
             
             for (size_t i = 0; i < argc; ++i)
-                if (simple::is_array(argv[i]))
+                if (ss::is_array(argv[i]))
                     type_error(0, 4);
             
             return stringify(argc, argv);
         }));
         
-        set_function(new simple::function("accept", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("accept", [this](const size_t argc, string* argv) {
             if (argc != 1)
-                expect("1 argument(s), got " + to_string(argc));
+                expect_error("1 argument(s), got " + to_string(argc));
             
-            if (simple::is_array(argv[0]))
+            if (ss::is_array(argv[0]))
                 type_error(0, 3);
                 //  array => int
             
@@ -12294,11 +12293,11 @@ namespace simple {
             return ss.str();
         }));
         
-        set_function(new simple::function("client", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("client", [this](const size_t argc, string* argv) {
             if (argc != 2)
-                expect("2 argument(s), got " + to_string(argc));
+                expect_error("2 argument(s), got " + to_string(argc));
             
-            if (simple::is_array(argv[0]))
+            if (ss::is_array(argv[0]))
                 type_error(0, 4);
                 //  array => string
             
@@ -12311,7 +12310,7 @@ namespace simple {
             
             string str = decode(argv[0]);
             
-            if (simple::is_array(argv[1]))
+            if (ss::is_array(argv[1]))
                 type_error(0, 3);
                 //  array => int
             
@@ -12333,11 +12332,11 @@ namespace simple {
             return to_string(fildes);
         }));
         
-        set_function(new simple::function("close", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("close", [this](const size_t argc, string* argv) {
             if (argc != 1)
-                expect("1 argument(s), got " + to_string(argc));
+                expect_error("1 argument(s), got " + to_string(argc));
             
-            if (simple::is_array(argv[0]))
+            if (ss::is_array(argv[0]))
                 type_error(0, 3);
                 //  array => int
             
@@ -12368,12 +12367,12 @@ namespace simple {
             return encode(types[5]);
         }));
         
-        set_function(new simple::function("connect", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("connect", [this](const size_t argc, string* argv) {
             if (argc != 3)
-                expect("3 argument(s), got " + to_string(argc));
+                expect_error("3 argument(s), got " + to_string(argc));
             
             for (size_t i = 0; i < 3; ++i) {
-                if (simple::is_array(argv[i]))
+                if (ss::is_array(argv[i]))
                     type_error(0, 4);
                     //  array => string
                 
@@ -12387,16 +12386,23 @@ namespace simple {
                 argv[i] = decode(argv[i]);
             }
             
-            size_t res = api::mysql_connect(argv[0], argv[1], argv[2]);
+            size_t res;
+            
+            try {
+                res = api::mysql_connect(argv[0], argv[1], argv[2]);
+                
+            } catch (sql::SQLException& e) {
+                throw e;
+            }
             
             return to_string(res);
         }));
         
-        set_function(new simple::function("exists", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("exists", [this](const size_t argc, string* argv) {
             if (!argc)
-                expect("1 argument(s), got 0");
+                expect_error("1 argument(s), got 0");
             
-            if (simple::is_array(argv[0]))
+            if (ss::is_array(argv[0]))
                 type_error(0, 4);
                 //  array => string
             
@@ -12423,9 +12429,9 @@ namespace simple {
             return to_string(exists);
         }));
         
-        set_function(new simple::function("input", [](const size_t argc, string* argv) {
+        set_function(new ss::function("input", [](const size_t argc, string* argv) {
             if (argc)
-                expect("0 argument(s), got " + to_string(argc));
+                expect_error("0 argument(s), got " + to_string(argc));
             
             string str;
             getline(cin, str);
@@ -12439,9 +12445,9 @@ namespace simple {
             return encode(str);
         }));
         
-        set_function(new simple::function("local", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("local", [this](const size_t argc, string* argv) {
             if (argc)
-                expect("0 argument(s), got " + to_string(argc));
+                expect_error("0 argument(s), got " + to_string(argc));
             
             time_t now = time(0);
             
@@ -12450,9 +12456,9 @@ namespace simple {
             return encode(string(dt));
         }));
         
-        set_function(new simple::function("gmt", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("gmt", [this](const size_t argc, string* argv) {
             if (argc)
-                expect("0 argument(s), got " + to_string(argc));
+                expect_error("0 argument(s), got " + to_string(argc));
             
             time_t now = time(0);
             
@@ -12462,12 +12468,12 @@ namespace simple {
             return encode(string(dt));
         }));
         
-        set_function(new simple::function("listen", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("listen", [this](const size_t argc, string* argv) {
             if (argc != 2)
-                expect("2 argument(s), got " + to_string(argc));
+                expect_error("2 argument(s), got " + to_string(argc));
             
             for (size_t i = 0; i < 2; ++i) {
-                if (simple::is_array(argv[i]))
+                if (ss::is_array(argv[i]))
                     type_error(0, 3);
                     //  array => int
                 
@@ -12491,11 +12497,11 @@ namespace simple {
         }));
         
         //  replace string empty with NULL
-        set_function(new simple::function("prepareQuery", [this](size_t argc, string* argv) {
+        set_function(new ss::function("prepareQuery", [this](size_t argc, string* argv) {
             if (argc <= 1)
-                expect("2 argument(s), got " + to_string(argc));
+                expect_error("2 argument(s), got " + to_string(argc));
             
-            if (simple::is_array(argv[0]))
+            if (ss::is_array(argv[0]))
                 type_error(0, 3);
                 //  double => int
             
@@ -12512,7 +12518,7 @@ namespace simple {
             if (num < 0)
                 range_error(rtrim(num));
             
-            if (simple::is_array(argv[1]))
+            if (ss::is_array(argv[1]))
                 type_error(0, 4);
                 //  array => string
             
@@ -12533,7 +12539,7 @@ namespace simple {
             }
             
             for (size_t i = 0; i < argc; ++i) {
-                if (simple::is_array(argv[i]))
+                if (ss::is_array(argv[i]))
                     type_error(0, 4);
                     //  array => string
                 
@@ -12559,18 +12565,18 @@ namespace simple {
             if (res == NULL)
                 return encode(types[5]);
                 
-            size_t ncols = res -> getMetaData() -> getColumnCount();
+            size_t ncols = res->getMetaData()->getColumnCount();
             
-            simple::array<string> arr = simple::array<string>(ncols + 1);
+            ss::array<string> arr = ss::array<string>(ncols + 1);
             
             arr.push(to_string(ncols));
             
             for (int i = 0; i < ncols; ++i)
-                arr.push(encode(res -> getMetaData() ->  getColumnName(i + 1)));
+                arr.push(encode(res->getMetaData()-> getColumnName(i + 1)));
             
-            while (res -> next()) {
+            while (res->next()) {
                 for (int i = 0; i < ncols; ++i) {
-                    string value = res -> getString(i + 1);
+                    string value = res->getString(i + 1);
                     
                     arr.push(is_double(value) ? rtrim(stod(value)) : encode(value));
                 }
@@ -12581,11 +12587,11 @@ namespace simple {
             return stringify(arr);
         }));
         
-        set_function(new simple::function("prepareUpdate", [this](size_t argc, string* argv) {
+        set_function(new ss::function("prepareUpdate", [this](size_t argc, string* argv) {
             if (argc <= 1)
-                expect("2 argument(s), got " + to_string(argc));
+                expect_error("2 argument(s), got " + to_string(argc));
             
-            if (simple::is_array(argv[0]))
+            if (ss::is_array(argv[0]))
                 type_error(0, 3);
                 //  double => int
             
@@ -12602,7 +12608,7 @@ namespace simple {
             if (num < 0)
                 range_error(rtrim(num));
             
-            if (simple::is_array(argv[1]))
+            if (ss::is_array(argv[1]))
                 type_error(0, 4);
                 //  array => string
             
@@ -12623,7 +12629,7 @@ namespace simple {
             }
             
             for (size_t i = 0; i < argc; ++i) {
-                if (simple::is_array(argv[i]))
+                if (ss::is_array(argv[i]))
                     type_error(0, 4);
                     //  array => string
                 
@@ -12649,11 +12655,11 @@ namespace simple {
             return to_string(res);
         }));
         
-        set_function(new simple::function("query", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("query", [this](const size_t argc, string* argv) {
             if (argc != 2)
-                expect("2 argument(s), got " + to_string(argc));
+                expect_error("2 argument(s), got " + to_string(argc));
             
-            if (simple::is_array(argv[0]))
+            if (ss::is_array(argv[0]))
                 type_error(0, 3);
                 //  array => int
             
@@ -12670,7 +12676,7 @@ namespace simple {
             if (num < 0)
                 range_error(rtrim(num));
             
-            if (simple::is_array(argv[1]))
+            if (ss::is_array(argv[1]))
                 type_error(0, 4);
                 //  array => string
             
@@ -12695,18 +12701,18 @@ namespace simple {
             if (res == NULL)
                 return encode(types[5]);
                 
-            size_t ncols = res -> getMetaData() -> getColumnCount();
+            size_t ncols = res->getMetaData()->getColumnCount();
             
-            simple::array<string> arr = simple::array<string>(ncols + 1);
+            ss::array<string> arr = ss::array<string>(ncols + 1);
             
             arr.push(to_string(ncols));
             
             for (int i = 0; i < ncols; ++i)
-                arr.push(encode(res -> getMetaData() ->  getColumnName(i + 1)));
+                arr.push(encode(res->getMetaData()-> getColumnName(i + 1)));
             
-            while (res -> next()) {
+            while (res->next()) {
                 for (int i = 0; i < ncols; ++i) {
-                    string value = res -> getString(i + 1);
+                    string value = res->getString(i + 1);
                     
                     arr.push(is_double(value) ? rtrim(stod(value)) : encode(value));
                 }
@@ -12717,9 +12723,9 @@ namespace simple {
             return stringify(arr);
         }));
         
-        set_function(new simple::function("rand", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("rand", [this](const size_t argc, string* argv) {
             if (argc)
-                expect("0 argument(s), got " + to_string(argc));
+                expect_error("0 argument(s), got " + to_string(argc));
             
             random_device rd;
             mt19937_64 gen(rd());
@@ -12728,11 +12734,11 @@ namespace simple {
             return to_string(uid(gen));
         }));
         
-        set_function(new simple::function("read", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("read", [this](const size_t argc, string* argv) {
             if (!argc)
-                expect("1 argument(s), got 0");
+                expect_error("1 argument(s), got 0");
             
-            if (simple::is_array(argv[0]))
+            if (ss::is_array(argv[0]))
                 type_error(0, 4);
                 //  array => string
             
@@ -12797,11 +12803,11 @@ namespace simple {
             return encode(read_txt(argv[0]));
         }));
         
-        set_function(new simple::function("recv", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("recv", [this](const size_t argc, string* argv) {
             if (argc != 1)
-                expect("1 argument(s), got " + to_string(argc));
+                expect_error("1 argument(s), got " + to_string(argc));
             
-            if (simple::is_array(argv[0]))
+            if (ss::is_array(argv[0]))
                 type_error(0, 3);
                 //  array => int
             
@@ -12823,11 +12829,11 @@ namespace simple {
             return str.empty() ? encode(types[5]) : encode(str);
         }));
         
-        set_function(new simple::function("remove", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("remove", [this](const size_t argc, string* argv) {
             if (argc != 1)
-                expect("1 argument(s), got " + to_string(argc));
+                expect_error("1 argument(s), got " + to_string(argc));
             
-            if (simple::is_array(argv[0]))
+            if (ss::is_array(argv[0]))
                 type_error(0, 4);
                 //  array => string
             
@@ -12843,11 +12849,11 @@ namespace simple {
             return to_string(remove(argv[0].c_str()) != -1);
         }));
         
-        set_function(new simple::function("send", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("send", [this](const size_t argc, string* argv) {
             if (argc != 2)
-                expect("2 argument(s), got " + to_string(argc));
+                expect_error("2 argument(s), got " + to_string(argc));
             
-            if (simple::is_array(argv[0]))
+            if (ss::is_array(argv[0]))
                 type_error(0, 3);
                 //  array => int
             
@@ -12864,7 +12870,7 @@ namespace simple {
             if (num < 0)
                 range_error(rtrim(num));
             
-            if (simple::is_array(argv[1]))
+            if (ss::is_array(argv[1]))
                 type_error(0, 4);
                 //  array => string
             
@@ -12882,12 +12888,12 @@ namespace simple {
             return rtrim(num);
         }));
         
-        set_function(new simple::function("server", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("server", [this](const size_t argc, string* argv) {
             if (argc != 2)
-                expect("2 argument(s), got " + to_string(argc));
+                expect_error("2 argument(s), got " + to_string(argc));
             
             for (size_t i = 0; i < 2; ++i) {
-                if (simple::is_array(argv[i]))
+                if (ss::is_array(argv[i]))
                     type_error(0, 3);
                     //  array => int
                 
@@ -12910,9 +12916,9 @@ namespace simple {
             return to_string(fildes);
         }));
         
-        set_function(new simple::function("setSchema", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("setSchema", [this](const size_t argc, string* argv) {
             if (argc != 2)
-                expect("2 argument(s), got " + to_string(argc));
+                expect_error("2 argument(s), got " + to_string(argc));
             
             double num = stod(argv[0]);
             
@@ -12923,7 +12929,7 @@ namespace simple {
             if (num < 0)
                 range_error(rtrim(num));
             
-            if (simple::is_array(argv[1]))
+            if (ss::is_array(argv[1]))
                 type_error(0, 4);
                 //  array => string
             
@@ -12936,21 +12942,23 @@ namespace simple {
             
             string str = decode(argv[1]);
             
+            bool res;
+            
             try {
-                api::mysql_set_schema((size_t)num, str);
+                res = api::mysql_set_schema((size_t)num, str);
                 
             } catch (sql::SQLException& e) {
                 throw exception(e.what());
             }
             
-            return encode(types[5]);
+            return encode(to_string(res));
         }));
         
-        set_function(new simple::function("update", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("update", [this](const size_t argc, string* argv) {
             if (argc != 2)
-                expect("2 argument(s), got " + to_string(argc));
+                expect_error("2 argument(s), got " + to_string(argc));
             
-            if (simple::is_array(argv[0]))
+            if (ss::is_array(argv[0]))
                 type_error(0, 3);
                 //  array => int
             
@@ -12967,7 +12975,7 @@ namespace simple {
             if (num < 0)
                 range_error(rtrim(num));
             
-            if (simple::is_array(argv[1]))
+            if (ss::is_array(argv[1]))
                 type_error(0, 4);
                 //  array => string
             
@@ -12992,11 +13000,11 @@ namespace simple {
             return to_string(res);
         }));
             
-        set_function(new simple::function("write", [this](const size_t argc, string* argv) {
+        set_function(new ss::function("write", [this](const size_t argc, string* argv) {
             if (argc < 2)
-                expect("2 argument(s), got " + to_string(argc));
+                expect_error("2 argument(s), got " + to_string(argc));
             
-            if (simple::is_array(argv[0]))
+            if (ss::is_array(argv[0]))
                 type_error(0, 4);
                 //  array => string
             
@@ -13024,9 +13032,9 @@ namespace simple {
                 write_txt(argv[0], argv[1]);
             } else {
                 if (argc == 2 || argc > 3)
-                    expect("3 argument(s), got " + to_string(argc));
+                    expect_error("3 argument(s), got " + to_string(argc));
                 
-                if (simple::is_array(argv[2]))
+                if (ss::is_array(argv[2]))
                     type_error(0, 4);
                     //  array => string
                 
@@ -13067,17 +13075,17 @@ namespace simple {
         string term = data[i];
         
         size_t j = 0;
-        while (j < aoc - 2 && ((j >= 16 && j < 22) || term != aov[j] -> opcode()))
+        while (j < aoc - 2 && ((j >= 16 && j < 22) || term != aov[j]->opcode()))
             ++j;
         
         if (j == aoc - 2) {
             j = 0;
-            while (j < loc - 1 && term != lov[j] -> opcode())
+            while (j < loc - 1 && term != lov[j]->opcode())
                 ++j;
             
             if (j == loc - 1) {
                 j = 0;
-                while (j < uoc && term != uov[j] -> opcode())
+                while (j < uoc && term != uov[j]->opcode())
                     ++j;
                 
                 if (j == uoc) return is_symbol(term);
@@ -13157,17 +13165,17 @@ namespace simple {
                             
                         } catch (invalid_argument& ia) {
                             size_t j = 0;
-                            while (j < aoc && data[i - 1] != aov[j] -> opcode())
+                            while (j < aoc && data[i - 1] != aov[j]->opcode())
                                 ++j;
                             
                             if (j == aoc) {
                                 j = 0;
-                                while (j < loc - 1 && data[i - 1] != lov[j] -> opcode())
+                                while (j < loc - 1 && data[i - 1] != lov[j]->opcode())
                                     ++j;
                                 
                                 if (j == loc - 1) {
                                     j = 0;
-                                    while (j < assignment_oi + 1 && data[i - 1] != uov[j] -> opcode())
+                                    while (j < assignment_oi + 1 && data[i - 1] != uov[j]->opcode())
                                         ++j;
                                     
                                     if (j != assignment_oi + 1) {
@@ -13218,7 +13226,7 @@ namespace simple {
         
         for (int i = 1; i < n - 1; ++i) {
             size_t j = 1;
-            while (j < loc - 1 && data[i] != lov[j] -> opcode())
+            while (j < loc - 1 && data[i] != lov[j]->opcode())
                 ++j;
             
             if (j != loc - 1) {
@@ -13232,15 +13240,15 @@ namespace simple {
                         --p;
                     else if (p == -1) {
                         size_t k = 1;
-                        while (k < loc - 1 && data[l] != lov[k] -> opcode())
+                        while (k < loc - 1 && data[l] != lov[k]->opcode())
                             ++k;
                         
                         if (k == loc - 1) {
                             k = assignment_oi;
-                            while (k < uoc && data[l] != uov[k] -> opcode())
+                            while (k < uoc && data[l] != uov[k]->opcode())
                                 ++k;
                             
-                            if (k != uoc || data[l] == uov[unary_count] -> opcode())
+                            if (k != uoc || data[l] == uov[unary_count]->opcode())
                                 break;
                         } else
                             break;
@@ -13270,12 +13278,12 @@ namespace simple {
                             break;
                     } else if (p == 1) {
                         size_t k = 1;
-                        while (k < loc - 1 && data[r] != lov[k] -> opcode())
+                        while (k < loc - 1 && data[r] != lov[k]->opcode())
                             ++k;
                         
                         if (k != loc - 1 ||
-                            data[r] == uov[unary_count] -> opcode() ||
-                            data[r] == uov[conditional_oi] -> opcode())
+                            data[r] == uov[unary_count]->opcode() ||
+                            data[r] == uov[conditional_oi]->opcode())
                             break;
                     }
                     
@@ -13303,13 +13311,13 @@ namespace simple {
         while (i < n - 1) {
             string term = tolower(data[i]);
             
-            if (term == uov[aggregate_oi] -> opcode()
-                || term == uov[cell_oi] -> opcode()
-                || term == uov[conditional_oi] -> opcode()
-                || term == uov[filter_oi] -> opcode()
-                || term == uov[find_oi] -> opcode()
-                || term == uov[insert_oi] -> opcode()
-                || term == uov[map_oi] -> opcode()) {
+            if (term == uov[aggregate_oi]->opcode() ||
+                term == uov[cell_oi]->opcode() ||
+                term == uov[conditional_oi]->opcode() ||
+                term == uov[filter_oi]->opcode() ||
+                term == uov[find_oi]->opcode() ||
+                term == uov[insert_oi]->opcode() ||
+                term == uov[map_oi]->opcode()) {
                 size_t j = ++i;       int p = 0;
                 do {
                     if (data[j] == "(")
@@ -13317,7 +13325,7 @@ namespace simple {
                     else if (data[j] == ")")
                         --p;
                     
-                    if (!p && (data[j + 1] == ")" || data[j + 1] == uov[unary_count] -> opcode()))
+                    if (!p && (data[j + 1] == ")" || data[j + 1] == uov[unary_count]->opcode()))
                         break;
                     
                     ++j;
@@ -13363,7 +13371,7 @@ namespace simple {
         
         for (i = 0; i < n - 2; ++i) {
             size_t j = 0;
-            while (j < functionc && data[i] != functionv[j] -> name())
+            while (j < functionc && data[i] != functionv[j]->name())
                 ++j;
             
             if (j != functionc && data[i + 1] == "(") {
@@ -13414,10 +13422,10 @@ namespace simple {
         while (i < n - 2) {
             string term = tolower(data[i]);
             
-            if (term == uov[splice_oi] -> opcode()
-                || term == uov[slice_oi] -> opcode()
-                || term == uov[substr_oi] -> opcode()
-                || term == uov[tospliced_oi] -> opcode()) {
+            if (term == uov[splice_oi]->opcode()
+                || term == uov[slice_oi]->opcode()
+                || term == uov[substr_oi]->opcode()
+                || term == uov[tospliced_oi]->opcode()) {
                 size_t j = ++i;       int p = 0;
                 do {
                     if (data[j] == "(")
@@ -13487,7 +13495,7 @@ namespace simple {
         //  array indexer
         
         for (int i = 1; i < n - 1; ++i) {
-            if (dst[i] == uov[indexer_oi] -> opcode()) {
+            if (dst[i] == uov[indexer_oi]->opcode()) {
                 size_t l = i;   int p = 0;
                 do {
                     --l;
@@ -13501,7 +13509,7 @@ namespace simple {
                 } while (l > 0 && p);
                 
                 size_t j = 0;
-                while (j < functionc && dst[l - 1] != functionv[j] -> name())
+                while (j < functionc && dst[l - 1] != functionv[j]->name())
                     ++j;
                 
                 if (j != functionc)
@@ -13518,19 +13526,19 @@ namespace simple {
                     string term = toupper(dst[r + 1]);
                     
                     size_t j = 0;
-                    while (j < arithmetic::unary_count && term != aov[j] -> opcode())
+                    while (j < arithmetic::unary_count && term != aov[j]->opcode())
                         ++j;
                     
-                    if (j == arithmetic::unary_count && dst[r + 1] != lov[0] -> opcode()) {
+                    if (j == arithmetic::unary_count && dst[r + 1] != lov[0]->opcode()) {
                         term = tolower(dst[r + 1]);
                         
                         j = 0;
-                        while (j < unary_count && term != uov[j] -> opcode())
+                        while (j < unary_count && term != uov[j]->opcode())
                             ++j;
                         
                         if (j == unary_count) {
                             j = 0;
-                            while (j < functionc && dst[r + 1] != functionv[j] -> name())
+                            while (j < functionc && dst[r + 1] != functionv[j]->name())
                                 ++j;
                             
                             if (j == functionc)
@@ -13571,15 +13579,15 @@ namespace simple {
                 //  relational and equality operators
             
             for (int j = 1; j < n - 1; ++j) {
-                if (dst[j] == uov[concat_oi] -> opcode() ||
-                    dst[j] == uov[assignment_oi + 1] -> opcode() ||
-                    dst[j] == uov[assignment_oi] -> opcode())
+                if (dst[j] == uov[concat_oi]->opcode() ||
+                    dst[j] == uov[assignment_oi + 1]->opcode() ||
+                    dst[j] == uov[assignment_oi]->opcode())
                     continue;
                 
                 string term = toupper(dst[j]);
                 
                 size_t k = 0;
-                while (k < baoc[i] && term != baov[i][k] -> opcode())
+                while (k < baoc[i] && term != baov[i][k]->opcode())
                     ++k;
                 
                 if (k != baoc[i]) {
@@ -13599,19 +13607,19 @@ namespace simple {
                         term = toupper(dst[l - 1]);
                         
                         size_t m = 0;
-                        while (m < arithmetic::unary_count && term != aov[m] -> opcode())
+                        while (m < arithmetic::unary_count && term != aov[m]->opcode())
                             ++m;
                         
-                        if (m == arithmetic::unary_count && dst[l - 1] != lov[0] -> opcode()) {
+                        if (m == arithmetic::unary_count && dst[l - 1] != lov[0]->opcode()) {
                             term = tolower(dst[l - 1]);
                             
                             m = 0;
-                            while (m < unary_count && term != uov[m] -> opcode())
+                            while (m < unary_count && term != uov[m]->opcode())
                                 ++m;
                             
                             if (m == unary_count) {
                                 m = 0;
-                                while (m < functionc && dst[l - 1] != functionv[m] -> name())
+                                while (m < functionc && dst[l - 1] != functionv[m]->name())
                                     ++m;
                                 
                                 if (m == functionc)
@@ -13634,19 +13642,19 @@ namespace simple {
                         term = toupper(dst[r + 1]);
                         
                         size_t m = 0;
-                        while (m < arithmetic::unary_count && term != aov[m] -> opcode())
+                        while (m < arithmetic::unary_count && term != aov[m]->opcode())
                             ++m;
                         
-                        if (m == arithmetic::unary_count && dst[r + 1] != lov[0] -> opcode()) {
+                        if (m == arithmetic::unary_count && dst[r + 1] != lov[0]->opcode()) {
                             term = tolower(dst[r + 1]);
                             
                             m = 0;
-                            while (m < unary_count && term != uov[m] -> opcode())
+                            while (m < unary_count && term != uov[m]->opcode())
                                 ++m;
                             
                             if (m == unary_count) {
                                 m = 0;
-                                while (m < functionc && dst[r + 1] != functionv[m] -> name())
+                                while (m < functionc && dst[r + 1] != functionv[m]->name())
                                     ++m;
                                 
                                 if (m == functionc)
@@ -13687,7 +13695,7 @@ namespace simple {
         
         for (size_t i = 1; i < loc - 1; ++i) {
             for (int j = 1; j < n - 1; ++j) {
-                if (dst[j] == lov[i] -> opcode()) {
+                if (dst[j] == lov[i]->opcode()) {
                     size_t l = j;   int p = 0;
                     
                     do {
@@ -13702,23 +13710,23 @@ namespace simple {
                     } while (l > 0 && p);
                     
                     while (l > 0) {
-                        if (dst[l - 1] != lov[0] -> opcode()) {
+                        if (dst[l - 1] != lov[0]->opcode()) {
                             string term = toupper(dst[l - 1]);
                             
                             size_t k = 0;
-                            while (k < arithmetic::unary_count && term != aov[k] -> opcode())
+                            while (k < arithmetic::unary_count && term != aov[k]->opcode())
                                 ++k;
                             
                             if (k == arithmetic::unary_count) {
                                 term = tolower(dst[l - 1]);
                                 
                                 k = 0;
-                                while (k < unary_count && term != uov[k] -> opcode())
+                                while (k < unary_count && term != uov[k]->opcode())
                                     ++k;
                                 
                                 if (k == unary_count) {
                                     k = 0;
-                                    while (k < functionc && dst[l - 1] != functionv[k] -> name())
+                                    while (k < functionc && dst[l - 1] != functionv[k]->name())
                                         ++k;
                                     
                                     if (k == functionc)
@@ -13740,23 +13748,23 @@ namespace simple {
                     size_t r = ++j;
                     
                     while (r < n - 1) {
-                        if (dst[r + 1] != lov[0] -> opcode()) {
+                        if (dst[r + 1] != lov[0]->opcode()) {
                             string term = toupper(dst[r + 1]);
                             
                             size_t k = 0;
-                            while (k < arithmetic::unary_count && term != aov[k] -> opcode())
+                            while (k < arithmetic::unary_count && term != aov[k]->opcode())
                                 ++k;
                             
                             if (k == arithmetic::unary_count) {
                                 term = tolower(dst[r + 1]);
                                 
                                 k = 0;
-                                while (k < unary_count && term != uov[k] -> opcode())
+                                while (k < unary_count && term != uov[k]->opcode())
                                     ++k;
                                 
                                 if (k == unary_count) {
                                     k = 0;
-                                    while (k < functionc && dst[r + 1] != functionv[k] -> name())
+                                    while (k < functionc && dst[r + 1] != functionv[k]->name())
                                         ++k;
                                     
                                     if (k == functionc)
@@ -13799,7 +13807,7 @@ namespace simple {
                 string term = tolower(dst[j]);
                 
                 int k = 0;
-                while (k < buoc[i] && buov[i][k] -> opcode() != term)
+                while (k < buoc[i] && buov[i][k]->opcode() != term)
                     ++k;
                 
                 if (k != buoc[i]) {
@@ -13820,19 +13828,19 @@ namespace simple {
                         term = tolower(dst[l - 1]);
                         
                         int m = 0;
-                        while (m < unary_count && uov[m] -> opcode() != term)
+                        while (m < unary_count && uov[m]->opcode() != term)
                             ++m;
                         
-                        if (m == unary_count && dst[l - 1] != lov[0] -> opcode()) {
+                        if (m == unary_count && dst[l - 1] != lov[0]->opcode()) {
                             term = toupper(dst[l - 1]);
                             
                             m = 0;
-                            while (m < arithmetic::unary_count && term != aov[m] -> opcode())
+                            while (m < arithmetic::unary_count && term != aov[m]->opcode())
                                 ++m;
                             
                             if (m == arithmetic::unary_count) {
                                 m = 0;
-                                while (m < functionc && dst[l - 1] != functionv[m] -> name())
+                                while (m < functionc && dst[l - 1] != functionv[m]->name())
                                     ++m;
                                 
                                 if (m == functionc)
@@ -13856,20 +13864,20 @@ namespace simple {
                         term = tolower(dst[r + 1]);
                         
                         int m = 0;
-                        while (m < unary_count && uov[m] -> opcode() != term)
+                        while (m < unary_count && uov[m]->opcode() != term)
                             ++m;
                             //  check for unary string operator
                         
-                        if (m == unary_count && dst[r + 1] != lov[0] -> opcode()) {
+                        if (m == unary_count && dst[r + 1] != lov[0]->opcode()) {
                             term = toupper(dst[r + 1]);
                             
                             m = 0;
-                            while (m < arithmetic::unary_count && term != aov[m] -> opcode())
+                            while (m < arithmetic::unary_count && term != aov[m]->opcode())
                                 ++m;
                             
                             if (m == arithmetic::unary_count) {
                                 m = 0;
-                                while (m < functionc && dst[r + 1] != functionv[m] -> name())
+                                while (m < functionc && dst[r + 1] != functionv[m]->name())
                                     ++m;
                                 
                                 if (m == functionc)
@@ -13929,7 +13937,7 @@ namespace simple {
 
     void interpreter::reload() {
         if (buid.empty())
-            expect("save");
+            expect_error("save");
             
         restore(buid, false);
         
@@ -13940,7 +13948,7 @@ namespace simple {
 
     void interpreter::restore(const string uuid, const bool verbose, size_t symbolc, string* symbolv) {
         size_t i = 0;
-        while (i < backupc && bu_numberv[i] -> first != uuid)
+        while (i < backupc && bu_numberv[i]->first != uuid)
             ++i;
         
         if (i == backupc)
@@ -13948,10 +13956,10 @@ namespace simple {
                 
         for (size_t j = 0; j < arrayc; ++j) {
             size_t k = 0;
-            while (k < bu_arrayv[i] -> first && std::get<0>(* bu_arrayv[i] -> second[k]) != std::get<0>(* arrayv[j]))
+            while (k < bu_arrayv[i]->first && std::get<0>(* bu_arrayv[i]->second[k]) != std::get<0>(* arrayv[j]))
                 ++k;
             
-            if (k == bu_arrayv[i] -> first) {
+            if (k == bu_arrayv[i]->first) {
                 if (verbose)
                     if (!std::get<2>(* arrayv[j]).second)
                         cout << "Unused variable '" << std::get<0>(* arrayv[j]) << "'\n";
@@ -13961,10 +13969,10 @@ namespace simple {
                     ++l;
                 
                 if (l == symbolc) {
-                    delete std::get<1>(* bu_arrayv[i] -> second[k]);
+                    delete std::get<1>(* bu_arrayv[i]->second[k]);
                     
-                    std::get<1>(* bu_arrayv[i] -> second[k]) = new simple::array<string>(std::get<1>(* arrayv[j]));
-                    std::get<2>(* bu_arrayv[i] -> second[k]).second = std::get<2>(* arrayv[j]).second;
+                    std::get<1>(* bu_arrayv[i]->second[k]) = new ss::array<string>(std::get<1>(* arrayv[j]));
+                    std::get<2>(* bu_arrayv[i]->second[k]).second = std::get<2>(* arrayv[j]).second;
                 } else {
                     for (; l < symbolc - 1; ++l)
                         swap(symbolv[l], symbolv[l + 1]);
@@ -13979,17 +13987,17 @@ namespace simple {
         
         delete[] arrayv;
         
-        arrayc = bu_arrayv[i] -> first;
-        arrayv = new tuple<string, simple::array<string>, pair<bool, bool>>*[pow2(arrayc)];
+        arrayc = bu_arrayv[i]->first;
+        arrayv = new tuple<string, ss::array<string>, pair<bool, bool>>*[pow2(arrayc)];
         
         for (size_t j = 0; j < arrayc; ++j) {
-            string first = std::get<0>(* bu_arrayv[i] -> second[j]);
-            simple::array<string> second = *std::get<1>(* bu_arrayv[i] -> second[j]);
-            pair<bool, bool> third = std::get<2>(* bu_arrayv[i] -> second[j]);
+            string first = std::get<0>(* bu_arrayv[i]->second[j]);
+            ss::array<string> second = *std::get<1>(* bu_arrayv[i]->second[j]);
+            pair<bool, bool> third = std::get<2>(* bu_arrayv[i]->second[j]);
             
-            delete std::get<1>(* bu_arrayv[i] -> second[j]);
+            delete std::get<1>(* bu_arrayv[i]->second[j]);
             
-            arrayv[j] = new tuple<string, simple::array<string>, pair<bool, bool>>(first, second, third);
+            arrayv[j] = new tuple<string, ss::array<string>, pair<bool, bool>>(first, second, third);
         }
         
         delete bu_arrayv[i];
@@ -13998,7 +14006,7 @@ namespace simple {
             swap(bu_arrayv[j], bu_arrayv[j + 1]);
         
         if (array_bst != NULL)
-            array_bst -> close();
+            array_bst->close();
         
         string* _symbolv = new string[arrayc];
         
@@ -14012,18 +14020,18 @@ namespace simple {
         if (verbose) {
             for (size_t j = 0; j < functionc; ++j) {
                 size_t k = 0;
-                while (k < bu_functionv[i] -> first && bu_functionv[i] -> second[k] -> name() != functionv[j] -> name())
+                while (k < bu_functionv[i]->first && bu_functionv[i]->second[k]->name() != functionv[j]->name())
                     ++k;
                 
-                if (k == bu_functionv[i] -> first && !functionv[j] -> count())
-                    cout << "Unused function '" << functionv[j] -> name() << "'\n";
+                if (k == bu_functionv[i]->first && !functionv[j]->count())
+                    cout << "Unused function '" << functionv[j]->name() << "'\n";
             }
         }
         
         delete[] functionv;
         
-        functionc = bu_functionv[i] -> first;
-        functionv = bu_functionv[i] -> second;
+        functionc = bu_functionv[i]->first;
+        functionv = bu_functionv[i]->second;
         
         delete bu_functionv[i];
         
@@ -14031,18 +14039,18 @@ namespace simple {
             swap(bu_functionv[j], bu_functionv[j + 1]);
         
         if (function_bst != NULL)
-            function_bst -> close();
+            function_bst->close();
         
         _symbolv = new string[functionc];
         
         for (size_t j = 0; j < functionc; ++j)
-            _symbolv[j] = functionv[j] -> name();
+            _symbolv[j] = functionv[j]->name();
         
         function_bst = functionc ? build(_symbolv, 0, (int)functionc) : NULL;
         
         delete[] _symbolv;
         
-        arithmetic::restore(bu_numberv[i] -> second, verbose, symbolc, symbolv);
+        arithmetic::restore(bu_numberv[i]->second, verbose, symbolc, symbolv);
 
         delete bu_numberv[i];
         
@@ -14051,10 +14059,10 @@ namespace simple {
         
         for (size_t j = 0; j < stringc; ++j) {
             size_t k = 0;
-            while (k < bu_stringv[i] -> first && std::get<0>(* stringv[j]) != std::get<0>(* bu_stringv[i] -> second[k]))
+            while (k < bu_stringv[i]->first && std::get<0>(* stringv[j]) != std::get<0>(* bu_stringv[i]->second[k]))
                 ++k;
             
-            if (k == bu_stringv[i] -> first) {
+            if (k == bu_stringv[i]->first) {
                 if (verbose)
                     if (!std::get<2>(* stringv[j]).second)
                         cout << "Unused variable '" << std::get<0>(* stringv[j]) << "'\n";
@@ -14064,8 +14072,8 @@ namespace simple {
                     ++l;
                 
                 if (l == symbolc) {
-                    std::get<1>(* bu_stringv[i] -> second[k]) = std::get<1>(* stringv[j]);
-                    std::get<2>(* bu_stringv[i] -> second[k]).second = std::get<2>(* stringv[j]).second;
+                    std::get<1>(* bu_stringv[i]->second[k]) = std::get<1>(* stringv[j]);
+                    std::get<2>(* bu_stringv[i]->second[k]).second = std::get<2>(* stringv[j]).second;
                 } else {
                     for (; l < symbolc - 1; ++l)
                         swap(symbolv[l], symbolv[l + 1]);
@@ -14078,8 +14086,8 @@ namespace simple {
         for (size_t j = 0; j < stringc; ++j)
             delete stringv[j];
         
-        stringc = bu_stringv[i] -> first;
-        stringv = bu_stringv[i] -> second;
+        stringc = bu_stringv[i]->first;
+        stringv = bu_stringv[i]->second;
         
         delete bu_stringv[i];
         
@@ -14087,7 +14095,7 @@ namespace simple {
             swap(bu_stringv[j], bu_stringv[j + 1]);
         
         if (string_bst != NULL)
-            string_bst -> close();
+            string_bst->close();
         
         _symbolv = new string[stringc];
         
@@ -14128,7 +14136,7 @@ namespace simple {
 
     void interpreter::set_array(const string symbol, const size_t index, const string value) {
         if (!is_symbol(symbol))
-            expect("symbol");
+            expect_error("symbol");
         
         if (!value.empty() && !is_string(value))
             stod(value);
@@ -14140,7 +14148,7 @@ namespace simple {
                 defined_error(symbol);
             
             if (is_pow(arrayc, 2)) {
-                tuple<string, simple::array<string>, pair<bool, bool>>** _arrayv = new tuple<string, simple::array<string>, pair<bool, bool>>*[arrayc * 2];
+                tuple<string, ss::array<string>, pair<bool, bool>>** _arrayv = new tuple<string, ss::array<string>, pair<bool, bool>>*[arrayc * 2];
                 
                 for (size_t j = 0; j < arrayc; ++j)
                     _arrayv[j] = arrayv[j];
@@ -14150,7 +14158,7 @@ namespace simple {
                 arrayv = _arrayv;
             }
             
-            arrayv[arrayc] = new tuple<string, simple::array<string>, pair<bool, bool>>(symbol, simple::array<string>(), pair<bool, bool>(false, false));
+            arrayv[arrayc] = new tuple<string, ss::array<string>, pair<bool, bool>>(symbol, ss::array<string>(), pair<bool, bool>(false, false));
             
             size_t j = arrayc++;
             while (j > 0 && std::get<0>(* arrayv[j]) < std::get<0>(* arrayv[j - 1])) {
@@ -14164,7 +14172,7 @@ namespace simple {
             insert(symbol);
             
             if (array_bst != NULL)
-                array_bst -> close();
+                array_bst->close();
             
             string symbolv[arrayc];
             
@@ -14187,8 +14195,8 @@ namespace simple {
     }
 
     void interpreter::set_function(function_t* new_function) {
-        if (is_defined(new_function -> name()))
-            defined_error(new_function -> name());
+        if (is_defined(new_function->name()))
+            defined_error(new_function->name());
         
         if (is_pow(functionc, 2)) {
             function_t** tmp = new function_t*[functionc * 2];
@@ -14203,30 +14211,30 @@ namespace simple {
         
         functionv[functionc] = new_function;
         
-        insert(functionv[functionc] -> name());
+        insert(functionv[functionc]->name());
         
         size_t i = functionc++;
         
-        while (i > 0 && functionv[i] -> name() < functionv[i - 1] -> name()) {
+        while (i > 0 && functionv[i]->name() < functionv[i - 1]->name()) {
             swap(functionv[i], functionv[i - 1]);
             
             --i;
         }
         
         if (function_bst != NULL)
-            function_bst -> close();
+            function_bst->close();
         
         string symbolv[functionc];
         
         for (size_t i = 0; i < functionc; ++i)
-            symbolv[i] = functionv[i] -> name();
+            symbolv[i] = functionv[i]->name();
         
         function_bst = build(symbolv, 0, (int)functionc);
     }
 
     void interpreter::set_string(const string symbol, const string value) {
         if (!is_symbol(symbol))
-            expect("symbol");
+            expect_error("symbol");
         
         if (!value.empty() && !is_string(value))
             undefined_error(value);
@@ -14260,7 +14268,7 @@ namespace simple {
             insert(symbol);
             
             if (string_bst != NULL)
-                string_bst -> close();
+                string_bst->close();
              
             string symbolv[stringc];
             
@@ -14289,12 +14297,12 @@ namespace simple {
         
         if (lhs == rhs) return;
         
-        simple::type_error(types[lhs], types[rhs]);
+        ss::type_error(types[lhs], types[rhs]);
     }
 
     void interpreter::consume(const string symbol) {
         if (symbol.empty())
-            expect("symbol");
+            expect_error("symbol");
         
         int i = io_function(symbol);
         
@@ -14311,6 +14319,6 @@ namespace simple {
             } else
                 std::get<2>(* arrayv[i]).second = true;
         } else
-            functionv[i] -> consume();
+            functionv[i]->consume();
     }
 }

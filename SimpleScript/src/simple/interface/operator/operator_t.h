@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace simple {
+namespace ss {
     class operator_t {
         //  MEMBER FIELDS
         

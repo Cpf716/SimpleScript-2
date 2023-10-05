@@ -7,7 +7,7 @@
 
 #include "logic.h"
 
-namespace simple {
+namespace ss {
     //  CONSTRUCTORS
 
     logic::logic() {
@@ -32,7 +32,7 @@ namespace simple {
 
     logic::~logic() {
         for (size_t i = 0; i < loc; ++i)
-            lov[i] -> close();
+            lov[i]->close();
         
         delete[] lov;
     }
@@ -70,7 +70,7 @@ namespace simple {
             ++start;
                 
         size_t i = 0;
-        while (i < loc && lov[i] -> opcode() != data[start])
+        while (i < loc && lov[i]->opcode() != data[start])
             ++i;
             //  test leading term for operator
         
@@ -97,7 +97,7 @@ namespace simple {
                     break;
                 
                 size_t k = 0;
-                while (k < loc && lov[k] -> opcode() != data[j])
+                while (k < loc && lov[k]->opcode() != data[j])
                     ++k;
                     //  test terms subsequent unary operator for operators
                 
@@ -123,7 +123,7 @@ namespace simple {
             
             if (j == end) {
                 size_t k = j - 1;
-                while (k > 0 && data[k] != lov[0] -> opcode())
+                while (k > 0 && data[k] != lov[0]->opcode())
                     --k;
                 
                 throw invalid_argument("Syntax error on token \"" + data[k] + "\", expression expected after this token");
@@ -144,7 +144,7 @@ namespace simple {
                 break;
             
             i = 0;
-            while (i < loc && data[start] != lov[i] -> opcode())
+            while (i < loc && data[start] != lov[i]->opcode())
                 ++i;
                 //  test term for operator
             
@@ -166,7 +166,7 @@ namespace simple {
                     break;
                 
                 size_t k = 0;
-                while (k < loc && lov[k] -> opcode() != data[j])
+                while (k < loc && lov[k]->opcode() != data[j])
                     ++k;
                     //  test terms subsequent binary operator for operators
                 
@@ -192,7 +192,7 @@ namespace simple {
             
             if (j == end) {
                 size_t k = j - 1;
-                while (k > 0 && data[k] != lov[0] -> opcode())
+                while (k > 0 && data[k] != lov[0]->opcode())
                     --k;
                 
                 throw invalid_argument("Syntax error on token \"" + data[k] + "\", expression expected after this token");
@@ -219,7 +219,7 @@ namespace simple {
         
         for (int i = (int)n - 1; i >= 0; --i) {
             size_t j = 0;
-            while (j < loc && lov[j] -> opcode() != data[i])
+            while (j < loc && lov[j]->opcode() != data[i])
                 ++j;
             
             if (j == loc)
@@ -230,7 +230,7 @@ namespace simple {
                 if (!j) {
                     ulo* u = (ulo *)lov[j];
                                 
-                    d = u -> apply(s.top());
+                    d = u->apply(s.top());
                     
                     s.pop();
                 } else {
@@ -246,7 +246,7 @@ namespace simple {
                         set_number(lhs, d);
                         
                     } else {
-                        d = b -> apply(lhs, s.top());
+                        d = b->apply(lhs, s.top());
                         
                         s.pop();
                     }
@@ -273,10 +273,10 @@ namespace simple {
         int i;
         
         for (i = 0; i < n - 1; ++i) {
-            if (data[i + 1] == lov[loc - 1] -> opcode()) {
+            if (data[i + 1] == lov[loc - 1]->opcode()) {
                 //  =
                 
-                if (data[i] == lov[0] -> opcode() || data[i] == lov[3] -> opcode()) {
+                if (data[i] == lov[0]->opcode() || data[i] == lov[3]->opcode()) {
                     data[i] += data[i + 1];
                     
                     for (size_t j = i + 1; j < n - 1; ++j)
@@ -304,8 +304,8 @@ namespace simple {
                 } else {
                     size_t j;
                     for (j = 15; j < 17; ++j) {
-                        if (data[i].length() >= aov[j] -> opcode().length()) {
-                            string opcode = aov[j] -> opcode();
+                        if (data[i].length() >= aov[j]->opcode().length()) {
+                            string opcode = aov[j]->opcode();
                             
                             size_t k = 0;
                             while (k < opcode.length() - 1 && opcode[k] == data[i][data[i].length() - opcode.length() + k + 1])
@@ -331,8 +331,8 @@ namespace simple {
                     if (j == 17) {
                         size_t k;
                         for (k = 25; k < aoc - 1; ++k) {
-                            if (data[i].length() >= aov[k] -> opcode().length() - 1) {
-                                string opcode = aov[k] -> opcode();
+                            if (data[i].length() >= aov[k]->opcode().length() - 1) {
+                                string opcode = aov[k]->opcode();
                                                         
                                 size_t l = 0;
                                 while (l < opcode.length() - 1 && opcode[l] == data[i][data[i].length() - opcode.length() + l + 1])
@@ -360,7 +360,7 @@ namespace simple {
         }
         
         for (i = 1; i < n - 1; ++i) {
-            if (data[i] == lov[loc - 1] -> opcode()) {
+            if (data[i] == lov[loc - 1]->opcode()) {
                 //  =
                 
                 int l = (int)data[i - 1].length() - 1;
@@ -473,7 +473,7 @@ namespace simple {
         size_t i;
         for (i = 1; i < loc; ++i) {
             for (size_t j = 1; j < n - 1; ++j) {
-                if (data[j] == lov[i] -> opcode()) {
+                if (data[j] == lov[i]->opcode()) {
                     size_t l = j;   int p = 0;
                     
                     do {
@@ -487,7 +487,7 @@ namespace simple {
                         
                     } while (l > 0 && p);
                     
-                    while (l > 0 && data[l - 1] == lov[0] -> opcode())
+                    while (l > 0 && data[l - 1] == lov[0]->opcode())
                         --l;
                     
                     data[n] = "(";
@@ -499,7 +499,7 @@ namespace simple {
                     
                     size_t r = ++j;
                     
-                    while (r < n - 1 && data[r + 1] == lov[0] -> opcode())
+                    while (r < n - 1 && data[r + 1] == lov[0]->opcode())
                         ++r;
                     
                     p = 0;
@@ -527,7 +527,7 @@ namespace simple {
         
         for (i = 0; i < n; ++i) {
             size_t j = 1;
-            while (j < loc && lov[j] -> opcode() != data[i])
+            while (j < loc && lov[j]->opcode() != data[i])
                 ++j;
             
             if (j != loc) {
@@ -607,12 +607,12 @@ namespace simple {
         while (i < expr.length()) {
             int j;
             for (j = 0; j < loc; ++j) {
-               if (i + lov[j] -> opcode().length() <= expr.length()) {
+               if (i + lov[j]->opcode().length() <= expr.length()) {
                    int k = 0;
-                   while (k < lov[j] -> opcode().length() && lov[j] -> opcode()[k] == expr[i + k])
+                   while (k < lov[j]->opcode().length() && lov[j]->opcode()[k] == expr[i + k])
                        ++k;
                    
-                   if (k == lov[j] -> opcode().length()) {
+                   if (k == lov[j]->opcode().length()) {
                        end = i;
                        
                        while (start < end && isspace(expr[start]))
@@ -660,7 +660,7 @@ namespace simple {
                            ++end;
                        }
                        
-                       data[n++] = lov[j] -> opcode();
+                       data[n++] = lov[j]->opcode();
                        
                        start = i + k;
                        i = start;

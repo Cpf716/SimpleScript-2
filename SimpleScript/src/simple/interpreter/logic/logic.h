@@ -14,7 +14,7 @@
 
 using namespace std;
 
-namespace simple {
+namespace ss {
     class logic: public arithmetic {
         //  MEMBER FUNCTIONS
         

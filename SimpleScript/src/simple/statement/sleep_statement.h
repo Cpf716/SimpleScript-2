@@ -10,7 +10,7 @@
 
 #include "statement_t.h"
 
-namespace simple {
+namespace ss {
     class sleep_statement: public statement_t {
         string expression;
         
@@ -19,7 +19,7 @@ namespace simple {
         
         sleep_statement(const string expression) {
             if (expression.empty())
-                expect("expression");
+                expect_error("expression");
             
             this->expression = expression;
         }
@@ -28,17 +28,19 @@ namespace simple {
         
         //  MEMBER FUNCTIONS
         
+        bool analyze(interpreter* ssu) const { return false; }
+        
         bool compare(const string val) const { return false; }
         
-        string evaluate(interpreter* ss) {
+        string evaluate(interpreter* ssu) {
             unsupported_error("evaluate()");
             return EMPTY;
         }
         
-        string execute(interpreter* ss) {
-            string res = ss->evaluate(expression);
+        string execute(interpreter* ssu) {
+            string res = ssu->evaluate(expression);
             
-            if (simple::is_array(res))
+            if (ss::is_array(res))
                 type_error("array", "int");
             
             if (is_string(res))
@@ -64,8 +66,6 @@ namespace simple {
         void set_parent(statement_t* parent) { }
         
         void set_return(const string result) { unsupported_error("set_return()"); }
-        
-        bool validate(interpreter* ss) const { return false; }
     };
 }
 

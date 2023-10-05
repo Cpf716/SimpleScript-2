@@ -10,7 +10,7 @@
 
 #include "statement_t.h"
 
-namespace simple {
+namespace ss {
     class assert_statement: public statement_t {
         //  MEMBER FIELDS
         
@@ -20,24 +20,26 @@ namespace simple {
         
         assert_statement(const string expression) {
             if (expression.empty())
-                expect("expression");
+                expect_error("expression");
             
-            this -> expression = expression;
+            this->expression = expression;
         }
         
         void close() { delete this; }
         
         //  MEMBER FUNCTIONS
         
+        bool analyze(interpreter* ssu) const { return false; }
+        
         bool compare(const string val) const { return false; }
         
-        string evaluate(interpreter* ss) {
+        string evaluate(interpreter* ssu) {
             unsupported_error("evaluate()");
             return EMPTY;
         }
         
-        string execute(interpreter* ss) {
-            if (!simple::evaluate(ss -> evaluate(expression)))
+        string execute(interpreter* ssu) {
+            if (!ss::evaluate(ssu->evaluate(expression)))
                 throw error("Assertion failed: (" + expression + ")");
                 
             return EMPTY;
@@ -50,8 +52,6 @@ namespace simple {
         void set_parent(statement_t* parent) { }
         
         void set_return(const string result) { unsupported_error("set_return()"); }
-        
-        bool validate(interpreter* ss) const { return false; }
     };
 }
 

@@ -10,7 +10,7 @@
 
 #include "control_statement.h"
 
-namespace simple {
+namespace ss {
     class for_statement: public control_statement {
         //  MEMBER FIELDS
         
@@ -30,19 +30,19 @@ namespace simple {
         
         //  MEMBER FUNCTIONS
         
+        bool analyze(interpreter* ssu) const;
+        
         bool compare(const string val) const;
         
-        string evaluate(interpreter* ss);
+        string evaluate(interpreter* ssu);
         
-        string execute(interpreter* ss);
+        string execute(interpreter* ssu);
         
         void set_break();
         
         void set_continue();
         
         void set_return(const string result);
-        
-        bool validate(interpreter* ss) const;
     };
 }
 

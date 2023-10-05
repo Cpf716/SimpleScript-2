@@ -12,7 +12,7 @@
 
 using namespace std;
 
-namespace simple {
+namespace ss {
     template <typename T>
     class stack {
         //  MEMBER FIELDS

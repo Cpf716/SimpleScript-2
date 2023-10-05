@@ -18,7 +18,7 @@
 #include <unistd.h>         //  close, read
 #include "utility.h"        //  split
 
-namespace simple {
+namespace ss {
     namespace api {
         //  TYPEDEF
 

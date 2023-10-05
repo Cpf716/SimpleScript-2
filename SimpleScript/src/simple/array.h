@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-namespace simple {
+namespace ss {
     template <typename T>
     class array {
         //  MEMBER FIELDS
@@ -20,7 +20,7 @@ namespace simple {
     public:
         //  CONSTRUCTORS
         
-        array(const simple::array<T>& data) {
+        array(const ss::array<T>& data) {
             _capacity = data.capacity();
             _data = new T[capacity()];
             

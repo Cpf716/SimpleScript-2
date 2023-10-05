@@ -10,19 +10,19 @@
 
 #include "array.h"
 
-namespace simple {
+namespace ss {
     template <typename T>
     class node {
         T _data;
         node* _parent = NULL;
-        simple::array<node*> children;
+        ss::array<node*> children;
     public:
         node(const T data, node* parent) {
             _data = data;
             _parent = parent;
             
             if (parent != NULL)
-                parent -> children.push(this);
+                parent->children.push(this);
         }
         
         T data() const { return _data; }
@@ -31,7 +31,7 @@ namespace simple {
         
         void close() {
             for (size_t i = 0; i < children.size(); ++i)
-                children[i] -> close();
+                children[i]->close();
             
             delete this;
         }

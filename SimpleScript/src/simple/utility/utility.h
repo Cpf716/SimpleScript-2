@@ -15,7 +15,7 @@
 #include <random>
 #include <sstream>
 
-namespace simple {
+namespace ss {
     //  NON-MEMBER FIELDS
 
     const static std::string BASE_DIR = "/Users/<user>/SimpleScript/SimpleScript/ssl/public/";
@@ -32,7 +32,7 @@ namespace simple {
 
     bool is_dictionary(const std::string* data, const std::size_t n);
 
-    bool is_dictionary(simple::array<std::string> data);
+    bool is_dictionary(ss::array<std::string> data);
 
     bool is_double(const std::string str);
 
@@ -46,7 +46,7 @@ namespace simple {
 
     bool is_table(std::string* data, const std::size_t n);
 
-    bool is_table(simple::array<std::string> data);
+    bool is_table(ss::array<std::string> data);
 
     std::string ltrim(const std::string str);
 
@@ -77,11 +77,11 @@ namespace simple {
 
     std::size_t split(std::string* dst, const std::string src, const std::string pattern);
 
-    std::string stringify(simple::array<std::string> data);
+    std::string stringify(ss::array<std::string> data);
 
-    std::string stringify(simple::array<std::string> data, std::size_t si);
+    std::string stringify(ss::array<std::string> data, std::size_t si);
 
-    std::string stringify(simple::array<std::string> data, std::size_t si, std::size_t ei);
+    std::string stringify(ss::array<std::string> data, std::size_t si, std::size_t ei);
 
     std::string stringify(const std::size_t n, std::string* data);
 

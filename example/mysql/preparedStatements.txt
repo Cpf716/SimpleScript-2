@@ -3,10 +3,10 @@
 //  File:   preparedStatements.txt
 
 func main
-    conn = -1
+    con = -1
 
     try
-        conn = connect("tcp://localhost:3306", "root", "root")
+        con = connect("tcp://localhost:3306", "root", "root")
     catch err
         echo "SQL: {}\n" format err
         
@@ -14,7 +14,7 @@ func main
     end try
 
     try
-        array res = prepareQuery(conn, "select * from music_library.artists")
+        array res = prepareQuery(con, "select * from music_library.artists")
         
         for i = 0, i < (count res - 1) / first res, i += 1
             for j = 0, j < first res, j += 1
@@ -28,7 +28,7 @@ func main
     end try
 
     try
-        close(conn)
+        close(con)
     catch err
         echo "SQL: {}\n" format err
     end try

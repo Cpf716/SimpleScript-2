@@ -8,7 +8,7 @@
 
 #include "operator_t.h"
 
-namespace simple {
+namespace ss {
     struct bao_t : public operator_t {
         //  MEMBER FUNCTIONS
         

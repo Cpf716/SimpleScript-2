@@ -7,58 +7,80 @@
 
 #include "while_statement.h"
 
-namespace simple {
+namespace ss {
     //  CONSTRUCTORS
 
     while_statement::while_statement(const string expression, const size_t statementc, statement_t** statementv) {
         if (expression.empty())
-            expect("expression");
+            expect_error("expression");
         
-        this -> expression = expression;
+        this->expression = expression;
         
         if (statementc && is_clause(statementv[statementc - 1]))
-            expect("expression");
+            expect_error("expression");
         
-        this -> statementc = statementc;
-        this -> statementv = statementv;
+        this->statementc = statementc;
+        this->statementv = statementv;
     }
-
-    //  MEMBER FUNCTIONS
 
     void while_statement::close() {
         for (size_t i = 0; i < statementc; ++i)
-            statementv[i] -> close();
+            statementv[i]->close();
         
         delete[] statementv;
         delete this;
     }
 
-    string while_statement::evaluate(interpreter* ss) {
+    //  MEMBER FUNCTIONS
+
+    bool while_statement::analyze(interpreter* ssu) const {
+        if (!statementc) {
+            cout << "'while' statement has empty body\n";
+            
+            return false;
+        }
+        
+        size_t i = 0;
+        while (i < statementc - 1 && !statementv[i]->analyze(ssu))
+            ++i;
+        
+        if (i != statementc - 1)
+            cout << "Unreachable code\n";
+                
+        if (statementv[i]->analyze(ssu) &&
+            (statementv[i]->compare("break") ||
+             statementv[i]->compare("return")))
+            cout << "'while' statement will execute at most once\n";
+        
+        return false;
+    }
+
+    string while_statement::evaluate(interpreter* ssu) {
         unsupported_error("evaluate()");
         return EMPTY;
     }
 
-    string while_statement::execute(interpreter* ss) {
+    string while_statement::execute(interpreter* ssu) {
         should_break = false;
         
         while (1) {
-            const string buid = ss -> backup();
+            const string buid = ssu->backup();
             
-            if (!simple::evaluate(ss -> evaluate(expression))) {
-                ss -> restore(buid);
+            if (!ss::evaluate(ssu->evaluate(expression))) {
+                ssu->restore(buid);
                 break;
             }
             
             should_continue = false;
             
             for (size_t i = 0; i < statementc; ++i) {
-                statementv[i] -> execute(ss);
+                statementv[i]->execute(ssu);
                 
                 if (should_break || should_continue)
                     break;
             }
             
-            ss -> restore(buid);
+            ssu->restore(buid);
             
             if (should_break)
                 break;
@@ -75,28 +97,6 @@ namespace simple {
 
     void while_statement::set_return(const string result) {
         should_break = true;
-        parent -> set_return(result);
-    }
-
-    bool while_statement::validate(interpreter* ss) const {
-        if (!statementc) {
-            cout << "'while' statement has empty body\n";
-            
-            return false;
-        }
-        
-        size_t i = 0;
-        while (i < statementc - 1 && !statementv[i] -> validate(ss))
-            ++i;
-        
-        if (i != statementc - 1)
-            cout << "Unreachable code\n";
-                
-        if (statementv[i] -> validate(ss) &&
-            (statementv[i] -> compare("break") ||
-             statementv[i] -> compare("return")))
-            cout << "'while' statement will execute at most once\n";
-        
-        return false;
+        parent->set_return(result);
     }
 }

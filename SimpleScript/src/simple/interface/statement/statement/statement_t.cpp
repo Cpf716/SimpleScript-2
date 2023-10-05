@@ -7,11 +7,11 @@
 
 #include "statement_t.h"
 
-namespace simple {
+namespace ss {
     //  NON-MEMBER FUNCTIONS
 
     bool evaluate(const string result) {
-        if (simple::is_array(result))
+        if (ss::is_array(result))
             return true;
         
         if (result.empty())
@@ -27,9 +27,9 @@ namespace simple {
     }
 
     bool is_clause(class statement_t* statement) {
-        return statement -> compare("catch") ||
-            statement -> compare("else") ||
-            statement -> compare("elseif") ||
-            statement -> compare("finally");
+        return statement->compare("catch") ||
+            statement->compare("else") ||
+            statement->compare("elseif") ||
+            statement->compare("finally");
     }
 }

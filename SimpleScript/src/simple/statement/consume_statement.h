@@ -10,7 +10,7 @@
 
 #include "statement_t.h"
 
-namespace simple {
+namespace ss {
     class consume_statement: public statement_t {
         //  MEMBER FIELDS
         
@@ -20,24 +20,26 @@ namespace simple {
         
         consume_statement(const string symbol) {
             if (!is_symbol(symbol))
-                expect("symbol");
+                expect_error("symbol");
             
-            this -> symbol = symbol;
+            this->symbol = symbol;
         }
         
         void close() { delete this; }
         
         //  MEMBER FUNCTIONS
         
+        bool analyze(interpreter* ssu) const { return false; }
+        
         bool compare(const string val) const { return false; }
         
-        string evaluate(interpreter* ss) {
+        string evaluate(interpreter* ssu) {
             unsupported_error("evaluate()");
             return EMPTY;
         }
         
-        string execute(interpreter* ss) {
-            ss -> consume(symbol);
+        string execute(interpreter* ssu) {
+            ssu->consume(symbol);
             
             return EMPTY;
         }
@@ -49,8 +51,6 @@ namespace simple {
         void set_parent(statement_t* parent) { }
         
         void set_return(const string result) { unsupported_error("set_return()"); }
-        
-        bool validate(interpreter* ss) const { return false; }
     };
 }
 

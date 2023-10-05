@@ -12,7 +12,7 @@
 
 using namespace std;
 
-namespace simple {
+namespace ss {
     struct statement_t {
         //  CONSTRUCTORS
         
@@ -20,11 +20,13 @@ namespace simple {
         
         //  MEMBER FUNCTIONS
         
+        virtual bool analyze(interpreter* ssu) const = 0;
+        
         virtual bool compare(const string val) const = 0;
         
-        virtual string evaluate(interpreter* ss) = 0;
+        virtual string evaluate(interpreter* ssu) = 0;
         
-        virtual string execute(interpreter* ss) = 0;
+        virtual string execute(interpreter* ssu) = 0;
         
         //  MEMBER FUNCTIONS
         
@@ -35,8 +37,6 @@ namespace simple {
         virtual void set_parent(statement_t* parent) = 0;
         
         virtual void set_return(const string result) = 0;
-        
-        virtual bool validate(interpreter* ss) const = 0;
     };
 
     //  NON-MEMBER FUNCTIONS

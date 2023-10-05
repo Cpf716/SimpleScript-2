@@ -10,13 +10,13 @@
 
 #define STOPWATCH false
 
-using namespace simple;
+using namespace ss;
 
 int main(int argc, char* argv[]) {
     if (STOPWATCH)
         cout << "Building...\n";
     
-    interpreter ss;
+    interpreter ssu;
     
     string path = argc == 1 ? BASE_DIR + "main.txt" : argv[1];
     
@@ -27,9 +27,9 @@ int main(int argc, char* argv[]) {
     
     node<string>* root = new node<string>(EMPTY, NULL);
     
-    class file* file = new class file(path, &ss, root);
+    class file* file = new class file(path, &ssu, root);
      
-    root -> close();
+    root->close();
     
     time_point<steady_clock> end;
     
@@ -40,11 +40,11 @@ int main(int argc, char* argv[]) {
         cout << "Running...\n";
     }
     
-    ss.set_function(file);
+    ssu.set_function(file);
     
     ostringstream os;
     
-    os << file -> name();
+    os << file->name();
     
     if (argc > 2) {
         os << "(";
@@ -61,10 +61,10 @@ int main(int argc, char* argv[]) {
         beg = steady_clock::now();
     
     try {
-        statement(os.str()).execute(&ss);
+        statement(os.str()).execute(&ssu);
         
-    } catch (simple::error e) {
-        ss.print_stack_trace();
+    } catch (ss::error e) {
+        ssu.print_stack_trace();
         
         throw e;
     }

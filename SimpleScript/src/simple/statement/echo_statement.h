@@ -10,7 +10,7 @@
 
 #include "statement_t.h"
 
-namespace simple {
+namespace ss {
     class echo_statement: public statement_t {
         //  MEMBER FIELDS
         
@@ -20,7 +20,7 @@ namespace simple {
         
         echo_statement(const string expression) {
             if (expression.empty())
-                expect("expression");
+                expect_error("expression");
             
             this->expression = expression;
         }
@@ -29,17 +29,19 @@ namespace simple {
         
         //  MEMBER FUNCTIONS
         
+        bool analyze(interpreter* ssu) const { return false; }
+        
         bool compare(const string val) const { return false; }
         
-        string evaluate(interpreter* ss) {
+        string evaluate(interpreter* ssu) {
             unsupported_error("evaluate()");
             return EMPTY;
         }
         
-        string execute(interpreter* ss) {
-            string result = ss->evaluate(expression);
+        string execute(interpreter* ssu) {
+            string result = ssu->evaluate(expression);
             
-            if (simple::is_array(result))
+            if (ss::is_array(result))
                 type_error("array", "string");
             
             cout << (result.empty() ? "null" : decode(result));
@@ -54,8 +56,6 @@ namespace simple {
         void set_parent(statement_t* parent) { }
         
         void set_return(const string result) { unsupported_error("set_return()"); }
-        
-        bool validate(interpreter* ss) const { return false; }
     };
 }
 

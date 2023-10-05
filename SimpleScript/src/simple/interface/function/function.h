@@ -10,7 +10,7 @@
 
 #include "function_t.h"
 
-namespace simple {
+namespace ss {
     class function: public function_t {
         //  MEMBER FIELDS
         
@@ -19,8 +19,8 @@ namespace simple {
         //  CONSTRUCTORS
         
         function(const string name, const std::function<string(size_t, string *)> operation) {
-            this -> rename(name);
-            this -> operation = operation;
+            this->rename(name);
+            this->operation = operation;
         }
         
         void close() { delete this; }

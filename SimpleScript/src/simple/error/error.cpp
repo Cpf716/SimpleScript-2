@@ -7,7 +7,7 @@
 
 #include "error.h"
 
-namespace simple {
+namespace ss {
     //  CONSTRUCTORS
 
     error::error(const std::string message) {
@@ -24,7 +24,7 @@ namespace simple {
 
     void defined_error(const std::string symbol) { throw error(symbol + " is defined"); }
 
-    void expect(const std::string subject) { throw error("Expected " + subject); }
+    void expect_error(const std::string subject) { throw error("Expected " + subject); }
 
     void null_error() { throw error("null"); }
 

@@ -7,7 +7,7 @@
 
 #include "exception.h"
 
-namespace simple {
+namespace ss {
     //  CONSTRUCTORS
 
     exception::exception(const std::string message) {

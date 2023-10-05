@@ -1,5 +1,3 @@
-//  problem:    inefficiency
-
 include "@/search/string/words"
 include "@/table/sort/sortRows"
 

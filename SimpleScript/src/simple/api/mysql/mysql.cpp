@@ -7,7 +7,7 @@
 
 #include "mysql.h"
 
-namespace simple {
+namespace ss {
     namespace api {
         size_t autoincrement = 10000;
 
@@ -97,14 +97,14 @@ namespace simple {
             return 0;
         }
 
-        void mysql_set_schema(const size_t connection, const std::string schema) {
+        bool mysql_set_schema(const size_t connection, const std::string schema) {
             if (connbst == NULL)
-                return;
+                return false;
             
             int i = index_of(connbst, connection);
             
             if (i == -1)
-                return;
+                return false;
             
             try {
                 conns[i].second->setSchema(schema);
@@ -112,6 +112,8 @@ namespace simple {
             } catch (sql::SQLException& e) {
                 throw e;
             }
+            
+            return true;
         }
 
         sql::ResultSet* mysql_prepare_query(const size_t connection, const string sql, const size_t argc, string* argv) {

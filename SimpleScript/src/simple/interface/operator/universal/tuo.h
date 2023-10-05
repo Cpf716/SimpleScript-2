@@ -10,7 +10,7 @@
 
 #include "operator_t.h"
 
-namespace simple {
+namespace ss {
     class tuo: public operator_t {
         //  MEMBER FIELDS
         
@@ -19,8 +19,8 @@ namespace simple {
         //  CONSTRUCTORS
         
         tuo(const string opcode, const std::function<string(const string, const string, const string)> operation) {
-            this -> set_opcode(opcode);
-            this -> operation = operation;
+            this->set_opcode(opcode);
+            this->operation = operation;
         }
         
         void close() { delete this; }

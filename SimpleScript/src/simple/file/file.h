@@ -12,9 +12,9 @@
 #include "node.h"
 
 using namespace chrono;
-using namespace simple;
+using namespace ss;
 
-namespace simple {
+namespace ss {
     class file: public function_t {
         //  MEMBER FIELDS
         
@@ -23,23 +23,23 @@ namespace simple {
         
         string filepath;
         
-        file_statement* main = NULL;
+        interpreter* ssu = NULL;
         
-        interpreter* ss = NULL;
+        file_statement* target = NULL;
         
         //  MEMBER FUNCTIONS
         
-        simple::array<string> marshall(const size_t argc, string* argv) const;
+        ss::array<string> marshall(const size_t argc, string* argv) const;
     public:
         //  CONSTRUCTORS
         
-        file(const string filepath, interpreter* ss, node<string>* parent);
+        file(const string filepath, interpreter* ssu, node<string>* parent);
+        
+        void close();
         
         //  MEMBER FUNCTIONS
         
         string call(const size_t argc, string* argv);
-        
-        void close();
     };
 }
 

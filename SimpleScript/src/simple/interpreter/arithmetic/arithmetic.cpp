@@ -7,7 +7,7 @@
 
 #include "arithmetic.h"
 
-namespace simple {
+namespace ss {
     //  CONSTRUCTORS
 
     arithmetic::~arithmetic() {
@@ -19,7 +19,7 @@ namespace simple {
         delete[] bu_symbolv;
         
         if (number_bst != NULL)
-            number_bst -> close();
+            number_bst->close();
         
         for (size_t i = 0; i < numberc; ++i)
             delete numberv[i];
@@ -27,12 +27,12 @@ namespace simple {
         delete[] numberv;
         
         if (symbol_bst != NULL)
-            symbol_bst -> close();
+            symbol_bst->close();
         
         delete[] symbolv;
         
         for (size_t i = 0; i < aoc; ++i)
-            aov[i] -> close();
+            aov[i]->close();
         
         delete[] aov;
         
@@ -95,7 +95,7 @@ namespace simple {
             //  (j = 0) < (n = 1) && j % 2 == 0
                 
         size_t i = 0;
-        while (i < aoc && aov[i] -> opcode() != data[start])
+        while (i < aoc && aov[i]->opcode() != data[start])
             ++i;
             //  test leading term for operator
         
@@ -126,7 +126,7 @@ namespace simple {
                     break;
                 
                 size_t k = 0;
-                while (k < aoc && aov[k] -> opcode() != data[j])
+                while (k < aoc && aov[k]->opcode() != data[j])
                     ++k;
                     //  test terms subsequent unary operator for operators
                 
@@ -157,7 +157,7 @@ namespace simple {
                 size_t k;
                 for (k = j - 1; k >= 0; --k) {
                     size_t l = 0;
-                    while (l < unary_count && aov[l] -> opcode() != data[k])
+                    while (l < unary_count && aov[l]->opcode() != data[k])
                         ++l;
                     
                     if (l != unary_count)
@@ -182,7 +182,7 @@ namespace simple {
                 break;
             
             i = 0;
-            while (i < aoc && data[start] != aov[i] -> opcode())
+            while (i < aoc && data[start] != aov[i]->opcode())
                 ++i;
                 //  test term for operator
             
@@ -206,7 +206,7 @@ namespace simple {
                 //  ignore balanced enclosing parentheses
                 
                 size_t k = 0;
-                while (k < aoc && aov[k] -> opcode() != data[j])
+                while (k < aoc && aov[k]->opcode() != data[j])
                     ++k;
                     //  test terms subsequent binary operator for operators
                 
@@ -237,7 +237,7 @@ namespace simple {
                 size_t k;
                 for (k = j - 1; k >= 0; --k) {
                     size_t l = unary_count;
-                    while (l < aoc && aov[l] -> opcode() != data[k])
+                    while (l < aoc && aov[l]->opcode() != data[k])
                         ++l;
                     
                     if (l != aoc)
@@ -308,7 +308,7 @@ namespace simple {
         numberv = new tuple<string, double, pair<bool, bool>>*[1];
         
         if (number_bst != NULL) {
-            number_bst -> close();
+            number_bst->close();
             
             number_bst = NULL;
         }
@@ -318,7 +318,7 @@ namespace simple {
         symbolc = 0;
         
         if (symbol_bst != NULL) {
-            symbol_bst -> close();
+            symbol_bst->close();
          
             symbol_bst = NULL;
         }
@@ -326,7 +326,7 @@ namespace simple {
 
     void arithmetic::disable_write(const string symbol) {
         if (symbol.empty())
-            expect(symbol);
+            expect_error(symbol);
         
         int i = io_number(symbol);
         
@@ -357,7 +357,7 @@ namespace simple {
         
         --symbolc;
         
-        symbol_bst -> close();
+        symbol_bst->close();
         
         symbol_bst = symbolc ? build(symbolv, 0, (int)symbolc) : NULL;
         
@@ -373,7 +373,7 @@ namespace simple {
         
         --numberc;
         
-        number_bst -> close();
+        number_bst->close();
         
         string _symbolv[numberc];
         
@@ -400,7 +400,7 @@ namespace simple {
         
         for (int i = (int)n - 1; i >= 0; --i) {
             int j = 0;
-            while (j < aoc && aov[j] -> opcode() != data[i])
+            while (j < aoc && aov[j]->opcode() != data[i])
                 ++j;
             
             if (j == aoc)
@@ -411,7 +411,7 @@ namespace simple {
                 if (j < unary_count) {
                     uao* u = (uao *)aov[j];
                     
-                    d = u -> apply(value(s.top()));
+                    d = u->apply(value(s.top()));
                     
                     s.pop();
                 } else {
@@ -420,10 +420,10 @@ namespace simple {
                     bao_t* b = (bao_t *)aov[j];
                     
                     if (j < 25) {
-                        d = b -> apply(value(lhs), value(s.top()));
+                        d = b->apply(value(lhs), value(s.top()));
                         s.pop();
                     } else {
-                        d = j == aoc - 1 ? value(s.top()) : b -> apply(value(lhs), value(s.top()));
+                        d = j == aoc - 1 ? value(s.top()) : b->apply(value(lhs), value(s.top()));
                         s.pop();
                         set_number(lhs, d);
                     }
@@ -493,16 +493,16 @@ namespace simple {
         aov[24] = new bbao("|", [](const double lhs, const double rhs) { return (int)lhs | (int)rhs; });
         //  bitwise
         
-        aov[25] = new bao("*=", [this](const double lhs, const double rhs) { return ((bao *)aov[7]) -> apply(lhs, rhs); });
-        aov[26] = new bao("/=", [this](const double lhs, const double rhs) { return ((bao *)aov[8]) -> apply(lhs, rhs);; });
-        aov[27] = new bao("%=", [this](const double lhs, const double rhs) { return ((bao *)aov[9]) -> apply(lhs, rhs); });
-        aov[28] = new bao("-=", [this](const double lhs, const double rhs) { return ((bao *)aov[11]) -> apply(lhs, rhs); });
-        aov[29] = new bbao(">>=", [this](const double lhs, const double rhs) { return ((bao *)aov[12]) -> apply(lhs, rhs); });
-        aov[30] = new bbao("<<=", [this](const double lhs, const double rhs) { return ((bao *)aov[13]) -> apply(lhs, rhs); });
-        aov[31] = new bbao("&=", [this](const double lhs, const double rhs) { return ((bao *)aov[23]) -> apply(lhs, rhs); });
-        aov[32] = new bbao("^=", [this](const double lhs, const double rhs) { return ((bao *)aov[24]) -> apply(lhs, rhs); });
-        aov[33] = new bbao("|=", [this](const double lhs, const double rhs) { return ((bao *)aov[25]) -> apply(lhs, rhs); });
-        aov[34] = new bao("+=", [this](const double lhs, const double rhs) { return ((bao *)aov[10]) -> apply(lhs, rhs); });
+        aov[25] = new bao("*=", [this](const double lhs, const double rhs) { return ((bao *)aov[7])->apply(lhs, rhs); });
+        aov[26] = new bao("/=", [this](const double lhs, const double rhs) { return ((bao *)aov[8])->apply(lhs, rhs);; });
+        aov[27] = new bao("%=", [this](const double lhs, const double rhs) { return ((bao *)aov[9])->apply(lhs, rhs); });
+        aov[28] = new bao("-=", [this](const double lhs, const double rhs) { return ((bao *)aov[11])->apply(lhs, rhs); });
+        aov[29] = new bbao(">>=", [this](const double lhs, const double rhs) { return ((bao *)aov[12])->apply(lhs, rhs); });
+        aov[30] = new bbao("<<=", [this](const double lhs, const double rhs) { return ((bao *)aov[13])->apply(lhs, rhs); });
+        aov[31] = new bbao("&=", [this](const double lhs, const double rhs) { return ((bao *)aov[23])->apply(lhs, rhs); });
+        aov[32] = new bbao("^=", [this](const double lhs, const double rhs) { return ((bao *)aov[24])->apply(lhs, rhs); });
+        aov[33] = new bbao("|=", [this](const double lhs, const double rhs) { return ((bao *)aov[25])->apply(lhs, rhs); });
+        aov[34] = new bao("+=", [this](const double lhs, const double rhs) { return ((bao *)aov[10])->apply(lhs, rhs); });
         aov[35] = new bao("=", [](const double lhs, const double rhs) { return rhs; });
         //  binary
         
@@ -575,7 +575,7 @@ namespace simple {
 
     void arithmetic::insert(const string symbol) {
         if (symbol.empty())
-            expect("symbol");
+            expect_error("symbol");
         
         int i = io_symbol(symbol);
         
@@ -603,7 +603,7 @@ namespace simple {
         }
         
         if (symbol_bst != NULL)
-            symbol_bst -> close();
+            symbol_bst->close();
         
         symbol_bst = build(symbolv, 0, (int)symbolc);
     }
@@ -625,7 +625,7 @@ namespace simple {
         for (int i = 0; i < 9; ++i) {
             for (int j = 1; j < n - 1; ++j) {
                 int k = 0;
-                while (k < baoc[i] && baov[i][k] -> opcode() != data[j])
+                while (k < baoc[i] && baov[i][k]->opcode() != data[j])
                     ++k;
                 
                 if (k != baoc[i]) {
@@ -644,7 +644,7 @@ namespace simple {
                     
                     if (l > 0) {
                         int m = 0;
-                        while (m < unary_count && aov[m] -> opcode() != data[l - 1])
+                        while (m < unary_count && aov[m]->opcode() != data[l - 1])
                             ++m;
                         
                         if (m != unary_count)
@@ -661,7 +661,7 @@ namespace simple {
                     int r = ++j;
                     
                     int m = 0;
-                    while (m < unary_count && aov[m] -> opcode() != data[r + 1])
+                    while (m < unary_count && aov[m]->opcode() != data[r + 1])
                         ++m;
                     
                     if (m != unary_count)
@@ -694,7 +694,7 @@ namespace simple {
             int j;
             for (j = 0; j < 9; ++j) {
                 int k = 0;
-                while (k < baoc[j] && baov[j][k] -> opcode() != data[i])
+                while (k < baoc[j] && baov[j][k]->opcode() != data[i])
                     ++k;
                 
                 if (k != baoc[j])
@@ -749,10 +749,10 @@ namespace simple {
         
         for (size_t j = 0; j < numberc; ++j) {
             size_t k = 0;
-            while (k < bu_numberv[i] -> first && std::get<0>(* numberv[j]) != std::get<0>(* bu_numberv[i] -> second[k]))
+            while (k < bu_numberv[i]->first && std::get<0>(* numberv[j]) != std::get<0>(* bu_numberv[i]->second[k]))
                 ++k;
             
-            if (k == bu_numberv[i] -> first) {
+            if (k == bu_numberv[i]->first) {
                 if (verbose)
                     if (!std::get<2>(* numberv[j]).second)
                         cout << "Unused variable '" << std::get<0>(* numberv[j]) << "'\n";
@@ -762,8 +762,8 @@ namespace simple {
                     ++l;
                 
                 if (l == symbolc) {
-                    std::get<1>(* bu_numberv[i] -> second[k]) = std::get<1>(* numberv[j]);
-                    std::get<2>(* bu_numberv[i] -> second[k]).second = std::get<2>(* numberv[j]).second;
+                    std::get<1>(* bu_numberv[i]->second[k]) = std::get<1>(* numberv[j]);
+                    std::get<2>(* bu_numberv[i]->second[k]).second = std::get<2>(* numberv[j]).second;
                 } else {
                     for (; l < symbolc - 1; ++l)
                         swap(symbolv[l], symbolv[l + 1]);
@@ -777,8 +777,8 @@ namespace simple {
         
         delete[] numberv;
         
-        numberc = bu_numberv[i] -> first;
-        numberv = bu_numberv[i] -> second;
+        numberc = bu_numberv[i]->first;
+        numberv = bu_numberv[i]->second;
         
         delete bu_numberv[i];
         
@@ -786,7 +786,7 @@ namespace simple {
             swap(bu_numberv[j], bu_numberv[j + 1]);
         
         if (number_bst != NULL)
-            number_bst -> close();
+            number_bst->close();
         
         string _symbolv[numberc];
         
@@ -795,10 +795,10 @@ namespace simple {
         
         number_bst = numberc ? build(_symbolv, 0, (int)numberc) : NULL;
         
-        delete[] this -> symbolv;
+        delete[] this->symbolv;
         
-        this -> symbolc = std::get<1>(* bu_symbolv[i]);
-        this -> symbolv = std::get<2>(* bu_symbolv[i]);
+        this->symbolc = std::get<1>(* bu_symbolv[i]);
+        this->symbolv = std::get<2>(* bu_symbolv[i]);
         
         delete bu_symbolv[i];
         
@@ -806,9 +806,9 @@ namespace simple {
             swap(bu_symbolv[j], bu_symbolv[j + 1]);
         
         if (symbol_bst != NULL)
-            symbol_bst -> close();
+            symbol_bst->close();
         
-        symbol_bst = this -> symbolc ? build(this -> symbolv, 0, (int)this -> symbolc) : NULL;
+        symbol_bst = this->symbolc ? build(this->symbolv, 0, (int)this->symbolc) : NULL;
         
         --backupc;
     }
@@ -823,7 +823,7 @@ namespace simple {
     //  precondition:   key is non-empty & double is not nan
     void arithmetic::set_number(const string symbol, const double value) {
         if (!is_symbol(symbol))
-            expect("symbol");
+            expect_error("symbol");
         
         int i = io_number(symbol);
         
@@ -853,7 +853,7 @@ namespace simple {
             insert(symbol);
             
             if (number_bst != NULL)
-                number_bst -> close();
+                number_bst->close();
             
             string symbolv[numberc];
             
@@ -911,12 +911,12 @@ namespace simple {
         while (i < expr.length()) {
             int j;
             for (j = 0; j < aoc; ++j) {
-               if (i + aov[j] -> opcode().length() <= expr.length()) {
+               if (i + aov[j]->opcode().length() <= expr.length()) {
                    int k = 0;
-                   while (k < aov[j] -> opcode().length() && aov[j] -> opcode()[k] == expr[i + k])
+                   while (k < aov[j]->opcode().length() && aov[j]->opcode()[k] == expr[i + k])
                        ++k;
                    
-                   if (k == aov[j] -> opcode().length()) {
+                   if (k == aov[j]->opcode().length()) {
                        end = i;
                        
                        while (start < end && isspace(expr[start]))
@@ -963,7 +963,7 @@ namespace simple {
                            ++end;
                        }
                        
-                       data[n++] = aov[j] -> opcode();
+                       data[n++] = aov[j]->opcode();
                        
                        start = i + k;
                        i = start;
@@ -1020,12 +1020,12 @@ namespace simple {
         for (i = 1; i < n; ++i) {
             if (data[i] == "=") {
                 size_t j = unary_count + 1;
-                while (j < 14 && aov[j] -> opcode() != data[i - 1])
+                while (j < 14 && aov[j]->opcode() != data[i - 1])
                     ++j;
                 
                 if (j == 14) {
                     size_t k = 23;
-                    while (k < 26 && aov[k] -> opcode() != data[i - 1])
+                    while (k < 26 && aov[k]->opcode() != data[i - 1])
                         ++k;
                     
                     if (k != 26) {
@@ -1084,7 +1084,7 @@ namespace simple {
                         
                     } else {
                         size_t j = 0;
-                        while (j < aoc && aov[j] -> opcode() != data[i - 1])
+                        while (j < aoc && aov[j]->opcode() != data[i - 1])
                             ++j;
                         
                         if (j != aoc) {
@@ -1109,7 +1109,7 @@ namespace simple {
 
     void arithmetic::consume(const string symbol) {
         if (symbol.empty())
-            expect("symbol");
+            expect_error("symbol");
         
         int i = io_number(symbol);
         

@@ -24,7 +24,7 @@
 
 using namespace std;
 
-namespace simple {
+namespace ss {
     class arithmetic {
         //  MEMBER FIELDS
         

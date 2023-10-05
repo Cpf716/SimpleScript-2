@@ -7,7 +7,7 @@
 
 #include "socket.h"
 
-namespace simple {
+namespace ss {
     namespace api {
         //  CONSTRUCTORS
 

@@ -7,7 +7,7 @@
 
 #include "function_statement.h"
 
-namespace simple {
+namespace ss {
     //  CONSTRUCTORS
 
     function_statement::function_statement(const string specifier, const size_t statementc, statement_t** statementv) {
@@ -17,7 +17,7 @@ namespace simple {
         if (!tokenc || !is_symbol(tokenv[0])) {
             delete[] tokenv;
             
-            expect("symbol");
+            expect_error("symbol");
         }
         
         if (tokenc == 1)
@@ -26,7 +26,7 @@ namespace simple {
             if (tokenv[1] != "=>") {
                 delete[] tokenv;
                 
-                expect("';' after expression");
+                expect_error("';' after expression");
             }
             
             size_t e = 2, s = e;   int p = 0;
@@ -68,7 +68,7 @@ namespace simple {
                     if (!is_symbol(_tokenv[0])) {
                         delete[] tokenv;
                         
-                        expect("symbol in 'function' statement specificer");
+                        expect_error("symbol in 'function' statement specificer");
                     }
                     
                     if (previous != -1) {
@@ -90,7 +90,7 @@ namespace simple {
                     if (j == _tokenc || !is_symbol(_tokenv[j]) || _tokenv[j + 1] != "=") {
                         delete[] tokenv;
                         
-                        expect("symbol in 'function' statement specificer");
+                        expect_error("symbol in 'function' statement specificer");
                     }
                     
                     if (previous != -1 && previous != (int)i - 1) {
@@ -106,7 +106,7 @@ namespace simple {
                 
                 if (tokenv[i * 2 + 3] != ",") {
                     delete[] tokenv;
-                    expect("';' after expression");
+                    expect_error("';' after expression");
                 }
             }
             
@@ -117,7 +117,7 @@ namespace simple {
                 if (!is_symbol(tokenv[tokenc - 1])) {
                     delete[] tokenv;
                     
-                    expect("symbol in 'function' statement specificer");
+                    expect_error("symbol in 'function' statement specificer");
                 }
                 
                 if (previous != -1) {
@@ -139,7 +139,7 @@ namespace simple {
                 if (i == _tokenc || !is_symbol(_tokenv[i]) || _tokenv[i + 1] != "=") {
                     delete[] tokenv;
                     
-                    expect("symbol in 'function' statement specificer");
+                    expect_error("symbol in 'function' statement specificer");
                 }
                 
                 ++optionalc;
@@ -157,17 +157,17 @@ namespace simple {
         delete[] tokenv;
         
         if (statementc && is_clause(statementv[statementc - 1]))
-            expect("expression");
+            expect_error("expression");
         
-        this -> statementc = statementc;
-        this -> statementv = statementv;
+        this->statementc = statementc;
+        this->statementv = statementv;
     }
 
     void function_statement::close() {
         delete[] expressionv;
         
         for (size_t i = 0; i < statementc; ++i)
-            statementv[i] -> close();
+            statementv[i]->close();
         
         delete[] statementv;
         
@@ -176,13 +176,32 @@ namespace simple {
 
     //  MEMBER FUNCTIONS
 
+    bool function_statement::analyze(interpreter* ssu) const {
+        if (!statementc) {
+            cout << "'function' statement has empty body\n";
+            
+            return false;
+        }
+        
+        size_t i = 0;
+        while (i < statementc - 1 && !statementv[i]->analyze(ssu))
+            ++i;
+        
+        if (i != statementc - 1)
+            cout << "Unreachable code\n";
+        
+        statementv[statementc - 1]->analyze(ssu);
+        
+        return false;
+    }
+
     string function_statement::call(const size_t argc, string* argv) {
         if (argc < expressionc - optionalc || argc > expressionc)
-            expect(to_string(expressionc - optionalc) + " argument(s) but got " + to_string(argc));
+            expect_error(to_string(expressionc - optionalc) + " argument(s) but got " + to_string(argc));
         
         should_return = false;
         
-        string buid = ss -> backup();
+        string buid = ssu->backup();
         
         consume();
         
@@ -202,40 +221,40 @@ namespace simple {
             if (j < tokenc && tolower(tokenv[j]) == "array")
                 ++j;
             
-            if (ss -> is_defined(tokenv[j]))
-                ss -> drop(tokenv[j]);
+            if (ssu->is_defined(tokenv[j]))
+                ssu->drop(tokenv[j]);
             
             if (i < argc)
                 set_value(tokenv[j], argv[i]);
             else
-                ss -> evaluate(expressionv[i]);
+                ssu->evaluate(expressionv[i]);
             
             symbolv[i] = tokenv[j];
         }
         
         for (size_t i = 0; i < statementc; ++i) {
-            statementv[i] -> execute(ss);
+            statementv[i]->execute(ssu);
 
             if (should_return)
                 break;
         }
 
-        ss -> restore(buid, true, expressionc, symbolv);
+        ssu->restore(buid, true, expressionc, symbolv);
         
         return result;
     }
 
     bool function_statement::compare(const string val) const { return false; }
 
-    string function_statement::evaluate(interpreter* ss) {
+    string function_statement::evaluate(interpreter* ssu) {
         unsupported_error("evaluate()");
         
         return EMPTY;
     }
 
-    string function_statement::execute(interpreter* ss) {
-        this -> ss = ss;
-        this -> ss -> set_function(this);
+    string function_statement::execute(interpreter* ssu) {
+        this->ssu = ssu;
+        this->ssu->set_function(this);
         
         return EMPTY;
     }
@@ -245,43 +264,24 @@ namespace simple {
     void function_statement::set_continue() { throw error("continue cannot be used outside of a loop"); }
 
     void function_statement::set_return(const string result) {
-        this -> result = result;
-        this -> should_return = true;
+        this->result = result;
+        this->should_return = true;
     }
 
     void function_statement::set_value(const string symbol, const string value) {
-        if (ss -> is_defined(symbol))
-            ss -> drop(symbol);
+        if (ssu->is_defined(symbol))
+            ssu->drop(symbol);
         
         string valuev[value.length() + 1];
         size_t valuec = parse(valuev, value);
         
         if (valuec == 1) {
             if (value.empty() || is_string(value))
-                ss -> set_string(symbol, value);
+                ssu->set_string(symbol, value);
             else
-                ss -> set_number(symbol, stod(value));
+                ssu->set_number(symbol, stod(value));
         } else
             for (size_t j = 0; j < valuec; ++j)
-                ss -> set_array(symbol, j, valuev[j]);
-    }
-
-    bool function_statement::validate(interpreter* ss) const {
-        if (!statementc) {
-            cout << "'function' statement has empty body\n";
-            
-            return false;
-        }
-        
-        size_t i = 0;
-        while (i < statementc - 1 && !statementv[i] -> validate(ss))
-            ++i;
-        
-        if (i != statementc - 1)
-            cout << "Unreachable code\n";
-        
-        statementv[statementc - 1] -> validate(ss);
-        
-        return false;
+                ssu->set_array(symbol, j, valuev[j]);
     }
 }

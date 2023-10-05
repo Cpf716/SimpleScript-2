@@ -11,7 +11,7 @@
 #include "bao_t.h"
 #include "utility.h"
 
-namespace simple {
+namespace ss {
     class bbao: public bao_t {
         //  MEMBER FIELDS
         
@@ -20,8 +20,8 @@ namespace simple {
         //  CONSTRUCTORS
         
         bbao(const string opcode, const std::function<double(double, double)> operation) {
-            this -> set_opcode(opcode);
-            this -> operation = operation;
+            this->set_opcode(opcode);
+            this->operation = operation;
         }
         
         void close() { delete this; }

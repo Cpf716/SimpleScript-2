@@ -28,7 +28,7 @@
 #include "while_statement.h"
 #include "sleep_statement.h"
 
-namespace simple {
+namespace ss {
     class file_statement: public statement_t {
         //  MEMBER FIELDS
         
@@ -54,11 +54,13 @@ namespace simple {
         
         //  MEMBER FUNCTIONS
         
+        bool analyze(interpreter* ssu) const;
+        
         bool compare(const string val) const;
         
-        string evaluate(interpreter* ss);
+        string evaluate(interpreter* ssu);
         
-        string execute(interpreter* ss);
+        string execute(interpreter* ssu);
         
         void set_break();
         
@@ -67,8 +69,6 @@ namespace simple {
         void set_parent(statement_t* parent);
         
         void set_return(const string result);
-        
-        bool validate(interpreter* ss) const;
     };
 }
 

@@ -8,7 +8,7 @@
 #include "utility.h"
 #include <cmath>
 
-namespace simple {
+namespace ss {
     const std::string delimeters[] = { "!", "(", ")", ",", ".", ":", ";" };
 
     std::string toupper(const std::string str) {
@@ -522,7 +522,7 @@ namespace simple {
         return parse(data, val) != 1;
     }
 
-    std::string stringify(simple::array<std::string> data, std::size_t beg, std::size_t len) {
+    std::string stringify(ss::array<std::string> data, std::size_t beg, std::size_t len) {
         std::stringstream ss;
         
         if (len) {
@@ -536,9 +536,9 @@ namespace simple {
         return ss.str();
     }
 
-    std::string stringify(simple::array<std::string> data) { return stringify(data, 0, data.size()); }
+    std::string stringify(ss::array<std::string> data) { return stringify(data, 0, data.size()); }
 
-    std::string stringify(simple::array<std::string> data, std::size_t beg) { return stringify(data, beg, data.size() - beg); }
+    std::string stringify(ss::array<std::string> data, std::size_t beg) { return stringify(data, beg, data.size() - beg); }
 
     std::string stringify(const std::size_t n, std::string* data) {
         if (!n) return EMPTY;
@@ -678,7 +678,7 @@ namespace simple {
         return false;
     }
 
-    bool is_dictionary(simple::array<std::string> data) {
+    bool is_dictionary(ss::array<std::string> data) {
         if (data.size() % 2 == 0) {
             std::size_t i = 0;
             while (i < (std::size_t)floor(data.size() / 2) && is_string(data[i * 2]) && data[i * 2].length() != 2)
@@ -714,7 +714,7 @@ namespace simple {
         return false;
     }
 
-    bool is_table(simple::array<std::string> data) {
+    bool is_table(ss::array<std::string> data) {
         if (data.size() > 1 && (!data[0].empty() && !is_string(data[0]))) {
             double d = stod(data[0]);
             if (d - (int)d == 0 && d >= 1) {
