@@ -64,7 +64,7 @@ namespace ss {
         should_break = false;
         
         while (1) {
-            const string buid = ssu->backup();
+            string buid = ssu->backup();
             
             if (!ss::evaluate(ssu->evaluate(expression))) {
                 ssu->restore(buid);

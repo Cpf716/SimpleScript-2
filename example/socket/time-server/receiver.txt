@@ -11,14 +11,18 @@ func main
 
     echo "Connected...\n"
 
-    val = null
+    b = null
 
     while 1
-        if !(val = recv(a))
+        if !(b = recv(a))
             break
         end if
         
-        echo "{}\n" format isoString(parseTime(val))
+        array c = split(b, "\n")
+        
+        for d in c
+            echo "{}\n" format isoString(parseTime(d))
+        end for
     end while
 
     echo "Disconnected.\n"

@@ -28,6 +28,8 @@ namespace ss {
     class interpreter: public logic {
         //  MEMBER FIELDS
         
+        vector<pair<int, string>> signalv;
+        
         bst<pair<string, int>>* array_bst = NULL;
         bst<pair<string, int>>* function_bst = NULL;
         bst<pair<string, int>>* string_bst = NULL;
@@ -104,7 +106,9 @@ namespace ss {
         
         int io_array(const string symbol) const;
         
-        size_t merge(int n, string* data) const;
+        int merge(int n, string* data) const;
+        
+        int merge_numbers(int n, string* data) const;
         
         size_t prefix(string* dst, const string src) const;
         
@@ -150,6 +154,8 @@ namespace ss {
         void set_function(function_t* new_function);
         
         void set_string(const string symbol, const string value);
+        
+        bool signal(int signum);
         
         void consume(const string symbol);
     };

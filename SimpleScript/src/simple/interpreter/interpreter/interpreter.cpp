@@ -17,13 +17,13 @@ namespace ss {
             set_array("types", i, encode(types[i]));
         
         std::get<1>(* arrayv[io_array("types")]).shrink_to_fit();
-        std::get<2>(* arrayv[io_array("types")]) = pair<bool, bool>(true, true);
+        std::get<2>(* arrayv[io_array("types")]) = pair<bool, bool>(true, false);
         
         set_string("null", "");
-        std::get<2>(* stringv[io_string("null")]) = pair<bool, bool>(true, true);
+        std::get<2>(* stringv[io_string("null")]) = pair<bool, bool>(true, false);
         
         set_string("undefined", encode("undefined"));
-        std::get<2>(* stringv[io_string("undefined")]) = pair<bool, bool>(true, true);
+        std::get<2>(* stringv[io_string("undefined")]) = pair<bool, bool>(true, false);
         
         save();
     }
@@ -155,13 +155,6 @@ namespace ss {
         return _uuid;
     }
 
-    int interpreter::io_function(const string symbol) const {
-        if (function_bst == NULL)
-            return -1;
-        
-        return index_of(function_bst, symbol);
-    }
-
     void interpreter::drop(const string symbol) {
         int i = io_function(symbol);
         
@@ -264,8 +257,7 @@ namespace ss {
         
         start = steady_clock::now();
         
-        string* data = new string[expression.length() * 2 + 1];
-        
+        string data[expression.length() * 2 + 1];
         int n = (int)prefix(data, expression);
         
         /*
@@ -306,6 +298,15 @@ namespace ss {
                         
                         if (j == -1) {
                             //  validate operand
+                            
+                            string tokenv[data[i].length() + 1];
+                            int tokenc = (int)tokens(tokenv, data[i]);
+                            
+                            tokenc = merge_numbers(tokenc, tokenv);
+                            
+                            if (tokenc == 1 && !is_string(tokenv[0]) &&
+                                !is_symbol(tokenv[0]) && !is_double(tokenv[0]))
+                                    throw error("Unexpected token: " + data[i]);
                             
                             operands.push(data[i]);
                         } else {
@@ -3824,21 +3825,20 @@ namespace ss {
             }
         }
         
-        delete[] data;
-        
         if (!operands.size())
             return EMPTY;
         
         while (operands.size() > 1) {
             if (operands.top().empty() ||
-                ss::is_array(operands.top()) ||
-                is_string(operands.top())) {
+                    ss::is_array(operands.top()) ||
+                    is_string(operands.top())) {
                 operands.pop();
                 continue;
             }
             
             if (is_symbol(operands.top())) {
                 int i = io_array(operands.top());
+                
                 if (i == -1) {
                     i = io_string(operands.top());
                     
@@ -3849,8 +3849,6 @@ namespace ss {
                 } else
                     std::get<2>(* arrayv[i]).second = true;
                 
-            } else {
-                stod(operands.top());
             }
             
             operands.pop();
@@ -3858,7 +3856,7 @@ namespace ss {
         
         //  cout << operands.top() << endl;
             
-        if (operands.top().empty() || ss::is_array(operands.top()))
+        if (ss::is_array(operands.top()) || operands.top().empty())
             return operands.pop();
         
         if (is_string(operands.top())) {
@@ -3871,8 +3869,10 @@ namespace ss {
         
         if (is_symbol(operands.top())) {
             int i = io_array(operands.top());
+            
             if (i == -1) {
                 i = io_string(operands.top());
+                
                 if (i == -1)
                     return rtrim(get_number(operands.pop()));
                 
@@ -12416,7 +12416,7 @@ namespace ss {
             argv[0] = decode(argv[0]);
             
             if (argv[0].empty())
-                undefined_error("\"\"");
+                undefined_error("");
             
             ifstream file;
             
@@ -12437,7 +12437,7 @@ namespace ss {
             getline(cin, str);
             
             if (str.empty())
-                return string();
+                return EMPTY;
             
             if (is_double(str))
                 return rtrim(stod(str));
@@ -12954,6 +12954,57 @@ namespace ss {
             return encode(to_string(res));
         }));
         
+        set_function(new ss::function("signal", [this](const size_t argc, string* argv) {
+            if (argc != 2)
+                expect_error("2 argument(s), got " + to_string(argc));
+            
+            if (ss::is_array(argv[0]))
+                type_error(0, 3);
+                //  array => int
+            
+            if (argv[0].empty() || is_string(argv[0]))
+                type_error(4, 3);
+                //  string => int
+            
+            double num = stod(argv[0]);
+            
+            if (!is_int(num))
+                type_error(2, 3);
+                //  double => int
+            
+            if (num < 0)
+                range_error(rtrim(num));
+            
+            if (ss::is_array(argv[1]))
+                type_error(0, 4);
+                //  array => string
+            
+            if (argv[1].empty())
+                null_error();
+            
+            if (!is_string(argv[1]))
+                type_error(2, 4);
+                //  double => string
+            
+            string str = decode(argv[1]);
+            
+            int i = io_function(str);
+            
+            if (i == -1)
+                undefined_error(str);
+            
+            size_t j = 0;
+            while (j < signalv.size() && signalv[j].first != num)
+                ++j;
+            
+            if (j == signalv.size())
+                signalv.push_back(pair<int, string>((int)num, str));
+            else
+                signalv[j].second = str;
+            
+            return encode(types[5]);
+        }));
+        
         set_function(new ss::function("update", [this](const size_t argc, string* argv) {
             if (argc != 2)
                 expect_error("2 argument(s), got " + to_string(argc));
@@ -13018,7 +13069,7 @@ namespace ss {
             argv[0] = decode(argv[0]);
             
             if (argv[0].empty())
-                undefined_error("\"\"");
+                undefined_error("");
             
             string valuev[argv[1].length() + 1];
             size_t valuec = parse(valuev, argv[1]);
@@ -13064,6 +13115,13 @@ namespace ss {
          // */
     }
 
+    int interpreter::io_function(const string symbol) const {
+        if (function_bst == NULL)
+            return -1;
+        
+        return index_of(function_bst, symbol);
+    }
+
     bool interpreter::is_mutating(const string expression) const {
         string* data = new string[expression.length() + 1];
         size_t n = prefix(data, expression);
@@ -13088,14 +13146,15 @@ namespace ss {
                 while (j < uoc && term != uov[j]->opcode())
                     ++j;
                 
-                if (j == uoc) return is_symbol(term);
+                if (j == uoc)
+                    return n != 1 && is_symbol(term);
                 
                 return j >= assignment_oi ||
-                j == reserve_oi ||
-                j == insert_oi ||
-                j == splice_oi ||
-                j == resize_oi ||
-                j == shrink_oi;
+                    j == reserve_oi ||
+                    j == insert_oi ||
+                    j == splice_oi ||
+                    j == resize_oi ||
+                    j == shrink_oi;
             }
             
             return false;
@@ -13104,124 +13163,146 @@ namespace ss {
         return j >= 25;
     }
 
-    size_t interpreter::merge(int n, string* data) const {
-        if (n > 1) {
-            if (data[0] == ".") {
-                try {
-                    stoi(data[1]);
-                    
-                    data[0] += data[1];
-                    
-                    for (size_t j = 1; j < n - 1; ++j)
-                        swap(data[j], data[j + 1]);
-                    --n;
-                    
-                } catch (invalid_argument& ia) {
-                    //  do nothing
-                }
-            }
+    bool interpreter::signal(int signum) {
+        size_t i = 0;
+        while (i < signalv.size() && signalv[i].first != signum)
+            ++i;
+        
+        if (i == signalv.size())
+            return true;
+        
+        ostringstream ss;
+        
+        ss << signalv[i].second << "(" << signum << ")";
+        
+        string res = evaluate(ss.str());
+        
+        if (ss::is_array(res))
+            return true;
+        
+        if (res.empty())
+            return false;
+        
+        if (is_string(res)) {
+            res = decode(res);
             
-            for (size_t i = 1; i < n; ++i) {
-                if (data[i] == ".") {
-                    if (data[i - 1] == "(") {
-                        try {
-                            stoi(data[i + 1]);
-                            
-                            data[i] += data[i + 1];
-                            
-                            for (size_t j = i + 1; j < n - 1; ++j)
-                                swap(data[j], data[j + 1]);
-                            --n;
-                            
-                        } catch (invalid_argument& ia) {
-                            //  do nothing
-                        }
+            return !res.empty() && res != types[5];
+        }
+        
+        return !!stod(res);
+    }
+
+    int interpreter::merge_numbers(int n, string* data) const {
+        if (n == 1)
+            return n;
+        
+        if (data[0] == ".") {
+            if (is_double(data[1])) {
+                data[0] += data[1];
+                
+                for (size_t j = 1; j < n - 1; ++j)
+                    swap(data[j], data[j + 1]);
+                
+                --n;
+            }
+        }
+        
+        for (size_t i = 1; i < n; ++i) {
+            if (data[i] == ".") {
+                if (data[i - 1] == "(") {
+                    if (is_double(data[i + 1])) {
+                        data[i] += data[i + 1];
                         
-                    } else {
-                        try {
-                            stoi(data[i - 1]);
-                            
-                            data[i - 1] += data[i];
-                            
-                            for (size_t j = i; j < n - 1; ++j)
-                                swap(data[j], data[j + 1]);
-                            --n;
-                            --i;
-                            
-                            if (i < n - 1) {
-                                try {
-                                    stoi(data[i + 1]);
-                                    
-                                    data[i] += data[i + 1];
-                                    
-                                    for (size_t j = i + 1; j < n - 1; ++j)
-                                        swap(data[j], data[j + 1]);
-                                    --n;
-                                    
-                                } catch (invalid_argument& ia) {
-                                    //  do nothing
-                                }
+                        for (size_t j = i + 1; j < n - 1; ++j)
+                            swap(data[j], data[j + 1]);
+                        
+                        --n;
+                    }
+                } else {
+                    if (is_double(data[i - 1])) {
+                        data[i - 1] += data[i];
+                        
+                        for (size_t j = i; j < n - 1; ++j)
+                            swap(data[j], data[j + 1]);
+                        
+                        --n;
+                        --i;
+                        
+                        if (i < n - 1) {
+                            if (is_double(data[i + 1])) {
+                                data[i] += data[i + 1];
+                                
+                                for (size_t j = i + 1; j < n - 1; ++j)
+                                    swap(data[j], data[j + 1]);
+                                
+                                --n;
                             }
-                            
-                        } catch (invalid_argument& ia) {
-                            size_t j = 0;
-                            while (j < aoc && data[i - 1] != aov[j]->opcode())
+                        }
+                    } else {
+                        size_t j = 0;
+                        while (j < aoc && data[i - 1] != aov[j]->opcode())
+                            ++j;
+                        
+                        if (j == aoc) {
+                            j = 0;
+                            while (j < loc - 1 && data[i - 1] != lov[j]->opcode())
                                 ++j;
                             
-                            if (j == aoc) {
+                            if (j == loc - 1) {
                                 j = 0;
-                                while (j < loc - 1 && data[i - 1] != lov[j]->opcode())
+                                while (j < assignment_oi + 1 && data[i - 1] != uov[j]->opcode())
                                     ++j;
                                 
-                                if (j == loc - 1) {
-                                    j = 0;
-                                    while (j < assignment_oi + 1 && data[i - 1] != uov[j]->opcode())
-                                        ++j;
-                                    
-                                    if (j != assignment_oi + 1) {
-                                        try {
-                                            stoi(data[i + 1]);
-                                            
-                                            for (size_t k = i + 1; k < n - 1; ++k)
-                                                swap(data[k], data[k + 1]);
-                                            --n;
-                                            
-                                        } catch (invalid_argument& ia) {
-                                            //  do nothing
-                                        }
-                                    }
-                                } else {
-                                    try {
-                                        stoi(data[i + 1]);
-                                        
+                                if (j != assignment_oi + 1) {
+                                    if (is_double(data[i + 1])) {
                                         for (size_t k = i + 1; k < n - 1; ++k)
                                             swap(data[k], data[k + 1]);
-                                        --n;
                                         
-                                    } catch (invalid_argument& ia) {
-                                        //   do nothing
+                                        --n;
                                     }
                                 }
                             } else {
-                                try {
-                                    stoi(data[i + 1]);
-                                    
-                                    data[i] += data[i + 1];
-                                    
+                                if (is_double(data[i + 1])) {
                                     for (size_t k = i + 1; k < n - 1; ++k)
                                         swap(data[k], data[k + 1]);
-                                    --n;
                                     
-                                } catch (invalid_argument& ia) {
-                                    //  do nothing
+                                    --n;
                                 }
+                            }
+                        } else {
+                            if (is_double(data[i + 1])) {
+                                data[i] += data[i + 1];
+                                
+                                for (size_t k = i + 1; k < n - 1; ++k)
+                                    swap(data[k], data[k + 1]);
+                                
+                                --n;
                             }
                         }
                     }
                 }
             }
         }
-            
+        
+        return n;
+    }
+
+    int interpreter::merge(int n, string* data) const {
+        n = merge_numbers(n, data);
+        
+        //  merge inequality operators
+        
+        for (int i = 0; i < n - 1; ++i) {
+            if (data[i] == "!" && (data[i + 1] == "=" || data[i + 1] == "==")) {
+                data[i] += data[i + 1];
+                
+                for (size_t j = i + 1; j < n - 1; ++j)
+                    swap(data[j], data[j + 1]);
+                
+                --n;
+            }
+        }
+        
         //  merge logical expressions
         
         for (int i = 1; i < n - 1; ++i) {
@@ -13234,10 +13315,12 @@ namespace ss {
                 do {
                     if (data[l] == "(") {
                         ++p;
+                        
                         if (!p)
                             break;
                     } else if (data[l] == ")")
                         --p;
+                    
                     else if (p == -1) {
                         size_t k = 1;
                         while (k < loc - 1 && data[l] != lov[k]->opcode())
@@ -13274,6 +13357,7 @@ namespace ss {
                         ++p;
                     else if (data[r] == ")") {
                         --p;
+                        
                         if (!p)
                             break;
                     } else if (p == 1) {
@@ -13296,10 +13380,11 @@ namespace ss {
                     
                     for (size_t s = i + 2; s < n - 1; ++s)
                         swap(data[s], data[s + 1]);
+                    
                     --n;
                 }
                 
-                ++i;    //  binary operators cannot occur sequentially
+                ++i;    //  ???
             }
         }
             
@@ -13337,6 +13422,7 @@ namespace ss {
                     
                     for (size_t k = i + 1; k < n - 1; ++k)
                         swap(data[k], data[k + 1]);
+                    
                     --n;
                 }
                 
@@ -13358,6 +13444,7 @@ namespace ss {
                     
                     for (size_t k = i + 1; k < n - 1; ++k)
                         swap(data[k], data[k + 1]);
+                    
                     --n;
                 }
             }
@@ -13475,17 +13562,6 @@ namespace ss {
             ++i;
         }
         
-        for (int i = 0; i < n - 1; ++i) {
-            if (data[i] == "!" && (data[i + 1] == "=" || data[i + 1] == "==")) {
-                data[i] += data[i + 1];
-                
-                for (size_t j = i + 1; j < n - 1; ++j)
-                    swap(data[j], data[j + 1]);
-                
-                --n;
-            }
-        }
-        
         return n;
     }
 
@@ -13519,6 +13595,7 @@ namespace ss {
                 
                 for (size_t j = n; j > l; --j)
                     swap(dst[j], dst[j - 1]);
+                
                 ++n;
                 
                 size_t r;
@@ -13538,6 +13615,7 @@ namespace ss {
                         
                         if (j == unary_count) {
                             j = 0;
+                            
                             while (j < functionc && dst[r + 1] != functionv[j]->name())
                                 ++j;
                             

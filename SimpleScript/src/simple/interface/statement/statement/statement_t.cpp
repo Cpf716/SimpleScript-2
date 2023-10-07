@@ -20,7 +20,7 @@ namespace ss {
         if (is_string(result)) {
             string str = decode(result);
             
-            return !(str.empty() || str == "undefined");
+            return !str.empty() && str != "undefined";
         }
         
         return stod(result);

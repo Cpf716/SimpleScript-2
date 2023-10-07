@@ -47,23 +47,24 @@ namespace ss {
        
         set_number("E", exp(1));
         disable_write("E");
-        //  consume("E");
+        
+        set_number("SIGINT", 2);
+        disable_write("SIGINT");
+        
+        set_number("SIGKILL", 9);
+        disable_write("SIGKILL");
        
         set_number("pi", 2 * acos(0.0));
         disable_write("pi");
-        //  consume("pi");
        
         set_number("nan", NAN);
         disable_write("nan");
-        //  consume("nan");
         
         set_number("true", 1);
         disable_write("true");
-        //  consume("true");
         
         set_number("false", 0);
         disable_write("false");
-        //  consume("false");
     }
 
     //  MEMBER FUNCTIONS

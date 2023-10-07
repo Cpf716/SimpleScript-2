@@ -12,11 +12,19 @@
 
 using namespace ss;
 
+interpreter ssu;
+
+void signal_handler(int signum) {
+    if (ssu.signal(signum))
+        exit(signum);
+}
+
 int main(int argc, char* argv[]) {
+    signal(SIGINT, signal_handler);
+    signal(SIGKILL, signal_handler);
+    
     if (STOPWATCH)
         cout << "Building...\n";
-    
-    interpreter ssu;
     
     string path = argc == 1 ? BASE_DIR + "main.txt" : argv[1];
     
@@ -44,18 +52,16 @@ int main(int argc, char* argv[]) {
     
     ostringstream os;
     
-    os << file->name();
+    os << file->name() << "(";
     
     if (argc > 2) {
-        os << "(";
-        
         for (size_t i = 2; i < argc - 1; i += 1)
             os << (is_double(argv[i]) ? rtrim(stod(argv[i])) : encode(argv[i])) << ",";
         
         os << (is_double(argv[argc - 1]) ? rtrim(stod(argv[argc - 1])) : encode(argv[argc - 1]));
-        
-        os << ")";
     }
+    
+    os << ")";
     
     if (STOPWATCH)
         beg = steady_clock::now();

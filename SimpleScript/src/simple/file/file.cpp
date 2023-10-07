@@ -153,7 +153,7 @@ namespace ss {
                     ++j;
                 
                 if (j == n)
-                    expect_error("'*/'");
+                    --j;
                 
                 for (size_t k = i; k <= j; ++k) {
                     for (size_t l = i; l < n - 1; ++l)
