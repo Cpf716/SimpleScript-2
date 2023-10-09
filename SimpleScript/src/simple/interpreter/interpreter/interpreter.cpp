@@ -29,74 +29,94 @@ namespace ss {
     }
 
     interpreter::~interpreter() {
+        //  close logger
+        write();
+        
+        //  close APIs
         api::mysql_close();
         api::socket_close();
         
-        write();
-        
+        //  restore backups
         while (backupc)
             restore(bu_numberv[backupc - 1]->first, false);
         
+        //  deallocate backups
         delete[] bu_arrayv;
         delete[] bu_functionv;
         delete[] bu_numberv;
         delete[] bu_stringv;
         
+        //  close arrays tree
         if (array_bst != NULL)
             array_bst->close();
         
+        //  deallocate arrays
         for (size_t i = 0; i < arrayc; ++i)
             delete arrayv[i];
         
         delete[] arrayv;
         
+        //  close functions tree
         if (function_bst != NULL)
             function_bst->close();
         
+        //  close functions
         for (size_t i = 0; i < functionc; ++i)
             functionv[i]->close();
         
         delete[] functionv;
         
+        //  close strings tree
         if (string_bst != NULL)
             string_bst->close();
         
+        //  deallocate strings
         for (size_t i = 0; i < stringc; ++i)
             delete stringv[i];
         
         delete[] stringv;
         
-        for (size_t i = 0; i < uoc; ++i)
-            uov[i]->close();
-        
-        delete[] uov;
-                
+        //  deallocate universal operators tree
         for (size_t i = 0; i < 6; ++i)
             delete[] buov[i];
         
         delete[] buov;
+        
+        //  close universal operators
+        for (size_t i = 0; i < uoc; ++i)
+            uov[i]->close();
+        
+        delete[] uov;
     }
 
     //  MEMBER FUNCTIONS
 
     string interpreter::backup() {
-        const string _uuid = uuid();
+        string _uuid = uuid();
         
+        //  resize backups
         if (is_pow(backupc, 2)) {
+            
+            //  resize numbers
             pair<string, string>** _bu_numberv = new pair<string, string>*[backupc * 2];
+            
             for (size_t i = 0; i < backupc; ++i)
                 _bu_numberv[i] = bu_numberv[i];
             
             delete[] bu_numberv;
             bu_numberv = _bu_numberv;
             
+            //  resize functions
             pair<size_t, function_t**>** _bu_functionv = new pair<size_t, function_t**>*[backupc * 2];
+            
             for (size_t i = 0; i < backupc; ++i)
                 _bu_functionv[i] = bu_functionv[i];
             
             delete[] bu_functionv;
             bu_functionv = _bu_functionv;
             
+            //  resize arrays
+            //  array value is a pointer, as its internal pointer will be deallocated otherwise when control exits the array's declaring scope
             pair<size_t, tuple<string, ss::array<string>*, pair<bool, bool>>**>** _bu_arrayv = new pair<size_t, tuple<string, ss::array<string>*, pair<bool, bool>>**>*[backupc * 2];
             
             for (size_t i = 0; i < backupc; ++i)
@@ -105,6 +125,7 @@ namespace ss {
             delete[] bu_arrayv;
             bu_arrayv = _bu_arrayv;
             
+            //  resize strings
             pair<size_t, tuple<string, string, pair<bool, bool>>**>** _bu_stringv = new pair<size_t, tuple<string, string, pair<bool, bool>>**>*[backupc * 2];
             
             for (size_t i = 0; i < backupc;  ++i)
@@ -113,9 +134,21 @@ namespace ss {
             delete[] bu_stringv;
             bu_stringv = _bu_stringv;
         }
-            
-        bu_numberv[backupc] = new pair<string, string>(_uuid, arithmetic::backup());
         
+        //  backup arrays
+        tuple<string, ss::array<string>*, pair<bool, bool>>** _arrayv = new tuple<string, ss::array<string>*, pair<bool, bool>>*[pow2(arrayc)];
+        
+        for (size_t i = 0; i < arrayc; ++i) {
+            string first = std::get<0>(* arrayv[i]);
+            ss::array<string>* second = new ss::array<string>(std::get<1>(* arrayv[i]));
+            pair<bool, bool> third = std::get<2>(* arrayv[i]);
+            
+            _arrayv[i] = new tuple<string, ss::array<string>*, pair<bool, bool>>(first, second, third);
+        }
+        
+        bu_arrayv[backupc] = new pair<size_t, tuple<string, ss::array<string>*, pair<bool, bool>>**>(arrayc, _arrayv);
+        
+        //  backup functions
         function_t** _functionv = new function_t*[pow2(functionc)];
         
         for (size_t i = 0; i < functionc; ++i)
@@ -123,27 +156,16 @@ namespace ss {
         
         bu_functionv[backupc] = new pair<size_t, function_t**>(functionc, _functionv);
         
-        tuple<string, ss::array<string>*, pair<bool, bool>>** _arrayv = new tuple<string, ss::array<string>*, pair<bool, bool>>*[pow2(arrayc)];
+        //  backup numbers
+        bu_numberv[backupc] = new pair<string, string>(_uuid, arithmetic::backup());
         
-        for (size_t i = 0; i < arrayc; ++i) {
-            string first = std::get<0>(* arrayv[i]);
-            
-            //  requires pointer since array contains internal pointer
-            ss::array<string>* second = new ss::array<string>(std::get<1>(* arrayv[i]));
-            
-            pair<bool, bool> third = std::get<2>(* arrayv[i]);
-            
-            _arrayv[i] = new tuple<string, ss::array<string>*, pair<bool, bool>>(first, second, third);
-        }
-        
-        bu_arrayv[backupc] = new pair<size_t, tuple<string, ss::array<string>*, pair<bool, bool>    >**>(arrayc, _arrayv);
-        
+        //  backup strings
         tuple<string, string, pair<bool, bool>>** _stringv = new tuple<string, string, pair<bool, bool>>*[pow2(stringc)];
         
         for (size_t i = 0; i < stringc; ++i) {
-            const string first = std::get<0>(* stringv[i]);
-            const string second = std::get<1>(* stringv[i]);
-            const pair<bool, bool> third = std::get<2>(* stringv[i]);
+            string first = std::get<0>(* stringv[i]);
+            string second = std::get<1>(* stringv[i]);
+            pair<bool, bool> third = std::get<2>(* stringv[i]);
             
             _stringv[i] = new tuple<string, string, pair<bool, bool>>(first, second, third);
         }
@@ -258,7 +280,7 @@ namespace ss {
         start = steady_clock::now();
         
         string data[expression.length() * 2 + 1];
-        int n = (int)prefix(data, expression);
+        int n = prefix(data, expression);
         
         /*
         for (size_t i = 0; i < n; ++i)
@@ -3830,10 +3852,10 @@ namespace ss {
         
         while (operands.size() > 1) {
             if (operands.top().empty() ||
-                    ss::is_array(operands.top()) ||
-                    is_string(operands.top())) {
-                operands.pop();
-                continue;
+                ss::is_array(operands.top()) ||
+                is_string(operands.top())) {
+                    operands.pop();
+                    continue;
             }
             
             if (is_symbol(operands.top())) {
@@ -3860,9 +3882,7 @@ namespace ss {
             return operands.pop();
         
         if (is_string(operands.top())) {
-            string tmp = decode(operands.pop());
-            
-            operands.push(tmp);
+            operands.push(decode(operands.pop()));
             
             return encode(operands.top());
         }
@@ -3890,7 +3910,8 @@ namespace ss {
         
         end = steady_clock::now();
         
-        logger << duration<double>(end - start).count() << "\n";    //  seconds
+        //  seconds
+        logger << duration<double>(end - start).count() << "\n";
         
         return result;
     }
@@ -13123,7 +13144,7 @@ namespace ss {
     }
 
     bool interpreter::is_mutating(const string expression) const {
-        string* data = new string[expression.length() + 1];
+        string data[expression.length() + 1];
         size_t n = prefix(data, expression);
         
         size_t i = 0;
@@ -13368,7 +13389,7 @@ namespace ss {
                         if (k != loc - 1 ||
                             data[r] == uov[unary_count]->opcode() ||
                             data[r] == uov[conditional_oi]->opcode())
-                            break;
+                                break;
                     }
                     
                     ++r;
@@ -13468,6 +13489,7 @@ namespace ss {
                         ++p;
                     else if (data[k] == ")")
                         --p;
+                    
                     if (!p)
                         break;
                     ++k;
@@ -13565,7 +13587,7 @@ namespace ss {
         return n;
     }
 
-    size_t interpreter::prefix(string* dst, const string src) const {
+    int interpreter::prefix(string* dst, const string src) const {
         int n = (int)split(dst, src);
         
         //  array indexer
@@ -13760,10 +13782,12 @@ namespace ss {
                     
                     for (size_t m = n; m > r + 1; --m)
                         swap(dst[m], dst[m - 1]);
+                    
                     ++n;
                     
                     for (size_t m = j; m > l + 1; --m)
                         swap(dst[m], dst[m - 1]);
+                    
                     ++j;
                 }
             }
@@ -13871,10 +13895,12 @@ namespace ss {
                     
                     for (size_t k = n; k > r + 1; --k)
                         swap(dst[k], dst[k - 1]);
+                    
                     ++n;
                     
                     for (size_t k = j; k > l + 1; --k)
                         swap(dst[k], dst[k - 1]);
+                    
                     ++j;
                 }
             }
@@ -13979,10 +14005,6 @@ namespace ss {
                         
                     } while (r < n - 1 && p);
                     
-                    /*
-                     *
-                     */
-                    
                     dst[n] = ")";
                     
                     for (size_t m = n; m > r + 1; --m)
@@ -14025,33 +14047,43 @@ namespace ss {
     void interpreter::restore(const string uuid, bool verbose) { restore(uuid, verbose, 0, nullptr); }
 
     void interpreter::restore(const string uuid, const bool verbose, size_t symbolc, string* symbolv) {
+        //  find backup
         size_t i = 0;
         while (i < backupc && bu_numberv[i]->first != uuid)
             ++i;
         
+        //  no such backup
         if (i == backupc)
             undefined_error(uuid);
                 
+        //  restore arrays
         for (size_t j = 0; j < arrayc; ++j) {
+            
+            //  find array
             size_t k = 0;
             while (k < bu_arrayv[i]->first && std::get<0>(* bu_arrayv[i]->second[k]) != std::get<0>(* arrayv[j]))
                 ++k;
             
+            //  no such array
             if (k == bu_arrayv[i]->first) {
                 if (verbose)
                     if (!std::get<2>(* arrayv[j]).second)
                         cout << "Unused variable '" << std::get<0>(* arrayv[j]) << "'\n";
             } else {
+                //  find exception
                 size_t l = 0;
                 while (l < symbolc && std::get<0>(* arrayv[j]) != symbolv[l])
                     ++l;
                 
+                //  no such exception
                 if (l == symbolc) {
+                    //  update array
                     delete std::get<1>(* bu_arrayv[i]->second[k]);
                     
                     std::get<1>(* bu_arrayv[i]->second[k]) = new ss::array<string>(std::get<1>(* arrayv[j]));
                     std::get<2>(* bu_arrayv[i]->second[k]).second = std::get<2>(* arrayv[j]).second;
                 } else {
+                    //  remove exception
                     for (; l < symbolc - 1; ++l)
                         swap(symbolv[l], symbolv[l + 1]);
                     
@@ -14060,11 +14092,13 @@ namespace ss {
             }
         }
         
+        //  deallocate arrays
         for (size_t j = 0; j < arrayc; ++j)
             delete arrayv[j];
         
         delete[] arrayv;
         
+        //  copy arrays
         arrayc = bu_arrayv[i]->first;
         arrayv = new tuple<string, ss::array<string>, pair<bool, bool>>*[pow2(arrayc)];
         
@@ -14073,16 +14107,20 @@ namespace ss {
             ss::array<string> second = *std::get<1>(* bu_arrayv[i]->second[j]);
             pair<bool, bool> third = std::get<2>(* bu_arrayv[i]->second[j]);
             
-            delete std::get<1>(* bu_arrayv[i]->second[j]);
-            
             arrayv[j] = new tuple<string, ss::array<string>, pair<bool, bool>>(first, second, third);
+            
+            delete std::get<1>(* bu_arrayv[i]->second[j]);
+            delete bu_arrayv[i]->second[j];
         }
         
+        delete[] bu_arrayv[i]->second;
         delete bu_arrayv[i];
         
+        //  remove arrays backup
         for (size_t j = i; j < backupc - 1; ++j)
             swap(bu_arrayv[j], bu_arrayv[j + 1]);
         
+        //  rebuild arrays tree
         if (array_bst != NULL)
             array_bst->close();
         
@@ -14095,27 +14133,35 @@ namespace ss {
         
         delete[] _symbolv;
         
+        //  restore functions
         if (verbose) {
             for (size_t j = 0; j < functionc; ++j) {
+                
+                //  find function
                 size_t k = 0;
                 while (k < bu_functionv[i]->first && bu_functionv[i]->second[k]->name() != functionv[j]->name())
                     ++k;
                 
+                //  no such function
                 if (k == bu_functionv[i]->first && !functionv[j]->count())
                     cout << "Unused function '" << functionv[j]->name() << "'\n";
             }
         }
         
+        //  deallocate functions
         delete[] functionv;
         
+        //  copy functions
         functionc = bu_functionv[i]->first;
         functionv = bu_functionv[i]->second;
         
         delete bu_functionv[i];
         
+        //  remove functions backup
         for (size_t j = i; j < backupc - 1; ++j)
             swap(bu_functionv[j], bu_functionv[j + 1]);
         
+        //  rebuild functions tree
         if (function_bst != NULL)
             function_bst->close();
         
@@ -14128,31 +14174,39 @@ namespace ss {
         
         delete[] _symbolv;
         
+        //  restore numbers
         arithmetic::restore(bu_numberv[i]->second, verbose, symbolc, symbolv);
 
         delete bu_numberv[i];
         
+        //  remove numbers backup
         for (size_t j = i; j < backupc - 1; ++j)
             swap(bu_numberv[j], bu_numberv[j + 1]);
         
+        //  restore strings
         for (size_t j = 0; j < stringc; ++j) {
+            //  find string
             size_t k = 0;
             while (k < bu_stringv[i]->first && std::get<0>(* stringv[j]) != std::get<0>(* bu_stringv[i]->second[k]))
                 ++k;
             
+            //  no such string
             if (k == bu_stringv[i]->first) {
                 if (verbose)
                     if (!std::get<2>(* stringv[j]).second)
                         cout << "Unused variable '" << std::get<0>(* stringv[j]) << "'\n";
             } else {
+                //  find exception
                 size_t l = 0;
                 while (l < symbolc && std::get<0>(* stringv[j]) != symbolv[l])
                     ++l;
                 
+                //  no such exception
                 if (l == symbolc) {
                     std::get<1>(* bu_stringv[i]->second[k]) = std::get<1>(* stringv[j]);
                     std::get<2>(* bu_stringv[i]->second[k]).second = std::get<2>(* stringv[j]).second;
                 } else {
+                    //  remove exception
                     for (; l < symbolc - 1; ++l)
                         swap(symbolv[l], symbolv[l + 1]);
                     
@@ -14161,17 +14215,23 @@ namespace ss {
             }
         }
         
+        //  deallocate strings
         for (size_t j = 0; j < stringc; ++j)
             delete stringv[j];
         
+        delete[] stringv;
+        
+        //  copy strings
         stringc = bu_stringv[i]->first;
         stringv = bu_stringv[i]->second;
         
         delete bu_stringv[i];
         
+        //  remove strings backup
         for (size_t j = i; j < backupc - 1; ++j)
             swap(bu_stringv[j], bu_stringv[j + 1]);
         
+        //  rebuild strings tree
         if (string_bst != NULL)
             string_bst->close();
         
@@ -14216,8 +14276,8 @@ namespace ss {
         if (!is_symbol(symbol))
             expect_error("symbol");
         
-        if (!value.empty() && !is_string(value))
-            stod(value);
+        if (!value.empty() && !is_string(value) && !is_double(value))
+            throw error("Unexpected token: " + value);
         
         size_t i = io_array(symbol);
         
@@ -14277,14 +14337,14 @@ namespace ss {
             defined_error(new_function->name());
         
         if (is_pow(functionc, 2)) {
-            function_t** tmp = new function_t*[functionc * 2];
+            function_t** _functionv = new function_t*[functionc * 2];
             
             for (size_t i = 0; i < functionc; ++i)
-                tmp[i] = functionv[i];
+                _functionv[i] = functionv[i];
             
             delete[] functionv;
             
-            functionv = tmp;
+            functionv = _functionv;
         }
         
         functionv[functionc] = new_function;
@@ -14362,7 +14422,7 @@ namespace ss {
         }
     }
 
-    size_t interpreter::split(string* dst, string src) const {
+    int interpreter::split(string* dst, string src) const {
         return merge((int)tokens(dst, src), dst);
     }
 
@@ -14372,8 +14432,6 @@ namespace ss {
         
         if (rhs > 7)
             range_error(to_string(rhs));
-        
-        if (lhs == rhs) return;
         
         ss::type_error(types[lhs], types[rhs]);
     }

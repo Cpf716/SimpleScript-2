@@ -36,7 +36,8 @@ namespace ss {
     }
 
     bool is_symbol(const std::string str) {
-        if (str.empty()) return false;
+        if (str.empty())
+            return false;
         
         std::size_t s = 0;
         while (s < str.length() && str[s] != '`')
@@ -541,14 +542,17 @@ namespace ss {
     std::string stringify(ss::array<std::string> data, std::size_t beg) { return stringify(data, beg, data.size() - beg); }
 
     std::string stringify(const std::size_t n, std::string* data) {
-        if (!n) return EMPTY;
+        if (!n)
+            return EMPTY;
         
         std::stringstream ss;
         
-        for (std::size_t i = 0; i < n - 1; ++i)
-            ss << data[i] << ',';
-        
-        ss << data[n - 1];
+        if (n) {
+            for (std::size_t i = 0; i < n - 1; ++i)
+                ss << data[i] << ',';
+            
+            ss << data[n - 1];
+        }
         
         return ss.str();
     }
@@ -581,10 +585,8 @@ namespace ss {
             while (e < dst[i].length()) {
                 std::size_t j;
                 for (j = 0; j < sizeof (delimeters) / sizeof(delimeters[0]); ++j) {
-                    /*
-                    if ((int)dst[i].length() - delimeters[j].length() <= 0)
+                    if (e + delimeters[j].length() > dst[i].length())
                         continue;
-                     */
                     
                     std::size_t k = 0;
                     while (k < delimeters[j].length() && dst[i][e + k] == delimeters[j][k])
@@ -980,20 +982,24 @@ namespace ss {
     std::string uuid() {
         std::ostringstream os;
         
+        std::random_device rd;
+        std::mt19937_64 gen(rd());
+        std::uniform_int_distribution<> uid;
+        
         for (std::size_t i = 0; i < 8; ++i)
-            os << std::hex << rand() % 16;
+            os << std::hex << uid(gen) % 16;
         
         os << '-';
         
         for (std::size_t i = 0; i < 3; ++i) {
             for (std::size_t j = 0; j < 4; ++j)
-                os << std::rand() % 16;
+                os << uid(gen) % 16;
             
             os << '-';
         }
         
         for (std::size_t i = 0; i < 12; ++i)
-            os << std::hex << rand() % 16;
+            os << std::hex << uid(gen) % 16;
         
         return os.str();
     }

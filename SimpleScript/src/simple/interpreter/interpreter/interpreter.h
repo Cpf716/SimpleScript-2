@@ -110,11 +110,11 @@ namespace ss {
         
         int merge_numbers(int n, string* data) const;
         
-        size_t prefix(string* dst, const string src) const;
+        int prefix(string* dst, const string src) const;
         
         void save();
         
-        size_t split(string* dst, string src) const;
+        int split(string* dst, string src) const;
         
         void type_error(const size_t lhs, const size_t rhs);
         

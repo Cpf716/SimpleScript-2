@@ -438,7 +438,8 @@ namespace ss {
                                 
                                 --p;
                                 
-                                if (!p) break;
+                                if (!p)
+                                    break;
                             } else
                                 delete[] tokenv;
                         } else

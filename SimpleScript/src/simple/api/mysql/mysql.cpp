@@ -11,9 +11,9 @@ namespace ss {
     namespace api {
         size_t autoincrement = 10000;
 
-        vector<pair<size_t, sql::Connection*>> conns;
-
         bst<pair<size_t, int>>* connbst = NULL;
+    
+        vector<pair<size_t, sql::Connection*>> conns;
 
         size_t mysql_connect(const string host_name, const string user_name, const string password) {
             sql::Driver *driver = NULL;

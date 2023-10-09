@@ -40,7 +40,6 @@ namespace ss {
         
         string execute(interpreter* ssu) {
             ssu->consume(symbol);
-            
             return EMPTY;
         }
         

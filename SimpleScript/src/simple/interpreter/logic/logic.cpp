@@ -261,17 +261,8 @@ namespace ss {
         return arithmetic::evaluate(s.top());
     }
 
-    //  causual component of err:   1 == 1
-
     size_t logic::merge(string* data, int n) const {
-        
-        //  both i and n must be integers, otherwise i < n - 3 returns max int
-        
-        //  merge equality, two-tailed relational operators, and compound assignment
-        //  then, merge arithmetic expressions
-        
         int i;
-        
         for (i = 0; i < n - 1; ++i) {
             if (data[i + 1] == lov[loc - 1]->opcode()) {
                 //  =
@@ -521,33 +512,12 @@ namespace ss {
                         swap(data[k], data[k - 1]);
                     
                     ++n;
+                    
+                    for (size_t k = j; k > l + 1; --k)
+                        swap(data[k], data[k - 1]);
+                    
+                    ++i;
                 }
-            }
-        }
-        
-        for (i = 0; i < n; ++i) {
-            size_t j = 1;
-            while (j < loc && lov[j]->opcode() != data[i])
-                ++j;
-            
-            if (j != loc) {
-                size_t l = i;   int p = -1;
-                
-                do {
-                    --l;
-                    
-                    if (data[l] == "(")
-                        ++p;
-                    
-                    else if (data[l] == ")")
-                        --p;
-                    
-                } while (p);
-                
-                for (size_t k = i; k > l + 1; --k)
-                    swap(data[k], data[k - 1]);
-                
-                ++i;
             }
         }
         

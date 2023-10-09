@@ -22,8 +22,8 @@
 		9C63BEFD29F1DDDE008C46ED /* logic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1CFB3C2915ED8500584726 /* logic.cpp */; };
 		9C63BEFE29F1DDE0008C46ED /* arithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C6F3C3A290CA179004559AB /* arithmetic.cpp */; };
 		9C63BF0229F1DE4D008C46ED /* interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CF86541291AF97E00CFCF26 /* interpreter.cpp */; };
+		9C7231172AD3C7AF00FD57C8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C63BF0029F1DE3A008C46ED /* main.cpp */; };
 		9C9713F92AC2206B00FDB285 /* utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C1CFB392915ED2500584726 /* utility.cpp */; };
-		9C9713FA2AC2211100FDB285 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C63BF0029F1DE3A008C46ED /* main.cpp */; };
 		9CA157842A11B840009201E1 /* statement_t.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CA157832A11B840009201E1 /* statement_t.cpp */; };
 		9CA5D77D2A0F7CEF001C560E /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CA5D77B2A0F7C27001C560E /* error.cpp */; };
 		9CB2B0552A818A3E00F0B735 /* bst.h in Sources */ = {isa = PBXBuildFile; fileRef = 9CB2B0532A80B24E00F0B735 /* bst.h */; };
@@ -137,6 +137,8 @@
 		9C63BF0029F1DE3A008C46ED /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		9C6DD85529480B2A00EF8D62 /* function_t.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = function_t.h; sourceTree = "<group>"; };
 		9C6F3C3A290CA179004559AB /* arithmetic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = arithmetic.cpp; sourceTree = "<group>"; };
+		9C7231132AD3C3BF00FD57C8 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		9C7231152AD3C5B800FD57C8 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		9C7C9E7129F8E19800053DA2 /* variance.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = variance.txt; sourceTree = "<group>"; };
 		9C7C9E7229F8E1A300053DA2 /* deviation.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = deviation.txt; sourceTree = "<group>"; };
 		9C7C9E7429F8E1D700053DA2 /* indexOf.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = indexOf.txt; sourceTree = "<group>"; };
@@ -900,6 +902,7 @@
 			children = (
 				9C1CFB3B2915ED8500584726 /* logic.h */,
 				9C1CFB3C2915ED8500584726 /* logic.cpp */,
+				9C7231132AD3C3BF00FD57C8 /* main.cpp */,
 			);
 			path = logic;
 			sourceTree = "<group>";
@@ -909,6 +912,7 @@
 			children = (
 				9CC64C5C290C9403000D3C48 /* arithmetic.h */,
 				9C6F3C3A290CA179004559AB /* arithmetic.cpp */,
+				9C7231152AD3C5B800FD57C8 /* main.cpp */,
 			);
 			path = arithmetic;
 			sourceTree = "<group>";
@@ -1159,10 +1163,10 @@
 				9C63BEFE29F1DDE0008C46ED /* arithmetic.cpp in Sources */,
 				9C1BB8C12A36BD15006E4360 /* file.cpp in Sources */,
 				9C9713F92AC2206B00FDB285 /* utility.cpp in Sources */,
-				9C9713FA2AC2211100FDB285 /* main.cpp in Sources */,
 				9C63BEFD29F1DDDE008C46ED /* logic.cpp in Sources */,
 				9C163A722A3E0C4D006CAABD /* function_statement.cpp in Sources */,
 				9C163A802A3E3324006CAABD /* else_statement.cpp in Sources */,
+				9C7231172AD3C7AF00FD57C8 /* main.cpp in Sources */,
 				9C3DC9F12AC898290014F28A /* exception.cpp in Sources */,
 				9CCBFC672A37DA2C00AB115B /* do_while_statement.cpp in Sources */,
 				9CCBFC612A37D7BB00AB115B /* while_statement.cpp in Sources */,

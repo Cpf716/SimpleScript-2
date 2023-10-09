@@ -45,7 +45,6 @@ namespace ss {
         
         string execute(interpreter* ssu) {
             ssu-> evaluate(expression);
-             
             return EMPTY;
         }
         

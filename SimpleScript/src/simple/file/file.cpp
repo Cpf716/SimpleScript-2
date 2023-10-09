@@ -18,7 +18,13 @@ namespace ss {
             throw error("No such file: " + filepath);
         
         this->filepath = filepath;
-        this->rename(::filename(filepath));
+        
+        string filename = ::filename(filepath);
+        
+        if (!is_symbol(filename))
+            expect_error("symbol");
+        
+        this->rename(filename);
         
         string* src = new string[1];
         size_t n = 0;
@@ -356,6 +362,8 @@ namespace ss {
         
         this->target = new file_statement(n, src, filec, _filev);
         this->ssu = ssu;
+        
+        delete[] src;
     }
 
     //  MEMBER FUNCTIONS

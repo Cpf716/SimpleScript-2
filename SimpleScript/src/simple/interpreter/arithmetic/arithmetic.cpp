@@ -11,35 +11,42 @@ namespace ss {
     //  CONSTRUCTORS
 
     arithmetic::~arithmetic() {
+        //  restore backups
         while (backupc)
             restore(std::get<0>(* bu_symbolv[backupc - 1]), false);
         
+        //  deallocate backups
         delete[] bu_numberv;
-        
         delete[] bu_symbolv;
         
+        //  close numbers tree
         if (number_bst != NULL)
             number_bst->close();
         
+        //  dellocate numbers
         for (size_t i = 0; i < numberc; ++i)
             delete numberv[i];
         
         delete[] numberv;
         
+        //  close symbols tree
         if (symbol_bst != NULL)
             symbol_bst->close();
         
+        //  deallocate symbols
         delete[] symbolv;
         
-        for (size_t i = 0; i < aoc; ++i)
-            aov[i]->close();
-        
-        delete[] aov;
-        
+        //  deallocate arithmetic operators tree
         for (size_t i = 0; i < 9; ++i)
             delete[] baov[i];
         
         delete[] baov;
+        
+        //  close arithmetic operators
+        for (size_t i = 0; i < aoc; ++i)
+            aov[i]->close();
+        
+        delete[] aov;
     }
 
     arithmetic::arithmetic() {
@@ -252,17 +259,26 @@ namespace ss {
     }
 
     string arithmetic::backup() {
+        string _uuid = uuid();
+        
+        //  resize backups
         if (is_pow(backupc, 2)) {
-            pair<size_t, tuple<string, double, pair<bool, bool>>**>** _bu_numberv;
+            //  resize numbers
+            pair<size_t, tuple<string, double, pair<bool, bool>>**>** _bu_numberv = NULL;
+            
             _bu_numberv = new pair<size_t, tuple<string, double, pair<bool, bool>>**>*[backupc * 2];
+            
             for (size_t i = 0; i < backupc; ++i)
                 _bu_numberv[i] = bu_numberv[i];
             
             delete[] bu_numberv;
             bu_numberv = _bu_numberv;
             
-            tuple<string, size_t, string*>** _bu_symbolv;
+            //  resize symbols
+            tuple<string, size_t, string*>** _bu_symbolv = NULL;
+            
             _bu_symbolv = new tuple<string, size_t, string*>*[backupc * 2];
+            
             for (size_t i = 0; i < backupc; ++i)
                 _bu_symbolv[i] = bu_symbolv[i];
             
@@ -270,15 +286,13 @@ namespace ss {
             bu_symbolv = _bu_symbolv;
         }
         
-        const string _uuid = uuid();
-        
-        tuple<string, double, pair<bool, bool>>** _numberv;
+        //  backup numbers
+        tuple<string, double, pair<bool, bool>>** _numberv = NULL;
         
         _numberv = new tuple<string, double, pair<bool, bool>>*[pow2(numberc)];
         
         for (size_t i = 0; i < numberc; ++i) {
             string first = std::get<0>(* numberv[i]);
-            
             double second = std::get<1>(* numberv[i]);
             pair<bool, bool> third = std::get<2>(* numberv[i]);
             
@@ -287,6 +301,7 @@ namespace ss {
 
         bu_numberv[backupc] = new pair<size_t, tuple<string, double, pair<bool, bool>>**>(numberc, _numberv);
         
+        //  backup symbols
         string* _symbolv = new string[pow2(symbolc)];
         
         for (size_t i = 0; i < symbolc; ++i)
@@ -297,32 +312,6 @@ namespace ss {
         backupc++;
         
         return _uuid;
-    }
-
-    void arithmetic::clear() {
-        for (size_t i = 0; i < numberc; ++i)
-            delete numberv[i];
-        
-        delete[] numberv;
-
-        numberc = 0;
-        numberv = new tuple<string, double, pair<bool, bool>>*[1];
-        
-        if (number_bst != NULL) {
-            number_bst->close();
-            
-            number_bst = NULL;
-        }
-        
-        delete[] symbolv;
-        symbolv = new string[1];
-        symbolc = 0;
-        
-        if (symbol_bst != NULL) {
-            symbol_bst->close();
-         
-            symbol_bst = NULL;
-        }
     }
 
     void arithmetic::disable_write(const string symbol) {
@@ -687,39 +676,12 @@ namespace ss {
                         swap(data[m], data[m - 1]);
                     
                     ++n;
+                    
+                    for (size_t m = j; m > l + 1; --m)
+                        swap(data[m], data[m - 1]);
+                    
+                    ++j;
                 }
-            }
-        }
-        
-        for (int i = 1; i < n - 1; ++i) {
-            int j;
-            for (j = 0; j < 9; ++j) {
-                int k = 0;
-                while (k < baoc[j] && baov[j][k]->opcode() != data[i])
-                    ++k;
-                
-                if (k != baoc[j])
-                    break;
-            }
-            
-            if (j != 9) {
-                int l = i, p = -1;
-                
-                do {
-                    --l;
-                    
-                    if (data[l] == "(")
-                        ++p;
-                    
-                    else if (data[l] == ")")
-                        --p;
-                    
-                } while (p);
-                
-                for (int k = i; k > l + 1; --k)
-                    swap(data[k], data[k - 1]);
-                
-                ++i;
             }
         }
         
@@ -741,31 +703,39 @@ namespace ss {
     void arithmetic::restore(const string uuid, bool verbose) { restore(uuid, verbose, 0, nullptr); }
 
     void arithmetic::restore(const string uuid, const bool verbose, size_t symbolc, string* symbolv) {
+        //  find backup
         size_t i = 0;
         while (i < backupc && std::get<0>(* bu_symbolv[i]) != uuid)
             ++i;
         
+        //  no such backup
         if (i == backupc)
             undefined_error(uuid);
         
         for (size_t j = 0; j < numberc; ++j) {
+            //  find number
             size_t k = 0;
             while (k < bu_numberv[i]->first && std::get<0>(* numberv[j]) != std::get<0>(* bu_numberv[i]->second[k]))
                 ++k;
             
+            //  no such number
             if (k == bu_numberv[i]->first) {
                 if (verbose)
                     if (!std::get<2>(* numberv[j]).second)
                         cout << "Unused variable '" << std::get<0>(* numberv[j]) << "'\n";
             } else {
+                //  find exception
                 size_t l = 0;
                 while (l < symbolc && std::get<0>(* numberv[j]) != symbolv[l])
                     ++l;
                 
+                //  no such exception
                 if (l == symbolc) {
                     std::get<1>(* bu_numberv[i]->second[k]) = std::get<1>(* numberv[j]);
                     std::get<2>(* bu_numberv[i]->second[k]).second = std::get<2>(* numberv[j]).second;
                 } else {
+                    //  remove exception
+                    
                     for (; l < symbolc - 1; ++l)
                         swap(symbolv[l], symbolv[l + 1]);
                     
@@ -774,18 +744,23 @@ namespace ss {
             }
         }
         
-        clear();
+        //  deallocate numbers
+        for (size_t j = 0; j < numberc; ++j)
+            delete numberv[j];
         
         delete[] numberv;
         
+        //  copy numbers
         numberc = bu_numberv[i]->first;
         numberv = bu_numberv[i]->second;
         
         delete bu_numberv[i];
         
+        //  remove numbers backup
         for (size_t j = i; j < backupc - 1; ++j)
             swap(bu_numberv[j], bu_numberv[j + 1]);
         
+        //  rebuild numbers tree
         if (number_bst != NULL)
             number_bst->close();
         
@@ -796,16 +771,20 @@ namespace ss {
         
         number_bst = numberc ? build(_symbolv, 0, (int)numberc) : NULL;
         
+        //  deallocate symbols
         delete[] this->symbolv;
         
+        //  copy symbols
         this->symbolc = std::get<1>(* bu_symbolv[i]);
         this->symbolv = std::get<2>(* bu_symbolv[i]);
         
         delete bu_symbolv[i];
         
+        //  remove symbols backup
         for (size_t j = i; j < backupc - 1; ++j)
             swap(bu_symbolv[j], bu_symbolv[j + 1]);
         
+        //  rebuild symbols tree
         if (symbol_bst != NULL)
             symbol_bst->close();
         
