@@ -16,7 +16,6 @@ namespace ss {
             
         if (!tokenc || !is_symbol(tokenv[0])) {
             delete[] tokenv;
-            
             expect_error("symbol");
         }
         
@@ -25,7 +24,6 @@ namespace ss {
         else {
             if (tokenv[1] != "=>") {
                 delete[] tokenv;
-                
                 expect_error("';' after expression");
             }
             

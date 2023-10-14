@@ -1,0 +1,59 @@
+//  Author: Corey Ferguson
+//  Date:   October 9, 2023
+//  File:   calendar.txt
+//
+
+include ((dir = "@/datetime/date/") + "month")
+include (dir + "parseDate")
+include (dir + "weekday")
+include (dir + "year")
+include "@/datetime/data/weekdays"
+
+func main
+    if nrows(argv) !== 2
+        expectExcept("1 argument(s), got {}" format (nrows(argv) - 1))
+    end if
+    
+    timstm = (argv row 1) slice 1
+    
+    if subtypeOf timstm !== "int"
+        typeExcept(subtypeOf timstm, "int")
+    end if
+    
+    if timstm < 0
+        rangeExcept(string(timstm))
+    end if
+
+    mon = month(timstm), yer = year(timstm)
+
+    echo "------ " + (keys months()).mon + " " + yer + " ------\n"
+
+    wekday = weekday(parseDate(array(yer, padStart(string(mon + 1), 2, "0"), "01") join "-"))
+    
+    for i = 0, i < 7, i += 1
+        echo "{}\t" format (weekdays().i substr 0, 3)
+    end for
+
+    echo "\n"
+
+    i = 0
+    for , i < wekday, i += 1
+        echo "\t"
+    end for
+    
+    upplim = (values months()).mon + (mon === 1 && isLeapYear(yer))
+
+    for j = 1, j <= upplim, (i += 1, j += 1)
+        echo "{}\t" format j
+
+        if i % 7 === 6
+            echo "\n"
+        end if
+    end for
+
+    if i % 7
+        echo "\n"
+    end if
+end func
+
+main()

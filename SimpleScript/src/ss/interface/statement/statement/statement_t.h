@@ -1,5 +1,5 @@
 //
-//  statement.h
+//  statement_t.h
 //  SimpleScript
 //
 //  Created by Corey Ferguson on 4/15/23.

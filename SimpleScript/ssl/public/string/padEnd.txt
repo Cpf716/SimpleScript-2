@@ -9,7 +9,7 @@ include "@/string/string"
 
 func main
     if nrows(argv) !== 4
-        throw expectExcept("4 argument(s), got {}" format (nrows(argv) - 1))
+        throw expectExcept("3 argument(s), got {}" format (nrows(argv) - 1))
     end if
 
     text = ((argv row 1) slice 1, argv cell 1, 0)

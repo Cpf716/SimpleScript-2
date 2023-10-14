@@ -68,13 +68,13 @@ func main
         
         val = recv(c)
         
-        if val === "api/artists"
+        if val === "/api/artists"
             send(c, mysql("select * from artists"))
-        else if val === "api/albums"
+        else if val === "/api/albums"
             send(c, mysql("select * from albums"))
-        else if val === "api/songs"
+        else if val === "/api/songs"
             send(c, mysql("select * from songs"))
-        else if val === "api/join"
+        else if val === "/api/join"
             send(c, mysql("select artist_name, album_year, album_name, song_title from songs join albums on songs.album_id = albums.album_id join artists on albums.artist_id = artists.artist_id"))
         else if count val !== 0
             send(c, "404")

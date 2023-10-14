@@ -38,7 +38,7 @@ namespace ss {
         
         //  restore backups
         while (backupc)
-            restore(bu_numberv[backupc - 1]->first, false);
+            restore(bu_numberv[backupc - 1], false);
         
         //  deallocate backups
         delete[] bu_arrayv;
@@ -92,13 +92,11 @@ namespace ss {
     //  MEMBER FUNCTIONS
 
     string interpreter::backup() {
-        string _uuid = uuid();
-        
         //  resize backups
         if (is_pow(backupc, 2)) {
             
             //  resize numbers
-            pair<string, string>** _bu_numberv = new pair<string, string>*[backupc * 2];
+            string* _bu_numberv = new string[backupc * 2];
             
             for (size_t i = 0; i < backupc; ++i)
                 _bu_numberv[i] = bu_numberv[i];
@@ -156,8 +154,10 @@ namespace ss {
         
         bu_functionv[backupc] = new pair<size_t, function_t**>(functionc, _functionv);
         
+        string _uuid = arithmetic::backup();
+        
         //  backup numbers
-        bu_numberv[backupc] = new pair<string, string>(_uuid, arithmetic::backup());
+        bu_numberv[backupc] = _uuid;
         
         //  backup strings
         tuple<string, string, pair<bool, bool>>** _stringv = new tuple<string, string, pair<bool, bool>>*[pow2(stringc)];
@@ -250,7 +250,7 @@ namespace ss {
             //  array => string
         
         if (val.empty())
-            return EMPTY;
+            return val;
         
         if (is_string(val))
             return encode(decode(val));
@@ -274,6 +274,8 @@ namespace ss {
 
     string interpreter::evaluate(const string expression) {
         logger << encode(expression) << ",";
+        
+        ++num;
         
         time_point<steady_clock> start, end;
         
@@ -12244,7 +12246,7 @@ namespace ss {
         
         bu_arrayv = new pair<size_t, tuple<string, ss::array<string>*,  pair<bool, bool>>**>*[1];
         bu_functionv = new pair<size_t, function_t**>*[1];
-        bu_numberv = new pair<string, string>*[1];
+        bu_numberv = new string[1];
         bu_stringv = new pair<size_t, tuple<string, string, pair<bool, bool>>**>*[1];
         
         set_function(new ss::function("array", [this](const size_t argc, string* argv) {
@@ -12758,6 +12760,9 @@ namespace ss {
         set_function(new ss::function("read", [this](const size_t argc, string* argv) {
             if (!argc)
                 expect_error("1 argument(s), got 0");
+            
+            if (argc >= 3)
+                expect_error("2 argument(s), got " + to_string(argc));
             
             if (ss::is_array(argv[0]))
                 type_error(0, 4);
@@ -14049,7 +14054,7 @@ namespace ss {
     void interpreter::restore(const string uuid, const bool verbose, size_t symbolc, string* symbolv) {
         //  find backup
         size_t i = 0;
-        while (i < backupc && bu_numberv[i]->first != uuid)
+        while (i < backupc && bu_numberv[i] != uuid)
             ++i;
         
         //  no such backup
@@ -14175,9 +14180,7 @@ namespace ss {
         delete[] _symbolv;
         
         //  restore numbers
-        arithmetic::restore(bu_numberv[i]->second, verbose, symbolc, symbolv);
-
-        delete bu_numberv[i];
+        arithmetic::restore(bu_numberv[i], verbose, symbolc, symbolv);
         
         //  remove numbers backup
         for (size_t j = i; j < backupc - 1; ++j)
@@ -14250,26 +14253,34 @@ namespace ss {
     void interpreter::save() { buid = backup(); }
 
     void interpreter::write() {
+        logger << num << endl;
+        
         time_t now = time(0);
         
         char* dt = ctime(&now);
-        
         size_t n = strlen(dt);
         
-        swap(dt[n - 1], dt[n]);
+        string tokenv[n + 1];
+        size_t tokenc = tokens(tokenv, string(dt));
+        
+        string months[12] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
         
         size_t i = 0;
-        for (size_t j = 0; j < 2; ++j) {
-            while (i < n && dt[i] != ':')
-                ++i;
-            
-            for (size_t k = i; k < n - 1; ++k)
-                swap(dt[k], dt[k + 1]);
-            
-            --n;
-        }
+        while (i < 12 && months[i] != tokenv[1])
+            ++i;
         
-        write_txt("/tmp/" + string(dt) + ".txt", logger.str());
+        ostringstream filnam;
+        
+        filnam << "/tmp/";
+        
+        filnam << tokenv[8] << (i + 1) << tokenv[2];
+        
+        for (size_t j = 0; j < 3; ++j)
+            filnam << tokenv[j * 2 + 3];
+        
+        filnam << ".log";
+        
+        write_txt(filnam.str(), logger.str());
     }
 
     void interpreter::set_array(const string symbol, const size_t index, const string value) {

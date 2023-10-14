@@ -27,15 +27,7 @@ using namespace std::chrono;
 namespace ss {
     class interpreter: public logic {
         //  MEMBER FIELDS
-        
-        vector<pair<int, string>> signalv;
-        
-        bst<pair<string, int>>* array_bst = NULL;
-        bst<pair<string, int>>* function_bst = NULL;
-        bst<pair<string, int>>* string_bst = NULL;
-        
-        ostringstream logger;
-        
+    
         size_t aggregate_oi;        //  lambda
         size_t assignment_oi;       //
         size_t cell_oi;
@@ -67,6 +59,10 @@ namespace ss {
         size_t tospliced_oi;        //  ternary
         size_t unary_count;
         
+        bst<pair<string, int>>* array_bst = NULL;
+        bst<pair<string, int>>* function_bst = NULL;
+        bst<pair<string, int>>* string_bst = NULL;
+        
         size_t arrayc = 0;
         tuple<string, ss::array<string>, pair<bool, bool>>** arrayv = NULL;
         
@@ -79,7 +75,7 @@ namespace ss {
         size_t backupc = 0;
         pair<size_t, tuple<string, ss::array<string>*, pair<bool, bool>>**>** bu_arrayv = NULL;
         pair<size_t, function_t**>** bu_functionv = NULL;
-        pair<string, string>** bu_numberv = NULL;
+        string* bu_numberv = NULL;
         pair<size_t, tuple<string, string, pair<bool, bool>>**>** bu_stringv = NULL;
         
         buo*** buov = NULL;
@@ -89,6 +85,12 @@ namespace ss {
         size_t uoc = 0;
         
         string buid = EMPTY;
+        
+        ostringstream logger;
+        
+        size_t num = 0;
+        
+        vector<pair<int, string>> signalv;
         
         ss::stack<string> stack_trace = ss::stack<string>();
         

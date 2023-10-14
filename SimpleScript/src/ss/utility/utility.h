@@ -9,6 +9,7 @@
 #define utility_h
 
 #include "array.h"
+#include <cassert>
 #include "error.h"
 #include <fstream>
 #include <iostream>

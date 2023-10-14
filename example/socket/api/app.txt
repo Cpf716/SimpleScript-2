@@ -37,7 +37,7 @@ func main
         
         echo "\n"
 
-        send(a, "api/" + array("artists", "albums", "songs", "join").(num - 1))
+        send(a, "/api/" + array("artists", "albums", "songs", "join").(num - 1))
 
         array res = recv(a)
 

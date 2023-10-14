@@ -14,6 +14,8 @@ Additionally, SimpleScript supports MySQL DBMS and TCP socket programming.
 
 3. Open a new Terminal window and run `sudo ln -s /usr/local/mysql-connector-c++-8.1.0/lib64/libmysqlcppconn.9.8.1.0.dylib /usr/local/lib` to create a symbolic link to the connector
 
+* If you have macOS Sonoma 14.0+ installed, navigate to `Build Settings/Targets/Linking/Run Search Paths/` and add `/usr/local/lib`.
+
 4. Open the `SimpleScript.xcodeproj` file in Xcode, navigate to `Build Settings/Linking/Other Linker Flags/Debug/`, and add `/usr/local/mysql-connector-c++-8.1.0/lib64/libmysqlcppconn.9.8.1.0.dylib`
 
 5. Similarly, navigate to `Build Settings/Search Paths/Header Search Paths/Debug`, and add `/usr/local/mysql-connector-c++-8.1.0/include/jdbc`

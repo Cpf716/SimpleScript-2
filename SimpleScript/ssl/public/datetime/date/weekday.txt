@@ -31,6 +31,9 @@ func main
     timestamp -= seconds
 
     seconds = 0, secondsInMonth = 0, month = 0
+    
+    consume secondsInMonth
+    
     while timestamp >= seconds + (secondsInMonth = (months().(month * 2 + 1) + (month === 1 && isLeapYear(year))) * 86400)
         seconds += secondsInMonth
         month += 1
