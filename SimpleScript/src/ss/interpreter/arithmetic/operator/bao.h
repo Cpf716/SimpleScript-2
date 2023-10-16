@@ -13,14 +13,15 @@
 namespace ss {
     class bao : public bao_t {
         //  MEMBER FIELDS
-        std::function<double(const double, const double)> operation;
+        std::function<double(const double, const double)> opr;
         
     public:
         //  CONSTRUCTORS
         
-        bao(const string opcode, const std::function<double(const double, const double)> operation) {
-            set_opcode(opcode);
-            this->operation = operation;
+        bao(const string opc, const std::function<double(const double, const double)> opr) {
+            set_opcode(opc);
+            
+            this->opr = opr;
         }
         
         void close() { delete this; }
@@ -28,7 +29,7 @@ namespace ss {
         //  MEMBER FUNCTIONS
         
         double apply(const double lhs, const double rhs) const {
-            return operation(lhs, rhs);
+            return opr(lhs, rhs);
         }
     };
 }

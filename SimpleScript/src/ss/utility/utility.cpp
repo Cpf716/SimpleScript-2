@@ -6,7 +6,6 @@
 //
 
 #include "utility.h"
-#include <cmath>
 
 namespace ss {
     const std::string delimeters[] = { "!", "(", ")", ",", ".", ":", ";" };
@@ -281,7 +280,7 @@ namespace ss {
         }
                 
         if (i == n - 1) {
-            std::cout << "Missing terminating '\"' character: (" << value << ")\n";
+            logger_write("Missing terminating '\"' character: (" + value + ")\n");
             
             //  BEGIN
             

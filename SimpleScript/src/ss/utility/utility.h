@@ -11,14 +11,13 @@
 #include "array.h"
 #include <cassert>
 #include "error.h"
-#include <fstream>
-#include <iostream>
+#include "logger.h"
 #include <random>
-#include <sstream>
 
 namespace ss {
     //  NON-MEMBER FIELDS
 
+    //  read from config file
     const static std::string BASE_DIR = "/Users/<user>/SimpleScript/SimpleScript/ssl/public/";
     const static std::string EMPTY = "";
 
@@ -74,7 +73,7 @@ namespace ss {
 
     std::string read_txt(const std::string filename);
 
-    std::string* resize(const std::size_t n, const std::size_t p, std::string* data);
+    std::string* resize(const std::size_t len, const std::size_t newlen, std::string* arr);
 
     std::size_t split(std::string* dst, const std::string src, const std::string pattern);
 

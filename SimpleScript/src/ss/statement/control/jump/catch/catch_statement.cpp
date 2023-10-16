@@ -42,7 +42,7 @@ namespace ss {
             ++i;
         
         if (i != statementc - 1)
-            cout << "Unreachable code\n";
+            logger_write("Unreachable code\n");
         
         statementv[statementc - 1]->analyze(ssu);
         

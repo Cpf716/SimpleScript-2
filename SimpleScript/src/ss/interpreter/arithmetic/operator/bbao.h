@@ -15,13 +15,14 @@ namespace ss {
     class bbao: public bao_t {
         //  MEMBER FIELDS
         
-        std::function<double(double, double)> operation;
+        std::function<double(double, double)> opr;
     public:
         //  CONSTRUCTORS
         
-        bbao(const string opcode, const std::function<double(double, double)> operation) {
-            this->set_opcode(opcode);
-            this->operation = operation;
+        bbao(const string opc, const std::function<double(double, double)> opr) {
+            set_opcode(opc);
+            
+            this->opr = opr;
         }
         
         void close() { delete this; }
@@ -32,7 +33,7 @@ namespace ss {
             if (is_int(lhs) || is_int(rhs))
                 type_error("double", "int");
             
-            return operation(lhs, rhs);
+            return opr(lhs, rhs);
         }
     };
 }

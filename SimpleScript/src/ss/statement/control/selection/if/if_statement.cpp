@@ -43,7 +43,7 @@ namespace ss {
                 ++i;
             
             if (i != index - 1)
-                cout << "Unreachable code\n";
+                logger_write("Unreachable code\n");
             
             statementv[index - 1]->analyze(ssu);
         }
@@ -52,7 +52,7 @@ namespace ss {
             statementv[i]->analyze(ssu);
         
         if (!index)
-            cout << "'if' statement has empty body\n";
+            logger_write("'if' statement has empty body\n");
         
         return false;
     }

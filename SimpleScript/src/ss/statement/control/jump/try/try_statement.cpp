@@ -20,10 +20,10 @@ namespace ss {
         
         if (index == statementc - 1) {
             if (statementc == 1)
-                cout << "'try' statement has empty body\n";
+                logger_write("'try' statement has empty body\n");
             
         } else if (statementc == 2)
-            cout << "'try' statement has empty body\n";
+            logger_write("'try' statement has empty body\n");
         
         this->statementc = statementc;
         this->statementv = statementv;
@@ -46,7 +46,7 @@ namespace ss {
                 ++i;
             
             if (i != index - 1)
-                cout << "Unreachable code\n";
+                logger_write("Unreachable code\n");
             
             statementv[index - 1]->analyze(ssu);
         }

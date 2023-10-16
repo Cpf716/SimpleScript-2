@@ -12,8 +12,6 @@
 #include "bbao.h"
 #include <cctype>
 #include <cmath>
-#include <iostream>
-#include <sstream>
 #include <stack>
 #include <stdexcept>
 #include <tuple>
@@ -54,22 +52,18 @@ namespace ss {
         //  pass pointer array twice the length of expr
         
         size_t split(string expr, string* data) const;
+        
+        double value(string val);
     protected:
         //  MEMBER FIELDS
         
         operator_t** aov;
         size_t aoc = 36;
         
-        size_t unary_count;
-        
         bao_t*** baov;
         size_t baoc[9];
         
-        //  MEMBER FUNCTIONS
-        
-        void clear();
-        
-        double value(string val);
+        size_t unary_count;
         
         //  MEMBER FUNCTIONS
         
@@ -85,6 +79,8 @@ namespace ss {
         
         string backup();
         
+        void consume(const string symbol);
+        
         void disable_write(const string symbol);
         
         void drop(const string symbol);
@@ -95,6 +91,8 @@ namespace ss {
         
         void insert(const string symbol);
         
+        int io_number(const string symbol) const;
+        
         bool is_defined(const string symbol) const;
         
         void restore(const string uuid, bool verbose = true);
@@ -102,10 +100,6 @@ namespace ss {
         void restore(const string uuid, const bool verbose, size_t symbolc, string* symbolv);
         
         void set_number(const string symbol, const double new_value);
-        
-        void consume(const string symbol);
-        
-        int io_number(const string symbol) const;
     };
 
     //  NON-MEMBER FUNCTIONS

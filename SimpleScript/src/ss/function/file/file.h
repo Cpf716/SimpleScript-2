@@ -18,23 +18,22 @@
 #include "else_statement.h"
 #include "else_if_statement.h"
 #include "exception_statement.h"
+#include "file_statement.h"
 #include "finally_statement.h"
 #include "for_statement.h"
 #include "function_statement.h"
-#include "function_t.h"
 #include "if_statement.h"
 #include "node.h"
 #include "return_statement.h"
 #include "sleep_statement.h"
 #include "statement.h"
-#include "statement_t.h"
 #include "try_statement.h"
 #include "while_statement.h"
 
 using namespace ss;
 
 namespace ss {
-    class file: public function_t, statement_t {
+    class file: public function_t {
         //  MEMBER FIELDS
         
         string filename;
@@ -42,18 +41,13 @@ namespace ss {
         size_t functionc = 0;
         pair<file*, bool>** functionv = NULL;
         
-        string result = encode("undefined");
-        
-        bool should_return;
-        
         interpreter* ssu = NULL;
         
-        size_t statementc = 0;
-        statement_t** statementv = NULL;
+        statement_t* target = NULL;
         
         //  MEMBER FUNCTIONS
         
-        size_t build(statement_t** dst, string* src, size_t si, size_t ei);
+        size_t build(statement_t** dst, string* src, const size_t si, const size_t ei) const;
         
         ss::array<string> marshall(const size_t argc, string* argv) const;
     public:
@@ -65,23 +59,7 @@ namespace ss {
         
         //  MEMBER FUNCTIONS
         
-        bool analyze(interpreter* ssu) const;
-        
         string call(const size_t argc, string* argv);
-
-        bool compare(const string val) const;
-
-        string evaluate(interpreter* ssu);
-
-        string execute(interpreter* ssu);
-
-        void set_break();
-
-        void set_continue();
-
-        void set_parent(statement_t* parent);
-
-        void set_return(const string result);
     };
 }
 

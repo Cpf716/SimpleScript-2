@@ -14,14 +14,14 @@ namespace ss {
     class uao : public operator_t {
         //  MEMBER FIELDS
         
-        std::function<const double(const double)> operation;
+        std::function<const double(const double)> opr;
     public:
         //  CONSTRUCTORS
         
-        uao(const string opcode, const std::function<double(const double)> operation) {
-            set_opcode(opcode);
+        uao(const string opc, const std::function<double(const double)> opr) {
+            set_opcode(opc);
             
-            this->operation = operation;
+            this->opr = opr;
         }
         
         void close() { delete this; }
@@ -29,7 +29,7 @@ namespace ss {
         //  MEMBER FUNCTIONS
         
         double apply(const double rhs) const {
-            return operation(rhs);
+            return opr(rhs);
         }
     };
 }

@@ -8,7 +8,6 @@
 #ifndef exception_statement_h
 #define exception_statement_h
 
-#include "exception.h"
 #include "statement_t.h"
 
 namespace ss {

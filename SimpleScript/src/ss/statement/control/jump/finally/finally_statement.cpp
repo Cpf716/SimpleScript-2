@@ -30,10 +30,8 @@ namespace ss {
     //  MEMBER FUNCTIONS
 
     bool finally_statement::analyze(interpreter* ssu) const {
-        cout << "statementc:\t" << statementc << endl;
-        
         if (!statementc) {
-            cout << "'finally' statement has empty body\n";
+            logger_write("'finally' statement has empty body\n");
             
             return false;
         }
@@ -43,7 +41,7 @@ namespace ss {
             ++i;
         
         if (i != statementc - 1)
-            cout << "Unreachable code\n";
+            logger_write("Unreachable code\n");
         
         statementv[statementc - 1]->analyze(ssu);
         

@@ -35,7 +35,7 @@ namespace ss {
 
     bool while_statement::analyze(interpreter* ssu) const {
         if (!statementc) {
-            cout << "'while' statement has empty body\n";
+            logger_write("'while' statement has empty body\n");
             
             return false;
         }
@@ -45,12 +45,12 @@ namespace ss {
             ++i;
         
         if (i != statementc - 1)
-            cout << "Unreachable code\n";
+            logger_write("Unreachable code\n");
                 
         if (statementv[i]->analyze(ssu) &&
             (statementv[i]->compare("break") ||
              statementv[i]->compare("return")))
-            cout << "'while' statement will execute at most once\n";
+            logger_write("'while' statement will execute at most once\n");
         
         return false;
     }

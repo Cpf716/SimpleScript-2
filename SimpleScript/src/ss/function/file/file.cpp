@@ -269,7 +269,7 @@ namespace ss {
                 
                 if (j != functionc) {
                     if (arr.index_of(valuev[1]) == -1) {
-                        cout << "'" << valuev[1] << "' is defined\n";
+                        logger_write("'" + valuev[1] + "' is defined\n");
                         
                         arr.push(valuev[1]);
                     }
@@ -350,23 +350,19 @@ namespace ss {
         
         if (!n) {
             if (!functionc)
-                cout << "'file' statement has empty body\n";
+                logger_write("'file' statement has empty body\n");
             
             else
                 //  configuration file
                 consume();
         }
         
-        statementv = new statement_t*[n];
-        statementc = build(statementv, src, 0, n);
+        statement_t** statementv = new statement_t*[n];
+        size_t statementc = build(statementv, src, 0, n);
         
         delete[] src;
         
-        if (statementc && is_clause(statementv[statementc - 1]))
-            expect_error("expression");
-        
-        for (size_t i = 0; i < statementc; ++i)
-            statementv[i]->set_parent(this);
+        target = new file_statement(statementc, statementv);
         
         this->ssu = ssu;
     }
@@ -377,33 +373,11 @@ namespace ss {
                 functionv[i]->first->close();
         
         delete[] functionv;
-        
-        for (size_t i = 0; i < statementc; ++i)
-            statementv[i]->close();
-        
-        delete[] statementv;
-        delete this;
     }
 
     //  MEMBER FUNCTIONS
 
-    bool file::analyze(interpreter* ssu) const {
-        if (!statementc)
-            return false;
-        
-        size_t i = 0;
-        while (i < statementc - 1 && !statementv[i]->analyze(ssu))
-            ++i;
-        
-        if (i != statementc - 1)
-            cout << "Unreachable code\n";
-        
-        statementv[statementc - 1]->analyze(ssu);
-        
-        return false;
-    }
-
-    size_t file::build(statement_t** dst, string* src, size_t si, size_t ei) {
+    size_t file::build(statement_t** dst, string* src, const size_t si, const size_t ei) const {
         size_t i = si, s = 0;
         while (i < ei) {
             string* tokenv = new string[src[i].length() + 1];
@@ -871,37 +845,12 @@ namespace ss {
         ssu->evaluate("shrink argv");
         ssu->consume("argv");
         
-        string result = execute(ssu);
+        string result = target->execute(ssu);
         
         consume();
         
         ssu->restore(_buid);
         ssu->restore(buid);
-        
-        return result;
-    }
-
-    bool file::compare(const string val) const {
-        unsupported_error("compare()");
-        return false;
-    }
-
-    string file::evaluate(interpreter* ssu) {
-        unsupported_error("evaluate()");
-        return EMPTY;
-    }
-
-    string file::execute(interpreter* ssu) {
-        analyze(ssu);
-        
-        should_return = false;
-        
-        for (size_t i = 0; i < statementc; ++i) {
-            statementv[i]->execute(ssu);
-            
-            if (should_return)
-                break;
-        }
         
         return result;
     }
@@ -938,22 +887,5 @@ namespace ss {
             data.insert(k + 2, EMPTY);
         
         return data;
-    }
-
-    void file::set_break() {
-        throw error("break cannot be used outside of a loop");
-    }
-
-    void file::set_continue() {
-        throw error("continue cannot be used outside of a loop");
-    }
-
-    void file::set_parent(statement_t* parent) {
-        unsupported_error("set_parent()");
-    }
-
-    void file::set_return(const string result) {
-        this->result = result;
-        this->should_return = true;
     }
 }

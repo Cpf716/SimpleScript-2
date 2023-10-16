@@ -10,9 +10,7 @@
 
 #include <arpa/inet.h>      //  inet_ptons
 #include <csignal>          //  signal
-#include <iostream>         //  cin, cout
 #include <netinet/in.h>     //  sockaddr_in
-#include <sstream>          //  ostringstream
 #include <sys/socket.h>     //  socket
 #include <thread>
 #include <unistd.h>         //  close, read

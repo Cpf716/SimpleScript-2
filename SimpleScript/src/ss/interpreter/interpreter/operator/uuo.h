@@ -16,13 +16,14 @@ namespace ss {
     class uuo: public operator_t {
         //  MEMBER FIELDS
         
-        std::function<string(const string)> operation;
+        std::function<string(const string)> opr;
     public:
         //  CONSTRUCTORS
         
-        uuo(const string opcode, const std::function<string(const string)> operation) {
-            set_opcode(opcode);
-            this->operation = operation;
+        uuo(const string opc, const std::function<string(const string)> opr) {
+            set_opcode(opc);
+            
+            this->opr = opr;
         }
         
         void close() { delete this; }
@@ -30,7 +31,7 @@ namespace ss {
         //  MEMBER FUNCTIONS
         
         string apply(const string rhs) const {
-            return operation(rhs);
+            return opr(rhs);
         }
     };
 }

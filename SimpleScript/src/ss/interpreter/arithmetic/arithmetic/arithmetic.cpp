@@ -722,7 +722,7 @@ namespace ss {
             if (k == bu_numberv[i]->first) {
                 if (verbose)
                     if (!std::get<2>(* numberv[j]).second)
-                        cout << "Unused variable '" << std::get<0>(* numberv[j]) << "'\n";
+                        logger_write("Unused variable '" + std::get<0>(* numberv[j]) + "'\n");
             } else {
                 //  find exception
                 size_t l = 0;

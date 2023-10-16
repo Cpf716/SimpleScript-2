@@ -176,8 +176,7 @@ namespace ss {
 
     bool function_statement::analyze(interpreter* ssu) const {
         if (!statementc) {
-            cout << "'function' statement has empty body\n";
-            
+            logger_write("'function' statement has empty body\n");
             return false;
         }
         
@@ -186,7 +185,7 @@ namespace ss {
             ++i;
         
         if (i != statementc - 1)
-            cout << "Unreachable code\n";
+            logger_write("Unreachable code\n");
         
         statementv[statementc - 1]->analyze(ssu);
         

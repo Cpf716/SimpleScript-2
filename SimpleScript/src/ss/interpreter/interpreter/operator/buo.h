@@ -14,13 +14,14 @@ namespace ss {
     class buo: public operator_t {
         //  MEMBER FIELDS
         
-        std::function<string(const string, const string)> operation;
+        std::function<string(const string, const string)> opr;
     public:
         //  CONSTRUCTORS
         
-        buo(const string opcode, const std::function<string(const string, const string)> operation) {
-            this->set_opcode(opcode);
-            this->operation = operation;
+        buo(const string opc, const std::function<string(const string, const string)> opr) {
+            set_opcode(opc);
+            
+            this->opr = opr;
         }
         
         void close() { delete this; }
@@ -28,7 +29,7 @@ namespace ss {
         //  MEMBER FUNCTIONS
         
         string apply(const string lhs, const string rhs) const {
-            return operation(lhs, rhs);
+            return opr(lhs, rhs);
         }
     };
 }

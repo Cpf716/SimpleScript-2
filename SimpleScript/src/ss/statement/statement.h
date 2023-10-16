@@ -31,7 +31,7 @@ namespace ss {
         
         bool analyze(interpreter* ssu) const {
             if (!ssu->is_mutating(expression))
-                cout << "Expression result unused: (" << expression << ")\n";
+                logger_write("Expression result unused: (" + expression + ")\n");
             
             return false;
         }

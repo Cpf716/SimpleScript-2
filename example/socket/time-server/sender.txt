@@ -12,6 +12,8 @@ func main
 
     while 1
         if !(b = accept(a))
+            sleep 50
+            
             continue
         end if
         

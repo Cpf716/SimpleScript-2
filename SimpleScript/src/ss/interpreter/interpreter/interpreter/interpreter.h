@@ -10,15 +10,11 @@
 #include <algorithm>    //  tolower, toupper
 #include "buo.h"
 #include <cstdio>   //  remove
-#include <ctime>
 #include "exception.h"
 #include "function.h"
-#include "function_t.h"
 #include "logic.h"
-#include <random>
 #include "socket.h" //  socket
 #include "stack.h"
-#include <thread>         // this_thread::sleep_for
 #include "tuo.h"
 #include "uuo.h"
 
@@ -86,9 +82,7 @@ namespace ss {
         
         string buid = EMPTY;
         
-        ostringstream logger;
-        
-        size_t num = 0;
+        string current_expression;
         
         vector<pair<int, string>> signalv;
         
@@ -102,11 +96,11 @@ namespace ss {
         
         void initialize();
         
+        int io_array(const string symbol) const;
+        
         int io_function(const string symbol) const;
         
         int io_string(const string symbol) const;
-        
-        int io_array(const string symbol) const;
         
         int merge(int n, string* data) const;
         
@@ -133,6 +127,8 @@ namespace ss {
         
         string backup();
         
+        void consume(const string symbol);
+        
         void drop(const string symbol);
         
         string evaluate(const string expression);
@@ -158,8 +154,6 @@ namespace ss {
         void set_string(const string symbol, const string value);
         
         bool signal(int signum);
-        
-        void consume(const string symbol);
     };
 }
 

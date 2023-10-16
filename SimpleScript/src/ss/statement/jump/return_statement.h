@@ -15,6 +15,7 @@ namespace ss {
         //  MEMBER FIELDS
         
         string expression;
+        
         statement_t* parent = NULL;
     public:
         //  CONSTRUCTORS

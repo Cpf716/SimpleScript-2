@@ -108,7 +108,7 @@ namespace ss {
 
     bool for_statement::analyze(interpreter* ssu) const {
         if (!statementc) {
-            cout << "'for' statement has empty body\n";
+            logger_write("'for' statement has empty body\n");
             
             return false;
         }
@@ -118,12 +118,12 @@ namespace ss {
             ++i;
         
         if (i != statementc - 1)
-            cout << "Unreachable code\n";
+            logger_write("Unreachable code\n");
                 
         if (statementv[i]->analyze(ssu) &&
             (statementv[i]->compare("break") ||
              statementv[i]->compare("return")))
-            cout << "'for' statement will execute at most once\n";
+            logger_write("'for' statement will execute at most once\n");
         
         return false;
     }

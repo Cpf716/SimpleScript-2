@@ -6,33 +6,33 @@
 //
 
 #include "file.h"
-#include <sstream>
-
-#define STOPWATCH false
 
 using namespace ss;
 
 interpreter ssu;
 
 void signal_handler(int signum) {
-    if (ssu.signal(signum))
-        exit(signum);
+    if (!ssu.signal(signum))
+        return;
+    
+    logger_write("^C\n");
+    logger_close();
+    
+    exit(signum);
 }
 
 int main(int argc, char* argv[]) {
     //  register signal callbacks
     signal(SIGINT, signal_handler);
-    signal(SIGKILL, signal_handler);
+    //  signal(SIGKILL, signal_handler);
     
-    if (STOPWATCH)
-        cout << "Building...\n";
+    logger_write("Building...\n");
     
     string filename = argc == 1 ? BASE_DIR + "main.txt" : argv[1];
     
     time_point<steady_clock> beg;
     
-    if (STOPWATCH)
-        beg = steady_clock::now();
+    beg = steady_clock::now();
     
     //  initialize filepath tree
     //  this prevents recursive file inclusion
@@ -46,12 +46,10 @@ int main(int argc, char* argv[]) {
     
     time_point<steady_clock> end;
     
-    if (STOPWATCH) {
-        end = steady_clock::now();
+    end = steady_clock::now();
         
-        cout << "Done in " << duration<double>(end - beg).count() << "s.\n";
-        cout << "Running...\n";
-    }
+    logger_write("Done in " + to_string(duration<double>(end - beg).count()) + "s.\n");
+    logger_write("Running...\n");
     
     ostringstream ss;
     
@@ -66,21 +64,21 @@ int main(int argc, char* argv[]) {
     
     ss << ")";
     
-    if (STOPWATCH)
-        beg = steady_clock::now();
+    beg = steady_clock::now();
     
     try {
         statement(ss.str()).execute(&ssu);
         
     } catch (ss::error e) {
+        logger_write("ERROR : " + string(e.what()) + "\n");
+        
         ssu.print_stack_trace();
         
         throw e;
     }
     
-    if (STOPWATCH) {
-        end = steady_clock::now();
-        
-        cout << "Done in " << duration<double>(end - beg).count() << "s.\n";
-    }
+    end = steady_clock::now();
+    
+    logger_write("Done in " + to_string(duration<double>(end - beg).count()) + "s.\n");
+    logger_close();
 }

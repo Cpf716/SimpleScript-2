@@ -29,9 +29,6 @@ namespace ss {
     }
 
     interpreter::~interpreter() {
-        //  close logger
-        write();
-        
         //  close APIs
         api::mysql_close();
         api::socket_close();
@@ -273,13 +270,7 @@ namespace ss {
     }
 
     string interpreter::evaluate(const string expression) {
-        logger << encode(expression) << ",";
-        
-        ++num;
-        
-        time_point<steady_clock> start, end;
-        
-        start = steady_clock::now();
+        current_expression = expression;
         
         string data[expression.length() * 2 + 1];
         int n = prefix(data, expression);
@@ -3909,12 +3900,7 @@ namespace ss {
         }
         
         string result = rtrim(stod(operands.pop()));
-        
-        end = steady_clock::now();
-        
-        //  seconds
-        logger << duration<double>(end - start).count() << "\n";
-        
+    
         return result;
     }
 
@@ -14027,17 +14013,18 @@ namespace ss {
     }
 
     void interpreter::print_stack_trace() {
-        logger << endl;
+        logger_write("  " + current_expression + "\n");
+        logger_write("Stack Trace:\n");
         
-        string padding = "";
+        string padding = "  ";
         
         while (!stack_trace.empty()) {
-            logger << padding + stack_trace.pop() + "()\n";
+            logger_write(padding + stack_trace.pop() + "()\n");
             
             padding += "  ";
         }
         
-        write();
+        logger_close();
     }
 
     void interpreter::reload() {
@@ -14073,7 +14060,7 @@ namespace ss {
             if (k == bu_arrayv[i]->first) {
                 if (verbose)
                     if (!std::get<2>(* arrayv[j]).second)
-                        cout << "Unused variable '" << std::get<0>(* arrayv[j]) << "'\n";
+                        logger_write("Unused variable '" + std::get<0>(* arrayv[j]) + "'\n");
             } else {
                 //  find exception
                 size_t l = 0;
@@ -14149,7 +14136,7 @@ namespace ss {
                 
                 //  no such function
                 if (k == bu_functionv[i]->first && !functionv[j]->count())
-                    cout << "Unused function '" << functionv[j]->name() << "'\n";
+                    logger_write("Unused function '" + functionv[j]->name() + "'\n");
             }
         }
         
@@ -14197,7 +14184,7 @@ namespace ss {
             if (k == bu_stringv[i]->first) {
                 if (verbose)
                     if (!std::get<2>(* stringv[j]).second)
-                        cout << "Unused variable '" << std::get<0>(* stringv[j]) << "'\n";
+                        logger_write("Unused variable '" + std::get<0>(* stringv[j]) + "'\n");
             } else {
                 //  find exception
                 size_t l = 0;
@@ -14251,37 +14238,6 @@ namespace ss {
     }
 
     void interpreter::save() { buid = backup(); }
-
-    void interpreter::write() {
-        logger << num << endl;
-        
-        time_t now = time(0);
-        
-        char* dt = ctime(&now);
-        size_t n = strlen(dt);
-        
-        string tokenv[n + 1];
-        size_t tokenc = tokens(tokenv, string(dt));
-        
-        string months[12] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-        
-        size_t i = 0;
-        while (i < 12 && months[i] != tokenv[1])
-            ++i;
-        
-        ostringstream filnam;
-        
-        filnam << "/tmp/";
-        
-        filnam << tokenv[8] << (i + 1) << tokenv[2];
-        
-        for (size_t j = 0; j < 3; ++j)
-            filnam << tokenv[j * 2 + 3];
-        
-        filnam << ".log";
-        
-        write_txt(filnam.str(), logger.str());
-    }
 
     void interpreter::set_array(const string symbol, const size_t index, const string value) {
         if (!is_symbol(symbol))
