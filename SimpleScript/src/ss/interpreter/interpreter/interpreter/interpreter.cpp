@@ -941,7 +941,7 @@ namespace ss {
                             if (rhs.empty()) {
                                 delete[] dst;
                                 
-                                if (is_dictionary(dst, s))
+                                if (is_dictionary(s, dst))
                                     null_error();
                                 
                                 type_error(4, 3);
@@ -958,7 +958,7 @@ namespace ss {
                             }
                             
                             if (is_string(rhs)) {
-                                if (!is_dictionary(dst, s)) {
+                                if (!is_dictionary(s, dst)) {
                                     delete[] dst;
                                     type_error(0, 6);
                                     //  array => dictionary
@@ -1085,7 +1085,7 @@ namespace ss {
                                     rhs = stringify(s, dst);
                                     
                                 } else {
-                                    if (!is_dictionary(dst, s)) {
+                                    if (!is_dictionary(s, dst)) {
                                         delete[] dst;
                                         type_error(0, 6);
                                         //  array => dictionary
@@ -1506,7 +1506,7 @@ namespace ss {
                             if (rhs.empty()) {
                                 delete[] valuev;
                                 
-                                if (is_dictionary(valuev, valuec))
+                                if (is_dictionary(valuec, valuev))
                                     null_error();
                                 
                                 type_error(4, 3);
@@ -1514,7 +1514,7 @@ namespace ss {
                             }
                             
                             if (is_string(rhs)) {
-                                if (!is_dictionary(valuev, valuec)) {
+                                if (!is_dictionary(valuec, valuev)) {
                                     delete[] valuev;
                                     
                                     type_error(4, 3);
@@ -2829,7 +2829,7 @@ namespace ss {
                                 delete[] v;
                                 
                                 //  null dictionary key
-                                if (is_dictionary(v, p))
+                                if (is_dictionary(p, v))
                                     null_error();
                                 
                                 type_error(4, 3);
@@ -2848,7 +2848,7 @@ namespace ss {
                             }
                             
                             if (is_string(rhs)) {
-                                if (!is_dictionary(v, p)) {
+                                if (!is_dictionary(p, v)) {
                                     delete[] v;
                                     type_error(0, 6);
                                     //  array => dictionary
@@ -2963,7 +2963,7 @@ namespace ss {
                                         v[(size_t)idx] = rtrim(number);
                                     }
                                 } else {
-                                    if (!is_dictionary(v, p)) {
+                                    if (!is_dictionary(p, v)) {
                                         delete[] v;
                                         type_error(0, 6);
                                         //  array => dictionary
@@ -3329,7 +3329,7 @@ namespace ss {
                                 //  search index, key
                                 
                                 if (rhs.empty()) {
-                                    if (is_dictionary(v, p))
+                                    if (is_dictionary(p, v))
                                         null_error();
                                     
                                     type_error(4, 3);
@@ -3346,7 +3346,7 @@ namespace ss {
                                     //  array => int
                                 
                                 if (is_string(rhs)) {
-                                    if (!is_dictionary(v, p))
+                                    if (!is_dictionary(p, v))
                                         type_error(0, 6);
                                         //  array => dictionary
                                     
@@ -3418,7 +3418,7 @@ namespace ss {
                                         } else
                                             v[(size_t)idx] = rhs;
                                     } else {
-                                        if (!is_dictionary(v, p))
+                                        if (!is_dictionary(p, v))
                                             type_error(0, 6);
                                             //  array => dictionary
                                         
@@ -4285,7 +4285,7 @@ namespace ss {
                 return rhs;
             }
             
-            if (!is_table(data, n))
+            if (!is_table(n, data))
                 type_error(0, 7);
                 //  array => table
             
@@ -4629,7 +4629,7 @@ namespace ss {
                 }
             }
             
-            if (!is_dictionary(v, n))
+            if (!is_dictionary(n, v))
                 type_error(0, 6);
                 //  array => dictionary
             
@@ -4762,9 +4762,9 @@ namespace ss {
             size_t valuec = parse(valuev, rhs);
             
             if (valuec != 1)
-                return encode(is_table(valuev, valuec) ?
+                return encode(is_table(valuec, valuev) ?
                               types[7] :
-                              is_dictionary(valuev, valuec) ?
+                              is_dictionary(valuec, valuev) ?
                               types[6] :
                               types[0]);
                 //  array
@@ -4990,7 +4990,7 @@ namespace ss {
                 }
             }
             
-            if (!is_dictionary(v, n))
+            if (!is_dictionary(n, v))
                 type_error(0, 6);
                 //  array => dictionary
             
@@ -5232,7 +5232,7 @@ namespace ss {
             }
             
             if (rhs.empty()) {
-                if (is_dictionary(v, n))
+                if (is_dictionary(n, v))
                     null_error();
                 
                 type_error(4, 3);
@@ -5249,7 +5249,7 @@ namespace ss {
             }
             
             if (is_string(rhs)) {
-                if (!is_dictionary(v, n))
+                if (!is_dictionary(n, v))
                     type_error(0, 6);
                     //  array => dictionary
                 
@@ -5288,7 +5288,7 @@ namespace ss {
                     return v[(size_t)d];
                 }
                 
-                if (!is_dictionary(v, n))
+                if (!is_dictionary(n, v))
                     type_error(0, 6);
                     //  array => dictionary
                 
@@ -5484,7 +5484,7 @@ namespace ss {
                 return std::get<1>(* arrayv[i])[(size_t)(y * c + x + 1)];
             }
             
-            if (!is_table(valuev, valuec)) {
+            if (!is_table(valuec, valuev)) {
                 delete[] valuev;
                 type_error(0, 7);
                 //  array => table
@@ -5684,7 +5684,7 @@ namespace ss {
                 return ss.str();
             }
             
-            if (!is_table(v, n)) {
+            if (!is_table(n, v)) {
                 delete[] v;
                 type_error(0, 7);
                 //  array => table
@@ -7959,7 +7959,7 @@ namespace ss {
                 return ss.str();
             }
             
-            if (!is_table(v, n)) {
+            if (!is_table(n, v)) {
                 delete[] v;
                 type_error(0, 7);
                 //  array => table
@@ -12445,13 +12445,7 @@ namespace ss {
             string str;
             getline(cin, str);
             
-            if (str.empty())
-                return EMPTY;
-            
-            if (is_double(str))
-                return rtrim(stod(str));
-            
-            return encode(str);
+            return raw(str);
         }));
         
         set_function(new ss::function("local", [this](const size_t argc, string* argv) {
@@ -12773,7 +12767,6 @@ namespace ss {
                     
                     if (n == -1) {
                         delete[] data;
-                        
                         return encode(types[5]);
                         //  undefined
                     }
@@ -12792,7 +12785,6 @@ namespace ss {
                     
                     if (n == -1) {
                         delete[] data;
-                        
                         return encode(types[5]);
                         //  undefined
                     }

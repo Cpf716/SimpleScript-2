@@ -18,13 +18,13 @@ namespace ss {
     class logic: public arithmetic {
         //  MEMBER FUNCTIONS
         
-        void analyze(const string* data, const size_t n) const;
+        void analyze(const size_t n, string* data) const;
         
-        size_t merge(string* data, int n) const;
+        size_t merge(int n, string* data) const;
         
-        size_t prefix(const string expr, string* data) const;
+        size_t prefix(string* dst, const string src) const;
         
-        size_t split(const string expr, string* data) const;
+        size_t split(string* dst, const string src) const;
     protected:
         //  MEMBER FIELDS
         

@@ -53,7 +53,7 @@ namespace ss {
         return false;
     }
 
-    bool else_if_statement::compare(const string val) const { return val == "elseif"; }
+    bool else_if_statement::compare(const string value) const { return value == "elseif"; }
 
     string else_if_statement::evaluate(interpreter* ssu) { return ssu->evaluate(expression); }
 

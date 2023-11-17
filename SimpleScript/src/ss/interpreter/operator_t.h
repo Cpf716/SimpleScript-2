@@ -14,11 +14,11 @@ namespace ss {
     class operator_t {
         //  MEMBER FIELDS
         
-        string _opc;
+        string opc;
     protected:
         //  MEMBER FUNCTIONS
         
-        void set_opcode(const string opc) { _opc = opc; }
+        void set_opcode(const string opc) { this->opc = opc; }
     public:
         //  CONSTRUCTORS
         
@@ -26,7 +26,7 @@ namespace ss {
         
         //  MEMBER FUNCTIONS
         
-        string opcode() const { return _opc; }
+        string opcode() const { return opc; }
     };
 }
 

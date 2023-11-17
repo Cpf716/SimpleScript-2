@@ -36,7 +36,7 @@ namespace ss {
             return false;
         }
         
-        bool compare(const string val) const { return false; }
+        bool compare(const string value) const { return false; }
         
         string evaluate(interpreter* ssu) {
             unsupported_error("evaluate()");

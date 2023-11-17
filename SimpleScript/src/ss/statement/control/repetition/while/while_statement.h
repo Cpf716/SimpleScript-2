@@ -33,7 +33,7 @@ namespace ss {
         
         string execute(interpreter* ssu);
         
-        bool compare(const string val) const;
+        bool compare(const string value) const;
         
         void set_break();
         

@@ -11,82 +11,82 @@ namespace ss {
     namespace api {
         size_t autoincrement = 10000;
 
-        bst<pair<size_t, int>>* connbst = NULL;
+        bst<pair<size_t, int>>* conbst = NULL;
     
-        vector<pair<size_t, sql::Connection*>> conns;
+        vector<pair<size_t, sql::Connection*>> conv;
 
-        size_t mysql_connect(const string host_name, const string user_name, const string password) {
+        size_t mysql_connect(const string host, const string uid, const string pwd) {
             sql::Driver *driver = NULL;
-            sql::Connection *conn = NULL;
+            sql::Connection *con = NULL;
             
             try {
                 driver = get_driver_instance();
                 
-                conn = driver->connect(host_name, user_name, password);
+                con = driver->connect(host, uid, pwd);
                 
             } catch (sql::SQLException &e) {
                 throw e;
             }
             
-            conns.push_back(pair<int, sql::Connection*>(autoincrement, conn));
+            conv.push_back(pair<int, sql::Connection*>(autoincrement, con));
             
-            if (connbst != NULL)
-                connbst->close();
+            if (conbst != NULL)
+                conbst->close();
             
-            size_t symv[conns.size()];
+            size_t symv[conv.size()];
             
-            for (size_t i = 0; i < conns.size(); ++i)
-                symv[i] = conns[i].first;
+            for (size_t i = 0; i < conv.size(); ++i)
+                symv[i] = conv[i].first;
             
-            connbst = build(symv, 0, (int)conns.size());
+            conbst = build(symv, 0, (int)conv.size());
             
             return autoincrement++;
         }
 
-        int mysql_close(const size_t connection) {
-            if (connbst == NULL)
+        int mysql_close(const size_t con) {
+            if (conbst == NULL)
                 return -1;
             
-            int i = index_of(connbst, connection);
+            int i = index_of(conbst, con);
             
             if (i == -1)
                 return -1;
             
             try {
-                conns[i].second->close();
+                conv[i].second->close();
                 
             } catch (sql::SQLException &e) {
                 throw e;
             }
             
-            delete conns[i].second;
+            delete conv[i].second;
             
-            conns.erase(conns.begin() + i);
+            conv.erase(conv.begin() + i);
             
-            connbst->close();
+            conbst->close();
             
-            if (conns.size()) {
-                size_t symv[conns.size()];
+            if (conv.size()) {
+                size_t symv[conv.size()];
                 
-                for (size_t i = 0; i < conns.size(); ++i)
-                    symv[i] = conns[i].first;
+                for (size_t i = 0; i < conv.size(); ++i)
+                    symv[i] = conv[i].first;
                 
-                connbst = build(symv, 0, (int)conns.size());
+                conbst = build(symv, 0, (int)conv.size());
             } else
-                connbst = NULL;
+                conbst = NULL;
             
             return 0;
         }
 
         int mysql_close() {
-            if (connbst != NULL)
-                connbst->close();
+            if (conbst != NULL)
+                conbst->close();
             
-            for (size_t i = 0; i < conns.size(); ++i) {
+            for (size_t i = 0; i < conv.size(); ++i) {
                 try {
-                    conns[i].second->close();
+                    conv[i].second->close();
                     
-                    delete conns[i].second;
+                    delete conv[i].second;
                     
                 } catch (sql::SQLException &e) {
                     throw e;
@@ -97,17 +97,17 @@ namespace ss {
             return 0;
         }
 
-        bool mysql_set_schema(const size_t connection, const std::string schema) {
-            if (connbst == NULL)
+        bool mysql_set_schema(const size_t con, const std::string sch) {
+            if (conbst == NULL)
                 return false;
             
-            int i = index_of(connbst, connection);
+            int i = index_of(conbst, con);
             
             if (i == -1)
                 return false;
             
             try {
-                conns[i].second->setSchema(schema);
+                conv[i].second->setSchema(sch);
                 
             } catch (sql::SQLException& e) {
                 throw e;
@@ -116,11 +116,11 @@ namespace ss {
             return true;
         }
 
-        sql::ResultSet* mysql_prepare_query(const size_t connection, const string sql, const size_t argc, string* argv) {
-            if (connbst == NULL)
+        sql::ResultSet* mysql_prepare_query(const size_t con, const string sql, const size_t argc, string* argv) {
+            if (conbst == NULL)
                 return NULL;
             
-            int i = index_of(connbst, connection);
+            int i = index_of(conbst, con);
             
             if (i == -1)
                 return NULL;
@@ -129,7 +129,7 @@ namespace ss {
             sql::ResultSet* res = NULL;
             
             try {
-                prep_stmt = conns[i].second->prepareStatement(sql);
+                prep_stmt = conv[i].second->prepareStatement(sql);
                 
                 for (int j = 0; j < argc; ++j) {
                     try {
@@ -153,11 +153,11 @@ namespace ss {
             return res;
         }
 
-        int mysql_prepare_update(const size_t connection, const string sql, const size_t argc, string* argv) {
-            if (connbst == NULL)
+        int mysql_prepare_update(const size_t con, const string sql, const size_t argc, string* argv) {
+            if (conbst == NULL)
                 return -1;
             
-            int i = index_of(connbst, connection);
+            int i = index_of(conbst, con);
             
             if (i == -1)
                 return -1;
@@ -167,7 +167,7 @@ namespace ss {
             int res;
             
             try {
-                prep_stmt = conns[i].second->prepareStatement(sql);
+                prep_stmt = conv[i].second->prepareStatement(sql);
                 
                 for (int j = 0; j < argc; ++j) {
                     try {
@@ -191,11 +191,11 @@ namespace ss {
             return res;
         }
 
-        int mysql_update(const size_t connection, const string sql) {
-            if (connbst == NULL)
+        int mysql_update(const size_t con, const string sql) {
+            if (conbst == NULL)
                 return -1;
             
-            int i = index_of(connbst, connection);
+            int i = index_of(conbst, con);
             
             if (i == -1)
                 return -1;
@@ -205,7 +205,7 @@ namespace ss {
             int res;
             
             try {
-                stmt = conns[i].second->createStatement();
+                stmt = conv[i].second->createStatement();
                 
                 res = stmt->executeUpdate(sql);
                 
@@ -218,11 +218,11 @@ namespace ss {
             return res;
         }
 
-        sql::ResultSet* mysql_query(const size_t connection, const string sql) {
-            if (connbst == NULL)
+        sql::ResultSet* mysql_query(const size_t con, const string sql) {
+            if (conbst == NULL)
                 return NULL;
             
-            int i = index_of(connbst, connection);
+            int i = index_of(conbst, con);
             
             if (i == -1)
                 return NULL;
@@ -231,7 +231,7 @@ namespace ss {
             sql::ResultSet *res = NULL;
             
             try {
-                stmt = conns[i].second->createStatement();
+                stmt = conv[i].second->createStatement();
                 
                 res = stmt->executeQuery(sql);
                 

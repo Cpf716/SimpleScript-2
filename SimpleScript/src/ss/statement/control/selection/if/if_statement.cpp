@@ -57,7 +57,7 @@ namespace ss {
         return false;
     }
 
-    bool if_statement::compare(const string val) const { return false; }
+    bool if_statement::compare(const string value) const { return false; }
 
     string if_statement::evaluate(interpreter* ssu) {
         unsupported_error("evaluate()");

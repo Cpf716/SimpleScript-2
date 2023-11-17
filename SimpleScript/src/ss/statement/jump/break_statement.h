@@ -26,7 +26,7 @@ namespace ss {
         
         bool analyze(interpreter* ssu) const { return true; }
         
-        bool compare(const string val) const { return val == "break"; }
+        bool compare(const string value) const { return value == "break"; }
         
         string evaluate(interpreter* ssu) {
             unsupported_error("evaluate()");

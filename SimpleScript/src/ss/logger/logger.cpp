@@ -59,24 +59,24 @@ namespace ss {
         while (i < 12 && months[i] != dst[1])
             ++i;
         
-        std::ostringstream filnam;
+        std::ostringstream filename;
         
-        filnam << "/tmp/";
+        filename << "/tmp/";
         
-        filnam << dst[6] << (i + 1) << dst[2];
+        filename << dst[6] << (i + 1) << dst[2];
         
         for (size_t j = 0; j < 3; ++j)
-            filnam << dst[j + 3];
+            filename << dst[j + 3];
         
-        filnam << ".log";
+        filename << ".log";
         
-        std::ofstream fil;
+        std::ofstream file;
         
-        fil.open(filnam.str());
+        file.open(filename.str());
         
-        fil << ss.str();
+        file << ss.str();
         
-        fil.close();
+        file.close();
     }
 
     void logger_write(const std::string str) {

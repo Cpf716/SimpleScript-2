@@ -3,8 +3,6 @@
 //  File:   addHours.txt
 //
 
-include "@/string/string"
-
 func main
     if nrows(argv) !== 3
         expectExcept("2 argument(s), got {}" format (nrows(argv) - 1))

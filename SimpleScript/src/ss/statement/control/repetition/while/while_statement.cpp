@@ -89,7 +89,7 @@ namespace ss {
         return EMPTY;
     }
 
-    bool while_statement::compare(const string val) const { return false; }
+    bool while_statement::compare(const string value) const { return false; }
 
     void while_statement::set_break() { should_break = true; }
 

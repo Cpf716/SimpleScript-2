@@ -49,7 +49,7 @@ namespace ss {
         return false;
     }
 
-    bool catch_statement::compare(const string val) const { return val == "catch"; }
+    bool catch_statement::compare(const string value) const { return value == "catch"; }
 
     string catch_statement::evaluate(interpreter* ssu) { return encode(symbol); }
 

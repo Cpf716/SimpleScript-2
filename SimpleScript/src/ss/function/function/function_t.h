@@ -33,7 +33,7 @@ namespace ss {
         
         string name() const { return _name; }
         
-        void rename(const string name) { _name = name; }
+        void rename(const string new_name) { _name = new_name; }
     };
 }
 

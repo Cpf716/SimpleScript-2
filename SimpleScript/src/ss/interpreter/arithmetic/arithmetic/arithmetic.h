@@ -43,15 +43,17 @@ namespace ss {
         
         //  MEMBER FUNCTIONS
             
-        void analyze(const string* data, const size_t n) const;
+        void analyze(const size_t n, string* data) const;
         
         void initialize();
         //  binary operators require discrete jagged array to set precedence levels
         
-        size_t prefix(string expr, string* data) const;
+        int io_symbol(const string symbol) const;
+        
+        size_t prefix(string* dst, string src) const;
         //  pass pointer array twice the length of expr
         
-        size_t split(string expr, string* data) const;
+        size_t split(string* dst, string src) const;
         
         double value(string val);
     protected:
@@ -64,10 +66,6 @@ namespace ss {
         size_t baoc[9];
         
         size_t unary_count;
-        
-        //  MEMBER FUNCTIONS
-        
-        int io_symbol(const string symbol) const;
     public:
         //  CONSTRUCTORS
         

@@ -33,7 +33,7 @@ namespace ss {
             std::vector<int> parval;
                 
             //  flags
-            std::vector<bool> fla;
+            std::vector<bool> flg;
                 
             //  threads
             std::vector<std::thread> thr;

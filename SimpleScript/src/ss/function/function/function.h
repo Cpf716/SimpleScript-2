@@ -14,13 +14,14 @@ namespace ss {
     class function: public function_t {
         //  MEMBER FIELDS
         
-        std::function<string(size_t, string *)> operation;
+        std::function<string(size_t, string *)> _function;
     public:
         //  CONSTRUCTORS
         
-        function(const string name, const std::function<string(size_t, string *)> operation) {
-            this->rename(name);
-            this->operation = operation;
+        function(const string name, const std::function<string(size_t, string *)> function) {
+            rename(name);
+            
+            _function = function;
         }
         
         void close() { delete this; }
@@ -30,7 +31,7 @@ namespace ss {
         string call(const size_t argc, string* argv) {
             //  consume();
             
-            return operation(argc, argv);
+            return _function(argc, argv);
         }
     };
 }

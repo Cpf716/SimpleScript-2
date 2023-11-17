@@ -138,6 +138,8 @@
 		9C67CE282ADAE99F00B4B071 /* file_statement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = file_statement.cpp; sourceTree = "<group>"; };
 		9C67CE2B2ADAFE1200B4B071 /* logger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = logger.h; sourceTree = "<group>"; };
 		9C67CE2C2ADAFED400B4B071 /* logger.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = logger.cpp; sourceTree = "<group>"; };
+		9C67CE382ADCE28000B4B071 /* thenByRow.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = thenByRow.txt; sourceTree = "<group>"; };
+		9C67CE392ADCE28800B4B071 /* thenByCol.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = thenByCol.txt; sourceTree = "<group>"; };
 		9C6DD85529480B2A00EF8D62 /* function_t.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = function_t.h; sourceTree = "<group>"; };
 		9C6F3C3A290CA179004559AB /* arithmetic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = arithmetic.cpp; sourceTree = "<group>"; };
 		9C7231132AD3C3BF00FD57C8 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -692,6 +694,24 @@
 			path = function;
 			sourceTree = "<group>";
 		};
+		9C67CE362ADCE25A00B4B071 /* thenBy */ = {
+			isa = PBXGroup;
+			children = (
+				9C67CE392ADCE28800B4B071 /* thenByCol.txt */,
+				9C67CE382ADCE28000B4B071 /* thenByRow.txt */,
+			);
+			path = thenBy;
+			sourceTree = "<group>";
+		};
+		9C67CE372ADCE26F00B4B071 /* sort */ = {
+			isa = PBXGroup;
+			children = (
+				9CE5DE5D2A18812100AF1B33 /* sortCols.txt */,
+				9CE5DE592A1880F500AF1B33 /* sortRows.txt */,
+			);
+			path = sort;
+			sourceTree = "<group>";
+		};
 		9C693F8D2AB506D500C044C6 /* math */ = {
 			isa = PBXGroup;
 			children = (
@@ -816,8 +836,8 @@
 			isa = PBXGroup;
 			children = (
 				9C9E11FF2A75767500308BB3 /* reverse */,
-				9CE5DE5D2A18812100AF1B33 /* sortCols.txt */,
-				9CE5DE592A1880F500AF1B33 /* sortRows.txt */,
+				9C67CE372ADCE26F00B4B071 /* sort */,
+				9C67CE362ADCE25A00B4B071 /* thenBy */,
 			);
 			path = sort;
 			sourceTree = "<group>";

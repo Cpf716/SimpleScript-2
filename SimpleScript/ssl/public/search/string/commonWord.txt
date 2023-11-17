@@ -11,13 +11,13 @@ func main
         expectExcept("1 argument(s), got {}" format (nrows(argv) - 1))
     end if
 
-    filnam = (argv row 1) slice 1
+    filename = (argv row 1) slice 1
     
-    if typeOf filnam !== "string"
-        typeExcept(typeOf filnam, "string")
+    if typeOf filename !== "string"
+        typeExcept(typeOf filename, "string")
     end if
 
-    arr = words(filnam)
+    arr = words(filename)
 
     /*
     arr insert 0, 2

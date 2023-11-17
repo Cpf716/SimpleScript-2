@@ -14,21 +14,21 @@ namespace ss {
     class ulo : public operator_t {
         //  MEMBER FIELDS
         
-        std::function<double(const string s)> operation;
+        std::function<double(const string s)> opr;
     public:
         //  CONSTRUCTORS
         
-        ulo(const string opcode, const std::function<double(const string s)> operation) {
-            set_opcode(opcode);
+        ulo(const string opc, const std::function<double(const string s)> opr) {
+            set_opcode(opc);
             
-            this->operation = operation;
+            this->opr = opr;
         }
         
         void close() { delete this; }
         
         //  MEMBER FUNCTIONS
         
-        double apply(const string s) const { return operation(s); }
+        double apply(const string rhs) const { return opr(rhs); }
     };
 }
 

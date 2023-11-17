@@ -39,7 +39,7 @@ namespace ss {
 
     //  MEMBER FUNCTIONS
 
-    void logic::analyze(const string *data, const size_t n) const {
+    void logic::analyze(const size_t n, string *data) const {
         size_t start = 0, end = n;
         while (start < end && data[start] == "(" && data[end - 1] == ")") {
             int p = 0;
@@ -201,19 +201,19 @@ namespace ss {
         }
     }
 
-    double logic::evaluate(const string expr) {
-        if (expr.empty())
+    double logic::evaluate(const string expression) {
+        if (expression.empty())
             throw invalid_argument("empty");
         
-        if (balance(expr) > 0)
+        if (balance(expression) > 0)
             throw invalid_argument("Syntax error, insert \")\" to complete expr body");
         
-        if (balance(expr) < 0)
+        if (balance(expression) < 0)
             throw invalid_argument("Syntax error on token \")\", delete this token");
         
-        string* data = new string[expr.length() * 2];
+        string* data = new string[expression.length() * 2];
         
-        size_t n = prefix(expr, data);
+        size_t n = prefix(data, expression);
         
         stack<string> s = stack<string>();
         
@@ -261,7 +261,7 @@ namespace ss {
         return arithmetic::evaluate(s.top());
     }
 
-    size_t logic::merge(string* data, int n) const {
+    size_t logic::merge(int n, string* data) const {
         int i;
         for (i = 0; i < n - 1; ++i) {
             if (data[i + 1] == lov[loc - 1]->opcode()) {
@@ -453,13 +453,13 @@ namespace ss {
         return n;
     }
 
-    size_t logic::prefix(const string expr, string* data) const {
+    size_t logic::prefix(string* data, const string expr) const {
         if (expr.empty())
             throw invalid_argument("empty");
         
-        size_t n = split(expr, data);
+        size_t n = split(data, expr);
         
-        analyze(data, n);
+        analyze(n, data);
         
         size_t i;
         for (i = 1; i < loc; ++i) {
@@ -535,7 +535,7 @@ namespace ss {
         return n;
     }
 
-    size_t logic::split(string expr, string* data) const {
+    size_t logic::split(string* data, string expr) const {
         if (expr.empty())
             throw invalid_argument("empty");
         
@@ -683,6 +683,6 @@ namespace ss {
             end++;
         }
         
-        return merge(data, (int)n);
+        return merge((int)n, data);
     }
 }

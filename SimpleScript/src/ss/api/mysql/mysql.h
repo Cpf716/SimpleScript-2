@@ -21,21 +21,21 @@ using namespace std;
 
 namespace ss {
     namespace api {
-        size_t mysql_connect(const string host_name, const string user_name, const string password);
+        size_t mysql_connect(const string host, const string uid, const string pwd);
 
         int mysql_close();
 
-        int mysql_close(const size_t connection);
+        int mysql_close(const size_t con);
 
-        bool mysql_set_schema(const size_t connection, const std::string schema);
+        bool mysql_set_schema(const size_t con, const std::string sch);
 
-        sql::ResultSet* mysql_prepare_query(const size_t connection, const string sql, const size_t argc, string* argv);
+        sql::ResultSet* mysql_prepare_query(const size_t con, const string sql, const size_t argc, string* argv);
 
-        int mysql_prepare_update(const size_t connection, const string sql, const size_t argc, string* argv);
+        int mysql_prepare_update(const size_t con, const string sql, const size_t argc, string* argv);
 
-        int mysql_update(const size_t connection, const string sql);
+        int mysql_update(const size_t con, const string sql);
 
-        sql::ResultSet* mysql_query(const size_t connection, const string sql);
+        sql::ResultSet* mysql_query(const size_t con, const string sql);
     }
 }
 #endif /* mysql_h */

@@ -22,7 +22,7 @@ namespace ss {
         
         virtual bool analyze(interpreter* ssu) const = 0;
         
-        virtual bool compare(const string val) const = 0;
+        virtual bool compare(const string value) const = 0;
         
         virtual string evaluate(interpreter* ssu) = 0;
         

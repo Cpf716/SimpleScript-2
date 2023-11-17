@@ -48,7 +48,7 @@ namespace ss {
         return false;
     }
 
-    bool finally_statement::compare(const string val) const { return val == "finally"; }
+    bool finally_statement::compare(const string value) const { return value == "finally"; }
 
     string finally_statement::evaluate(interpreter* ssu) {
         unsupported_error("evaluate()");

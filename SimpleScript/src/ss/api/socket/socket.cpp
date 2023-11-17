@@ -13,7 +13,7 @@ namespace ss {
 
         socket::socket(const int fildes) {
             val.push_back(fildes);
-            fla.push_back(true);
+            flg.push_back(true);
         }
 
         //  MEMBER FUNCTIONS
@@ -32,48 +32,48 @@ namespace ss {
             this->add.push_back(add);
             
             this->addlen = addlen;
-            this->fla[0] = false;
+            this->flg[0] = false;
         }
 
         //  NON-MEMBER FIELDS
 
         std::vector<struct socket*> thr;
 
-        std::vector<struct socket*> socks;
+        std::vector<struct socket*> sockv;
 
         //  NON-MEMBER FUNCTIONS
 
         std::vector<int> socket_accept(const int fildes) {
             size_t i;
-            for (i = 0; i < socks.size(); ++i) {
-                if (socks[i]->val[0] == fildes) {
-                    if (socks[i]->is_client())
+            for (i = 0; i < sockv.size(); ++i) {
+                if (sockv[i]->val[0] == fildes) {
+                    if (sockv[i]->is_client())
                         return std::vector<int>();
                     
                     break;
                 }
                 
-                if (socks[i]->is_server()) {
+                if (sockv[i]->is_server()) {
                     size_t j = 1;
-                    while (j < socks[i]->val.size() && socks[i]->val[j] != fildes)
+                    while (j < sockv[i]->val.size() && sockv[i]->val[j] != fildes)
                         ++j;
                     
-                    if (j != socks[i]->val.size())
+                    if (j != sockv[i]->val.size())
                         return std::vector<int>();
                 }
                 
                 size_t j = 1;
-                while (j < socks[i]->parval.size() && socks[i]->parval[j] != fildes)
+                while (j < sockv[i]->parval.size() && sockv[i]->parval[j] != fildes)
                     ++j;
                 
-                if (j != socks[i]->parval.size())
+                if (j != sockv[i]->parval.size())
                     return std::vector<int>();
             }
             
-            if (i == socks.size())
+            if (i == sockv.size())
                 return std::vector<int>();
             
-            struct socket* sock = socks[i];
+            struct socket* sock = sockv[i];
             
             i = 1;
             while (i < sock->val.size()) {
@@ -92,7 +92,7 @@ namespace ss {
             while (1) {
                 struct socket* sock = thr[thrnum];
                 
-                if (sock->fla[sock->fla.size() - 1])
+                if (sock->flg[sock->flg.size() - 1])
                     break;
                 
                 //  returns nonnegative file descriptor or -1 for error
@@ -113,7 +113,7 @@ namespace ss {
             while (1) {
                 struct socket* sock = thr[thrnum];
                 
-                if (sock->fla[sock->fla.size() - 1])
+                if (sock->flg[sock->flg.size() - 1])
                     break;
                 
                 char valread[1024] = {0};
@@ -167,7 +167,7 @@ namespace ss {
             while (1) {
                 struct socket* sock = thr[thrnum];
                 
-                if (sock->fla[0])
+                if (sock->flg[0])
                     break;
                 
                 //  returns nonnegative file descriptor or -1 for error
@@ -205,25 +205,25 @@ namespace ss {
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
             
-            socks.push_back(new struct socket(fildes));
+            sockv.push_back(new struct socket(fildes));
             
             return fildes;
         }
 
         int socket_close() {
-            while (socks.size())
-                socket_close(socks[0]->val[0]);
+            while (sockv.size())
+                socket_close(sockv[0]->val[0]);
             
             return 0;
         }
 
         int socket_close(const int fildes) {
-            for (size_t i = 0; i < socks.size(); ++i) {
-                struct socket* sock = socks[i];
+            for (size_t i = 0; i < sockv.size(); ++i) {
+                struct socket* sock = sockv[i];
                 
                 if (sock->val[0] == fildes) {
                     if (sock->is_parallel()) {
-                        sock->fla[sock->fla.size() - 1] = true;
+                        sock->flg[sock->flg.size() - 1] = true;
                         
                         shutdown(sock->parval[1], SHUT_RDWR);
                         
@@ -238,7 +238,7 @@ namespace ss {
                     if (sock->is_client())
                         close(sock->val[0]);
                     else {
-                        sock->fla[0] = true;
+                        sock->flg[0] = true;
                         
                         shutdown(sock->val[0], SHUT_RDWR);
                         
@@ -251,7 +251,7 @@ namespace ss {
                     
                     delete sock;
                     
-                    socks.erase(socks.begin() + i);
+                    sockv.erase(sockv.begin() + i);
                     
                     return 0;
                 }
@@ -276,7 +276,7 @@ namespace ss {
                 
                 if (j != sock->parval.size()) {
                     if (j == 1) {
-                        sock->fla[sock->fla.size() - 1] = true;
+                        sock->flg[sock->flg.size() - 1] = true;
                         
                         shutdown(sock->parval[1], SHUT_RDWR);
                         
@@ -302,20 +302,20 @@ namespace ss {
 
         int socket_listen(const int fildes, const int port) {
             size_t i;
-            for (i = 0; i < socks.size(); ++i) {
-                if (socks[i]->val[0] == fildes) {
-                    if (socks[i]->is_server() || socks[i]->is_parallel())
+            for (i = 0; i < sockv.size(); ++i) {
+                if (sockv[i]->val[0] == fildes) {
+                    if (sockv[i]->is_server() || sockv[i]->is_parallel())
                         return -1;
                     
                     break;
                 }
                 
-                if (socks[i]->is_server()) {
+                if (sockv[i]->is_server()) {
                     size_t j = 1;
-                    while (j < socks[i]->val.size() && socks[i]->val[j] != fildes)
+                    while (j < sockv[i]->val.size() && sockv[i]->val[j] != fildes)
                         ++j;
                     
-                    if (j != socks[i]->val.size()) {
+                    if (j != sockv[i]->val.size()) {
                         int _fildes = ::socket(AF_INET, SOCK_STREAM, 0);
                         
                         int opt = 1;
@@ -328,7 +328,7 @@ namespace ss {
                         add.sin_family = AF_INET;
                         add.sin_port = htons(port);
                         
-                        struct socket* sock = socks[i];
+                        struct socket* sock = sockv[i];
                         
                         bind(_fildes, (struct sockaddr *)&add, sock->addlen);
                         listen(_fildes, 1);
@@ -336,7 +336,7 @@ namespace ss {
                         sock->parval.push_back(fildes);
                         sock->parval.push_back(_fildes);
                         sock->add.push_back(add);
-                        sock->fla.push_back(false);
+                        sock->flg.push_back(false);
                         
                         thr.push_back(sock);
                         
@@ -348,18 +348,18 @@ namespace ss {
                 }
                 
                 size_t j = 1;
-                while (j < socks[i]->parval.size() && socks[i]->parval[j] != fildes)
+                while (j < sockv[i]->parval.size() && sockv[i]->parval[j] != fildes)
                     ++j;
                 
-                if (j != socks[i]->parval.size())
+                if (j != sockv[i]->parval.size())
                     return -1;
             }
             
             //  socket is undefined
-            if (i == socks.size())
+            if (i == sockv.size())
                 return -1;
             
-            struct socket* sock = socks[i];
+            struct socket* sock = sockv[i];
             
             int _fildes = ::socket(AF_INET, SOCK_STREAM, 0);
             
@@ -393,30 +393,30 @@ namespace ss {
 
         std::string socket_recv(const int fildes) {
             size_t i;
-            for (i = 0; i < socks.size(); ++i) {
-                if (socks[i]->val[0] == fildes)
+            for (i = 0; i < sockv.size(); ++i) {
+                if (sockv[i]->val[0] == fildes)
                     break;
                 
-                if (socks[i]->is_server()) {
+                if (sockv[i]->is_server()) {
                     size_t j = 1;
-                    while (j < socks[i]->val.size() && socks[i]->val[j] != fildes)
+                    while (j < sockv[i]->val.size() && sockv[i]->val[j] != fildes)
                         ++j;
                     
-                    if (j != socks[i]->val.size())
+                    if (j != sockv[i]->val.size())
                         break;
                 }
                 
                 size_t j = 1;
-                while (j < socks[i]->parval.size() && socks[i]->parval[j] != fildes)
+                while (j < sockv[i]->parval.size() && sockv[i]->parval[j] != fildes)
                     ++j;
                 
                 //  cannot read from socket
-                if (j != socks[i]->parval.size())
+                if (j != sockv[i]->parval.size())
                     return std::string();
             }
             
             //  socket is undefined
-            if (i == socks.size())
+            if (i == sockv.size())
                 return std::string();
             
             while (1) {
@@ -456,30 +456,30 @@ namespace ss {
 
         int socket_send(const int fildes, const std::string msg) {
             size_t i;
-            for (i = 0; i < socks.size(); ++i) {
-                if (socks[i]->val[0] == fildes)
+            for (i = 0; i < sockv.size(); ++i) {
+                if (sockv[i]->val[0] == fildes)
                     break;
                 
-                if (socks[i]->is_server()) {
+                if (sockv[i]->is_server()) {
                     size_t j = 1;
-                    while (j < socks[i]->val.size() && socks[i]->val[j] != fildes)
+                    while (j < sockv[i]->val.size() && sockv[i]->val[j] != fildes)
                         ++j;
                     
-                    if (j != socks[i]->val.size())
+                    if (j != sockv[i]->val.size())
                         break;
                 }
                 
                 size_t j = 1;
-                while (j < socks[i]->parval.size() && socks[i]->parval[j] != fildes)
+                while (j < sockv[i]->parval.size() && sockv[i]->parval[j] != fildes)
                     ++j;
                 
                 //  cannot write to socket
-                if (j != socks[i]->parval.size())
+                if (j != sockv[i]->parval.size())
                     return -1;
             }
             
             //  socket is undefined
-            if (i == socks.size())
+            if (i == sockv.size())
                 return -1;
             
             //  check only that fildes does not belong to a listener
@@ -515,7 +515,7 @@ namespace ss {
             
             sock->thr.push_back(std::thread(handler_server_accept));
             
-            socks.push_back(sock);
+            sockv.push_back(sock);
             
             return fildes;
         }

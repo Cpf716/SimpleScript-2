@@ -1,5 +1,5 @@
 //  Author: Corey Ferguson
-//  Date:   September 24, 2023
+//  Date:   November 16, 2023
 //  File:   app.txt
 //
 
@@ -37,9 +37,17 @@ func main
         
         echo "\n"
 
-        send(a, "/api/" + array("artists", "albums", "songs", "join").(num - 1))
+	mes = "/api/" + array("artists", "albums", "songs", "join").(num - 1)
+
+        send(a, mes)
 
         array res = recv(a)
+
+	if !res
+	    close(a)
+	    echo "Disconnected.\n"
+	    continue
+	end if
 
         num = parseTime(gmt())
         

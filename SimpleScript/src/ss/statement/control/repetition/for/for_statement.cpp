@@ -128,7 +128,7 @@ namespace ss {
         return false;
     }
 
-    bool for_statement::compare(const string val) const { return false; }
+    bool for_statement::compare(const string value) const { return false; }
 
     string for_statement::evaluate(interpreter* ssu) {
         unsupported_error("evaluate()");

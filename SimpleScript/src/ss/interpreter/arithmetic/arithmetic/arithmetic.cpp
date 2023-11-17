@@ -76,7 +76,7 @@ namespace ss {
 
     //  MEMBER FUNCTIONS
 
-    void arithmetic::analyze(const string* data, const size_t n) const {
+    void arithmetic::analyze(const size_t n, string* data) const {
         size_t start = 0, end = n;
         while (start < end && data[start] == "(" && data[end - 1] == ")") {
             int p = 0;
@@ -385,7 +385,7 @@ namespace ss {
             throw invalid_argument("Syntax error on token \")\", delete this token");
         
         string* data = new string[expr.length() + 1];
-        size_t n = prefix(expr, data);
+        size_t n = prefix(data, expr);
         stack<string> s = stack<string>();
         
         for (int i = (int)n - 1; i >= 0; --i) {
@@ -604,13 +604,13 @@ namespace ss {
 
     //  precondition:   expr is non-empty & data is non-null
     //  postcondition:
-    size_t arithmetic::prefix(const string expr, string* data) const {
+    size_t arithmetic::prefix(string* data, const string expr) const {
         if (expr.empty())
             throw invalid_argument("empty");
         
-        size_t n = split(expr, data);
+        size_t n = split(data, expr);
         
-        analyze(data, n);
+        analyze(n, data);
         
         for (int i = 0; i < 9; ++i) {
             for (int j = 1; j < n - 1; ++j) {
@@ -851,7 +851,7 @@ namespace ss {
 
     //  precondition:   sizeof(data) / sizeof(data[0]) >= expr.length()
     //  postcondition:
-    size_t arithmetic::split(string expr, string* data) const {
+    size_t arithmetic::split(string* data, string expr) const {
         if (expr.empty())
             throw invalid_argument("empty");
         

@@ -47,7 +47,7 @@ namespace ss {
         return false;
     }
 
-    bool file_statement::compare(const string val) const {
+    bool file_statement::compare(const string value) const {
         unsupported_error("compare()");
         return false;
     }
