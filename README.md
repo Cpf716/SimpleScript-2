@@ -24,19 +24,20 @@ Additionally, SimpleScript supports MySQL DBMS and TCP socket programming.
 
 ## Building and Running
 
-1. Open the `SimpleScript.xcodeproj` file in Xcode
+1. Open Terminal, and run the following commands:
+    ```cd /Library/Application\ Support
+    sudo mkdir SimpleScript
+    ln -s /Users/<user>/SimpleScript/SimpleScript/ssl/public/ /Library/Application\ Support/SimpleScript/ssl```
 
-2. Drill down to `/SimpleScript/src/utility/` in the project navigator and open `utility.h`
-
-3. Replace `<user>` within the global `BASE_DIR` field with the name of your user account directory 
+2. Open the `SimpleScript.xcodeproj` file in Xcode 
 
 3. Build the project (only required once)
 
-2. Navigate to `/Users/<user>/Library/Developer/Xcode/DerivedData`
+4. Navigate to `/Users/<user>/Library/Developer/Xcode/DerivedData`
 
-3. Locate the `SimpleScript` directory, and drill down to `Build/Products/Debug/`
+5. Locate the `SimpleScript` directory, and drill down to `Build/Products/Debug/`
 
-4. Open a new Terminal window from the `Debug` directory and run `./SimpleScript`, passing the full path of your SimpleScript file as the first argument
+6. Open a new Terminal window from the `Debug` directory and run `./SimpleScript`, passing the full path of your SimpleScript file as the first argument
 
 * Additional arguments are passed to the `argv` variable within your SimpleScript file
 
