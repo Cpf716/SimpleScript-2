@@ -25,9 +25,11 @@ Additionally, SimpleScript supports MySQL DBMS and TCP socket programming.
 ## Building and Running
 
 1. Open Terminal, and run the following commands:
-    ```cd /Library/Application\ Support
+    ```
+    cd /Library/Application\ Support
     sudo mkdir SimpleScript
-    ln -s /Users/<user>/SimpleScript/SimpleScript/ssl/public/ /Library/Application\ Support/SimpleScript/ssl```
+    ln -s /Users/<user>/SimpleScript/SimpleScript/ssl/public/ /Library/Application\ Support/SimpleScript/ssl
+    ```
 
 2. Open the `SimpleScript.xcodeproj` file in Xcode 
 
