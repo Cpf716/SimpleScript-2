@@ -18,7 +18,7 @@
 9. \*=&nbsp;&nbsp;&nbsp;&nbsp;/=&nbsp;&nbsp;&nbsp;&nbsp;%=&nbsp;&nbsp;&nbsp;&nbsp;-=&nbsp;&nbsp;&nbsp;&nbsp;\>>=&nbsp;&nbsp;&nbsp;&nbsp;<<=&nbsp;&nbsp;&nbsp;&nbsp;&=&nbsp;&nbsp;&nbsp;&nbsp;^=&nbsp;&nbsp;&nbsp;&nbsp;|=
 10. &&
 11. ||
-12. aggregate&nbsp;cell&nbsp;col&nbsp;contains&nbsp;fill&nbsp;filter&nbsp;find&nbsp;format&nbsp;indexOf&nbsp;insert&nbsp;join&nbsp;lastIndexOf&nbsp;map&nbsp;reserve&nbsp;resize&nbsp;row&nbsp;slice&nbsp;splice&nbsp;substr&nbsp;toSpliced
+12. aggregate&nbsp;&nbsp;&nbsp;&nbsp;cell&nbsp;&nbsp;&nbsp;&nbsp;col&nbsp;&nbsp;&nbsp;&nbsp;contains&nbsp;&nbsp;&nbsp;&nbsp;fill&nbsp;&nbsp;&nbsp;&nbsp;filter&nbsp;&nbsp;&nbsp;&nbsp;find&nbsp;&nbsp;&nbsp;&nbsp;format&nbsp;&nbsp;&nbsp;&nbsp;indexOf&nbsp;&nbsp;&nbsp;&nbsp;insert&nbsp;&nbsp;&nbsp;&nbsp;join&nbsp;&nbsp;&nbsp;&nbsp;lastIndexOf&nbsp;&nbsp;&nbsp;&nbsp;map&nbsp;&nbsp;&nbsp;&nbsp;reserve&nbsp;&nbsp;&nbsp;&nbsp;resize&nbsp;&nbsp;&nbsp;&nbsp;row&nbsp;&nbsp;&nbsp;&nbsp;slice&nbsp;&nbsp;&nbsp;&nbsp;splice&nbsp;&nbsp;&nbsp;&nbsp;substr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;toSpliced
 13. \+
 14. ??
 15. <=&nbsp;&nbsp;&nbsp;&nbsp;\>=&nbsp;&nbsp;&nbsp;&nbsp;<&nbsp;&nbsp;&nbsp;&nbsp;\>
