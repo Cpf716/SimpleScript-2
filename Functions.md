@@ -72,7 +72,7 @@ Postcondition:  returns a file descriptor identifying the server at `hostName` a
 #### close(fildes: int): int
 
 Precondition:   `fildes >= 0`<br>
-Postcondition:  returns 0 upon successful closure of the MySQL connection or the socket `fildes`, otherwise returns -1 or throws an exception if an error occurs
+Postcondition:  returns 0 upon successful closure of the socket `fildes`, otherwise returns -1 or throws an exception if an error occurs
 
 #### listen(fildes: int, port: int): int
 
@@ -102,6 +102,11 @@ Postcondition:  starts a server at `port` with the capacity of `backlog`; return
 
 Precondition:   `count hostName > 0 && count userName > 0 && count password > 0`<br>
 Postcondition:  returns the MySQL connection to `hostName` given `userName` and `password`, otherwise throws an exception if an error occurs
+
+#### close(con: int): int
+
+Precondition:   `con >= 0`<br>
+Postcondition:  returns 0 upon successful closure of the MySQL connection, otherwise returns -1 or throws an exception if an error occurs
 
 #### prepareQuery(con: int, sql: string, args...): table
 
