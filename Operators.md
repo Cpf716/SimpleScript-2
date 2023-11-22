@@ -18,7 +18,7 @@
 9. \*=&nbsp;&nbsp;&nbsp;&nbsp;/=&nbsp;&nbsp;&nbsp;&nbsp;%=&nbsp;&nbsp;&nbsp;&nbsp;-=&nbsp;&nbsp;&nbsp;&nbsp;\>>=&nbsp;&nbsp;&nbsp;&nbsp;<<=&nbsp;&nbsp;&nbsp;&nbsp;&=&nbsp;&nbsp;&nbsp;&nbsp;^=&nbsp;&nbsp;&nbsp;&nbsp;|=
 10. &&
 11. ||
-12. aggregate cell col contains fill filter find format indexOf insert join lastIndexOf map reserve resize row slice splice substr toSpliced
+12. aggregate&nbsp;cell&nbsp;col&nbsp;contains&nbsp;fill&nbsp;filter&nbsp;find&nbsp;format&nbsp;indexOf&nbsp;insert&nbsp;join&nbsp;lastIndexOf&nbsp;map&nbsp;reserve&nbsp;resize&nbsp;row&nbsp;slice&nbsp;splice&nbsp;substr&nbsp;toSpliced
 13. \+
 14. ??
 15. <=&nbsp;&nbsp;&nbsp;&nbsp;\>=&nbsp;&nbsp;&nbsp;&nbsp;<&nbsp;&nbsp;&nbsp;&nbsp;\>
