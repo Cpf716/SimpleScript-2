@@ -1,11 +1,11 @@
 //  Author: Corey Ferguson
 //  Date:   August 3, 2023
-//  File:   padStart.txt
+//  File:   padEnd.txt
 //
 
 include "@/exception/expectExcept"
 include "@/exception/rangeExcept"
-include "@/string/string"
+include "@/string"
 
 func main
     if nrows(argv) !== 4
@@ -43,7 +43,7 @@ func main
     end if
 
     while count text < tgtLen
-        text = padStr + text
+        text += padStr
     end while
 
     return text
