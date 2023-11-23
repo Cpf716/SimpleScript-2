@@ -26,43 +26,43 @@
 
 #### func-end func : symbol
 
-func foobar
-    echo ""
+func foobar<br>
+    echo ""<br>
 end func
 
 ### Jump
 
 #### try-catch-end try : symbol
 
-try
-    throw ""
-catch err
+try<br>
+    throw ""<br>
+catch err<br>
 end try
 
 ### Repetition
 
 #### do while-end while
 
-do while true
-    continue
+do while true<br>
+    continue<br>
 end while
 
 #### for-end for
 
-for ,,
-    continue
+for ,,<br>
+    continue<br>
 end for
 
 #### while-end while
 
-while true
-    continue
+while true<br>
+    continue<br>
 end while
 
 ### Selection
 
 #### if-end if
 
-if true
-    echo ""
+if true<br>
+    echo ""<br>
 end if
