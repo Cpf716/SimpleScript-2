@@ -27,7 +27,7 @@
 #### func-end func : symbol
 
 func foobar<br>
-    echo ""<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo ""<br>
 end func
 
 ### Jump
@@ -35,7 +35,7 @@ end func
 #### try-catch-end try : symbol
 
 try<br>
-    throw ""<br>
+&nbsp;&nbsp;&nbsp;&nbsp;throw ""<br>
 catch err<br>
 end try
 
@@ -44,19 +44,19 @@ end try
 #### do while-end while
 
 do while true<br>
-    continue<br>
+&nbsp;&nbsp;&nbsp;&nbsp;continue<br>
 end while
 
 #### for-end for
 
 for ,,<br>
-    continue<br>
+&nbsp;&nbsp;&nbsp;&nbsp;continue<br>
 end for
 
 #### while-end while
 
 while true<br>
-    continue<br>
+&nbsp;&nbsp;&nbsp;&nbsp;continue<br>
 end while
 
 ### Selection
@@ -64,5 +64,5 @@ end while
 #### if-end if
 
 if true<br>
-    echo ""<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo ""<br>
 end if
