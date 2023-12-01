@@ -8,13 +8,15 @@
 #ifndef socket_h
 #define socket_h
 
-#include <arpa/inet.h>      //  inet_ptons
-#include <csignal>          //  signal
-#include <netinet/in.h>     //  sockaddr_in
-#include <sys/socket.h>     //  socket
+#include <arpa/inet.h>          //  inet_ptons
+#include <csignal>              //  signal
+#include <iostream>             //  cout
+#include <netinet/in.h>         //  sockaddr_in
+#include "socket_exception.h"
+#include <sstream>              //  stringstream
+#include <sys/socket.h>         //  socket
 #include <thread>
-#include <unistd.h>         //  close, read
-#include "utility.h"        //  split
+#include <unistd.h>             //  close, read
 
 namespace ss {
     namespace api {
@@ -72,7 +74,7 @@ namespace ss {
 
         int socket_close(const int fildes);
 
-        int socket_listen(const int fildes, const int port);
+        void socket_listen(const int fildes, const int port);
 
         std::string socket_recv(const int fildes);
 

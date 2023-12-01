@@ -5,6 +5,9 @@
 //  Created by Corey Ferguson on 9/21/23.
 //
 
+//  * segmentation fault when server/client closes connection before the other
+//  * unclosed parallel thread(s)
+
 #include "socket.h"
 
 namespace ss {
@@ -12,25 +15,24 @@ namespace ss {
         //  CONSTRUCTORS
 
         socket::socket(const int fildes) {
-            val.push_back(fildes);
-            flg.push_back(true);
+            this->val.push_back(fildes);
+            this->flg.push_back(true);
         }
 
         //  MEMBER FUNCTIONS
 
         bool socket::is_client() const {
-            return (!add.size() && !parval.size()) || (add.size() == 1 && parval.size());
+            return (!this->add.size() && !this->parval.size()) || (this->add.size() == 1 && this->parval.size());
         }
 
-        bool socket::is_parallel() const { return !!parval.size(); }
+        bool socket::is_parallel() const { return !!this->parval.size(); }
 
         bool socket::is_server() const {
-            return (add.size() == 1 && !parval.size()) || (add.size() > 1 && parval.size());
+            return (this->add.size() == 1 && !this->parval.size()) || (this->add.size() > 1 && this->parval.size());
         }
 
         void socket::set_address(const struct sockaddr_in add, const int addlen) {
             this->add.push_back(add);
-            
             this->addlen = addlen;
             this->flg[0] = false;
         }
@@ -77,7 +79,7 @@ namespace ss {
             
             i = 1;
             while (i < sock->val.size()) {
-                if (::send(sock->val[i], std::string("\n").c_str(), 1, MSG_NOSIGNAL) <= 0)
+                if (::send(sock->val[i], std::string("\n\r").c_str(), 2, MSG_NOSIGNAL) <= 0)
                     sock->val.erase(sock->val.begin() + i);
                 else
                     ++i;
@@ -87,11 +89,9 @@ namespace ss {
         }
 
         void handler_parallel_accept() {
-            size_t thrnum = thr.size() - 1;
+            struct socket* sock = thr[thr.size() - 1];
             
             while (1) {
-                struct socket* sock = thr[thrnum];
-                
                 if (sock->flg[sock->flg.size() - 1])
                     break;
                 
@@ -104,15 +104,13 @@ namespace ss {
                 sock->parval.push_back(fildes);
             }
             
-            //  cout << "parallel accept joining...\n";
+            //  std::cout << "parallel accept joining...\n";
         }
 
         void handler_read() {
-            size_t thrnum = thr.size() - 1;
+            struct socket* sock = thr[thr.size() - 1];
                 
             while (1) {
-                struct socket* sock = thr[thrnum];
-                
                 if (sock->flg[sock->flg.size() - 1])
                     break;
                 
@@ -122,34 +120,11 @@ namespace ss {
                 if (read(sock->parval[0], valread, 1024) <= 0)
                     continue;
                 
-                std::string valv[strlen(valread) + 1];
-                std::size_t valc = split(valv, std::string(valread), "\n");
+                std::string val(valread);
                 
-                std::size_t i = 0;
-                
-                while (i < valc) {
-                    if (valv[i].empty()) {
-                        for (size_t j = i; j < valc - 1; ++j)
-                            swap(valv[j], valv[j + 1]);
+                val += "\n\r";
                         
-                        --valc;
-                    } else
-                        ++i;
-                }
-                
-                if (!valc)
-                    continue;
-                
-                std::ostringstream ss;
-                
-                for (i = 0; i < valc - 1; ++i)
-                    ss << valv[i] << "\n";
-                
-                ss << valv[i];
-                
-                std::string val = ss.str();
-                        
-                i = 2;
+                size_t i = 2;
                 while (i < sock->parval.size()) {
                     if (::send(sock->parval[i], val.c_str(), val.length(), MSG_NOSIGNAL) <= 0)
                         sock->parval.erase(sock->parval.begin() + i);
@@ -158,15 +133,13 @@ namespace ss {
                 }
             }
             
-            //  cout << "read joining...\n";
+            //  std::cout << "read joining...\n";
         }
 
         void handler_server_accept() {
-            size_t thrnum = thr.size() - 1;
+            struct socket* sock = thr[thr.size() - 1];
             
             while (1) {
-                struct socket* sock = thr[thrnum];
-                
                 if (sock->flg[0])
                     break;
                 
@@ -179,7 +152,7 @@ namespace ss {
                 sock->val.push_back(fildes);
             }
             
-            //  cout << "server accept joining...\n";
+            //  std::cout << "server accept joining...\n";
         }
 
         int socket_client(const std::string src, const int port) {
@@ -188,19 +161,24 @@ namespace ss {
             while (1) {
                 fildes = ::socket(AF_INET, SOCK_STREAM, 0);
                 
+                if (fildes == -1)
+                    throw api::socket_exception(std::to_string(errno));
+                
                 struct sockaddr_in add;
 
                 add.sin_family = AF_INET;
                 add.sin_port = htons(port);
                 
                 //  localhost
-                inet_pton(AF_INET, src.c_str(), &add.sin_addr);
+                if (inet_pton(AF_INET, src.c_str(), &add.sin_addr) == -1)
+                    throw api::socket_exception(std::to_string(errno));
                 
-                //  returns 0 for success, -1 otherwise
                 if (!connect(fildes, (struct sockaddr *)&add, sizeof(add)))
                     break;
-                    
-                close(fildes);
+                
+                //  returns 0 for success, -1 otherwise
+                if (close(fildes))
+                    throw api::socket_exception(std::to_string(errno));
                 
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
@@ -222,31 +200,34 @@ namespace ss {
                 struct socket* sock = sockv[i];
                 
                 if (sock->val[0] == fildes) {
+                    if (sock->is_client()) {
+                        if (close(sock->val[0]))
+                            throw api::socket_exception(std::to_string(errno));
+                    } else {
+                        sock->flg[0] = true;
+                        
+                        shutdown(sock->val[0], SHUT_RDWR);
+                        
+                        for (size_t j = 0; j < sock->val.size(); ++j)
+                            if (close(sock->val[j]))
+                                throw api::socket_exception(std::to_string(errno));
+                        
+                        if (sock->thr[0].joinable())
+                            sock->thr[0].join();
+                    }
+                    
                     if (sock->is_parallel()) {
                         sock->flg[sock->flg.size() - 1] = true;
                         
                         shutdown(sock->parval[1], SHUT_RDWR);
                         
                         for (size_t j = 1; j < sock->parval.size(); ++j)
-                            close(sock->parval[j]);
+                            if (close(sock->parval[j]))
+                                throw api::socket_exception(std::to_string(errno));
                         
-                        for (size_t j = sock->is_server() ? 1 : 0; j < sock->thr.size(); ++j)
+                        for (size_t j = sock->is_server(); j < sock->thr.size(); ++j)
                             if (sock->thr[j].joinable())
                                 sock->thr[j].join();
-                    }
-                    
-                    if (sock->is_client())
-                        close(sock->val[0]);
-                    else {
-                        sock->flg[0] = true;
-                        
-                        shutdown(sock->val[0], SHUT_RDWR);
-                        
-                        for (size_t j = 0; j < sock->val.size(); ++j)
-                            close(sock->val[j]);
-                        
-                        if (sock->thr[0].joinable())
-                            sock->thr[0].join();
                     }
                     
                     delete sock;
@@ -262,50 +243,25 @@ namespace ss {
                         ++j;
                     
                     if (j != sock->val.size()) {
-                        close(sock->val[j]);
+                        if (close(sock->val[j]))
+                            throw api::socket_exception(std::to_string(errno));
                         
                         sock->val.erase(sock->val.begin() + j);
                         
                         return 0;
                     }
                 }
-                
-                size_t j = 1;
-                while (j < sock->parval.size() && sock->parval[j] != fildes)
-                    ++j;
-                
-                if (j != sock->parval.size()) {
-                    if (j == 1) {
-                        sock->flg[sock->flg.size() - 1] = true;
-                        
-                        shutdown(sock->parval[1], SHUT_RDWR);
-                        
-                        for (size_t j = 1; j < sock->parval.size(); ++j)
-                            close(sock->parval[j]);
-                        
-                        for (size_t j = sock->is_server() ? 1 : 0; j < sock->thr.size(); ++j)
-                            if (sock->thr[j].joinable())
-                                sock->thr[j].join();
-                        
-                        sock->parval.clear();
-                        sock->add.erase(sock->add.end() - 1);
-                        
-                        return 0;
-                    }
-                    
-                    return -1;
-                }
             }
             
             return -1;
         }
 
-        int socket_listen(const int fildes, const int port) {
+        void socket_listen(const int fildes, const int port) {
             size_t i;
             for (i = 0; i < sockv.size(); ++i) {
                 if (sockv[i]->val[0] == fildes) {
                     if (sockv[i]->is_server() || sockv[i]->is_parallel())
-                        return -1;
+                        return;
                     
                     break;
                 }
@@ -318,9 +274,13 @@ namespace ss {
                     if (j != sockv[i]->val.size()) {
                         int _fildes = ::socket(AF_INET, SOCK_STREAM, 0);
                         
+                        if (_fildes == -1)
+                            throw api::socket_exception(std::to_string(errno));
+                        
                         int opt = 1;
                         
-                        setsockopt(_fildes, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+                        if (setsockopt(_fildes, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
+                            throw api::socket_exception(std::to_string(errno));
                         
                         struct sockaddr_in add;
                             
@@ -330,8 +290,11 @@ namespace ss {
                         
                         struct socket* sock = sockv[i];
                         
-                        bind(_fildes, (struct sockaddr *)&add, sock->addlen);
-                        listen(_fildes, 1);
+                        if (bind(_fildes, (struct sockaddr *)&add, sock->addlen))
+                            throw api::socket_exception(std::to_string(errno));
+                        
+                        if (listen(_fildes, 1))
+                            throw api::socket_exception(std::to_string(errno));
                         
                         sock->parval.push_back(fildes);
                         sock->parval.push_back(_fildes);
@@ -343,7 +306,7 @@ namespace ss {
                         sock->thr.push_back(std::thread(handler_parallel_accept));
                         sock->thr.push_back(std::thread(handler_read));
                         
-                        return _fildes;
+                        return;
                     }
                 }
                 
@@ -352,20 +315,24 @@ namespace ss {
                     ++j;
                 
                 if (j != sockv[i]->parval.size())
-                    return -1;
+                    return;
             }
             
             //  socket is undefined
             if (i == sockv.size())
-                return -1;
+                return;
             
             struct socket* sock = sockv[i];
             
             int _fildes = ::socket(AF_INET, SOCK_STREAM, 0);
             
+            if (_fildes == -1)
+                throw api::socket_exception(std::to_string(errno));
+            
             int opt = 1;
             
-            setsockopt(_fildes, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+            if (setsockopt(_fildes, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
+                throw api::socket_exception(std::to_string(errno));
             
             struct sockaddr_in add;
                 
@@ -375,8 +342,11 @@ namespace ss {
             
             int addlen = sizeof(add);
             
-            bind(_fildes, (struct sockaddr *)&add, addlen);
-            listen(_fildes, 1);
+            if (bind(_fildes, (struct sockaddr *)&add, addlen))
+                throw api::socket_exception(std::to_string(errno));
+            
+            if (listen(_fildes, 1))
+                throw api::socket_exception(std::to_string(errno));
             
             sock->parval.push_back(fildes);
             sock->parval.push_back(_fildes);
@@ -387,8 +357,6 @@ namespace ss {
             
             sock->thr.push_back(std::thread(handler_parallel_accept));
             sock->thr.push_back(std::thread(handler_read));
-            
-            return _fildes;
         }
 
         std::string socket_recv(const int fildes) {
@@ -425,13 +393,28 @@ namespace ss {
                 if (read(fildes, valread, 1024) <= 0)
                     return std::string();
                 
+                std::size_t valc = 0;
                 std::string valv[strlen(valread) + 1];
-                std::size_t valc = split(valv, std::string(valread), "\n");
+                
+                std::stringstream ss(valread);
+                std::string str;
+                
+                while (getline(ss, str))
+                    valv[valc++] = str;
                 
                 i = 0;
                 
                 while (i < valc) {
-                    if (valv[i].empty()) {
+                    //  trim
+                    size_t beg = 0;
+                    while (beg < valv[i].length() && isspace(valv[i][beg]))
+                        ++i;
+                    
+                    size_t end = valv[i].length();
+                    while (end > 0 && isspace(valv[i][end - 1]))
+                        --end;
+                    
+                    if (valv[i].substr(beg, end - beg).empty()) {
                         for (size_t j = i; j < valc - 1; ++j)
                             swap(valv[j], valv[j + 1]);
                         
@@ -443,12 +426,13 @@ namespace ss {
                 if (!valc)
                     continue;
                 
-                std::ostringstream ss;
+                ss.str("");
+                ss.clear();
                             
                 for (i = 0; i < valc - 1; ++i)
-                    ss << valv[i] << "\n";
+                    ss << valv[i] << std::endl;
                 
-                ss << valv[i];
+                ss << valv[valc - 1];
                 
                 return ss.str();
             }
@@ -484,17 +468,21 @@ namespace ss {
             
             //  check only that fildes does not belong to a listener
             
-            return (int)::send(fildes, (msg + "\n").c_str(), msg.length() + 1, MSG_NOSIGNAL);
+            return (int)::send(fildes, (msg + "\n\r").c_str(), msg.length() + 2, MSG_NOSIGNAL);
         }
 
         int socket_server(const int port, const int backlog) {
             //  check ports in use
             
             int fildes = ::socket(AF_INET, SOCK_STREAM, 0);
+            
+            if (fildes == -1)
+                throw api::socket_exception(std::to_string(errno));
                     
             int opt = 1;
             
-            setsockopt(fildes, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+            if (setsockopt(fildes, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
+                throw api::socket_exception(std::to_string(errno));
             
             struct sockaddr_in add;
                 
@@ -504,8 +492,11 @@ namespace ss {
             
             int addlen = sizeof(add);
             
-            bind(fildes, (struct sockaddr *)&add, addlen);
-            listen(fildes, backlog);
+            if (bind(fildes, (struct sockaddr *)&add, addlen))
+                throw api::socket_exception(std::to_string(errno));
+            
+            if (listen(fildes, backlog))
+                throw api::socket_exception(std::to_string(errno));
             
             struct socket* sock = new struct socket(fildes);
             

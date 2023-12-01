@@ -44,7 +44,7 @@ namespace ss {
         }
         
         string execute(interpreter* ssu) {
-            ssu-> evaluate(expression);
+            ssu->evaluate(this->expression);
             return EMPTY;
         }
         

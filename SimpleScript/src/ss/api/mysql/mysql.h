@@ -21,7 +21,7 @@ using namespace std;
 
 namespace ss {
     namespace api {
-        size_t mysql_connect(const string host, const string uid, const string pwd);
+        size_t mysql_connect(const string host, const string usr, const string pwd);
 
         int mysql_close();
 

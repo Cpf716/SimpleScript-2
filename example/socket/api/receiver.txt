@@ -3,7 +3,7 @@
 //  File:   app.txt
 //
 
-include "@/datetime/parseTime"
+include("@/datetime/parseTime")
 
 func int
     while 1
@@ -17,7 +17,7 @@ end func
 
 func main
     while 1
-        a = client("127.0.0.1", 8080)
+        sfd = client("127.0.0.1", 8080)
 
         echo "1\t-\tArtists\n"
         echo "2\t-\tAlbums\n"
@@ -37,17 +37,17 @@ func main
         
         echo "\n"
 
-	mes = "/api/" + array("artists", "albums", "songs", "join").(num - 1)
+        mes = "/api/" + array("artists", "albums", "songs", "join").(num - 1)
 
-        send(a, mes)
+        send(sfd, mes)
 
-        array res = recv(a)
+        array res = recv(sfd)
 
-	if !res
-	    close(a)
-	    echo "Disconnected.\n"
-	    continue
-	end if
+        if !res
+            close(a)
+            echo "Disconnected.\n"
+            continue
+        end if
 
         num = parseTime(gmt())
         
@@ -69,7 +69,7 @@ func main
         
         remove(path)
         
-        close(a)
+        close(sfd)
     end while
 end func
 

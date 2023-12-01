@@ -9,26 +9,25 @@
 
 namespace ss {
     namespace api {
-        size_t autoincrement = 10000;
-
         bst<pair<size_t, int>>* conbst = NULL;
     
+        size_t conc = 1024;
         vector<pair<size_t, sql::Connection*>> conv;
 
-        size_t mysql_connect(const string host, const string uid, const string pwd) {
+        size_t mysql_connect(const string host, const string usr, const string pwd) {
             sql::Driver *driver = NULL;
             sql::Connection *con = NULL;
             
             try {
                 driver = get_driver_instance();
                 
-                con = driver->connect(host, uid, pwd);
+                con = driver->connect(host, usr, pwd);
                 
             } catch (sql::SQLException &e) {
                 throw e;
             }
             
-            conv.push_back(pair<int, sql::Connection*>(autoincrement, con));
+            conv.push_back(pair<int, sql::Connection*>(conc, con));
             
             if (conbst != NULL)
                 conbst->close();
@@ -40,7 +39,7 @@ namespace ss {
             
             conbst = build(symv, 0, (int)conv.size());
             
-            return autoincrement++;
+            return conc++;
         }
 
         int mysql_close(const size_t con) {
